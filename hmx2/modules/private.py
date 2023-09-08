@@ -1,21 +1,23 @@
 from web3 import Web3, Account
 from web3.middleware.signing import construct_sign_and_send_raw_middleware
-from hmx2.constants import TOKEN_PROFILE
-from hmx2.constants import COLLATERAL_WETH
-from hmx2.constants import MULTICALL_ADDRESS
-from hmx2.constants import CROSS_MARGIN_HANDLER_ADDRESS
-from hmx2.constants import LIMIT_TRADE_HANDLER_ADDRESS
-from hmx2.constants import VAULT_STORAGE_ADDRESS
-from hmx2.constants import CROSS_MARGIN_HANDLER_ABI_PATH
-from hmx2.constants import LIMIT_TRADE_HANDLER_ABI_PATH
-from hmx2.constants import VAULT_STORAGE_ABI_PATH
-from hmx2.constants import ERC20_ABI_PATH
-from hmx2.constants import COLLATERALS
-from hmx2.constants import COLLATERAL_ASSET_ID_MAP
-from hmx2.constants import ADDRESS_ZERO
-from hmx2.constants import MAX_UINT
-from hmx2.constants import EXECUTION_FEE
-from hmx2.constants import BPS
+from hmx2.constants import (
+  TOKEN_PROFILE,
+  COLLATERAL_WETH,
+    MULTICALL_ADDRESS,
+    CROSS_MARGIN_HANDLER_ADDRESS,
+    LIMIT_TRADE_HANDLER_ADDRESS,
+    VAULT_STORAGE_ADDRESS,
+    CROSS_MARGIN_HANDLER_ABI_PATH,
+    LIMIT_TRADE_HANDLER_ABI_PATH,
+    VAULT_STORAGE_ABI_PATH,
+    ERC20_ABI_PATH,
+    COLLATERALS,
+    COLLATERAL_ASSET_ID_MAP,
+    ADDRESS_ZERO,
+    MAX_UINT,
+    EXECUTION_FEE,
+    BPS,
+)
 from hmx2.enum import Cmd
 from hmx2.helpers.contract_loader import load_contract
 from simple_multicall import Multicall
@@ -52,13 +54,18 @@ class Private(object):
     vault_storage_instance = load_contract(
       self.eth_provider, VAULT_STORAGE_ADDRESS, VAULT_STORAGE_ABI_PATH)
 
-    calls = []
-    collateral_usd = []
-    for collateral in COLLATERALS:
-      calls.append(multicall_instance.create_call(vault_storage_instance, 'traderBalances', [
-                   self.eth_signer.address, collateral]))
-      collateral_usd.append(self.oracle_middleware.get_price(
-        COLLATERAL_ASSET_ID_MAP[collateral]))
+    calls = [
+      multicall_instance.create_call(
+        vault_storage_instance,
+          "traderBalances",
+          [self.eth_signer.address, collateral],
+      )
+      for collateral in COLLATERALS
+    ]
+    collateral_usd = [
+      self.oracle_middleware.get_price(COLLATERAL_ASSET_ID_MAP[collateral])
+      for collateral in COLLATERALS
+    ]
 
     results = multicall_instance.call(calls)
 
@@ -156,14 +163,12 @@ class Private(object):
     '''
     self.__check_sub_account_id_param(sub_account_id)
 
-    size_delta = Web3.to_wei(size, "tether")
-    acceptable_price = MAX_UINT if buy else 0
     order = {
       "cmd": Cmd.CREATE,
       "market_index": market_index,
-      "size_delta": size_delta if buy else -size_delta,
+      "size_delta": Web3.to_wei(size, "tether") if buy else -Web3.to_wei(size, "tether"),
       "trigger_price": 0,
-      "acceptable_price": acceptable_price,
+      "acceptable_price": MAX_UINT if buy else 0,
       "trigger_above_threshold": True,
       "execution_fee": EXECUTION_FEE,
       "reduce_only": reduce_only,
@@ -202,15 +207,16 @@ class Private(object):
     :param tp_token
     :type tp_token: str in list COLLATERALS address
     '''
-    size_delta = Web3.to_wei(size, "tether")
-    acceptable_price = self.__add_slippage(
-      trigger_price) if size > 0 else self.__sub_slippage(trigger_price)
     order = {
       "cmd": Cmd.CREATE,
       "market_index": market_index,
-      "size_delta": size_delta if buy else -size_delta,
+      "size_delta": Web3.to_wei(size, "tether") if buy else -Web3.to_wei(size, "tether"),
       "trigger_price": Web3.to_wei(trigger_price, "tether"),
-      "acceptable_price": Web3.to_wei(acceptable_price, "tether"),
+      "acceptable_price": Web3.to_wei(
+        self.__add_slippage(
+          trigger_price) if size > 0 else self.__sub_slippage(trigger_price),
+        "tether"
+      ),
       "trigger_above_threshold": trigger_above_threshold,
       "execution_fee": EXECUTION_FEE,
       "reduce_only": reduce_only,
@@ -355,5 +361,5 @@ class Private(object):
     )
 
   def __check_sub_account_id_param(self, sub_account_id):
-    if sub_account_id < 0 or sub_account_id > 255:
+    if sub_account_id not in range(0, 256):
       raise Exception("Invalid sub account id")

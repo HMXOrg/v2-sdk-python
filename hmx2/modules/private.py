@@ -1,5 +1,6 @@
 from web3 import Web3, Account
 from web3.middleware.signing import construct_sign_and_send_raw_middleware
+from web3.logs import DISCARD
 from hmx2.constants import (
   TOKEN_PROFILE,
   COLLATERAL_WETH,
@@ -39,6 +40,8 @@ class Private(object):
     self.oracle_middleware = oracle_middleware
     self.eth_provider.middleware_onion.add(
       construct_sign_and_send_raw_middleware(self.eth_signer))
+    self.limit_trade_handler_instance = load_contract(
+      self.eth_provider, LIMIT_TRADE_HANDLER_ADDRESS, LIMIT_TRADE_HANDLER_ABI_PATH)
 
   def get_public_address(self):
     '''
@@ -175,9 +178,14 @@ class Private(object):
       "tp_token": tp_token
     }
 
-    return self.__create_order_batch(
+    tx = self.__create_order_batch(
       self.eth_signer.address, sub_account_id, [order]
     )
+    events = self.__parse_log(tx, "LogCreateLimitOrder")
+    args = {}
+    args["tx"] = events[0]["transactionHash"]
+    args["order"] = events[0]["args"]
+    return args
 
   def create_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO):
     '''
@@ -223,9 +231,14 @@ class Private(object):
       "tp_token": tp_token
     }
 
-    return self.__create_order_batch(
+    tx = self.__create_order_batch(
       self.eth_signer.address, sub_account_id, [order]
     )
+    events = self.__parse_log(tx, "LogCreateLimitOrder")
+    args = {}
+    args["tx"] = events[0]["transactionHash"]
+    args["order"] = events[0]["args"]
+    return args
 
   def update_trigger_order(self, sub_account_id: int, order_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str):
     '''
@@ -269,9 +282,14 @@ class Private(object):
       "tp_token": tp_token
     }
 
-    return self.__create_order_batch(
+    tx = self.__create_order_batch(
       self.eth_signer.address, sub_account_id, [order]
     )
+    events = self.__parse_log(tx, "LogUpdateLimitOrder")
+    args = {}
+    args["tx"] = events[0]["transactionHash"]
+    args["order"] = events[0]["args"]
+    return args
 
   def cancel_trigger_order(self, sub_account_id: int, order_index: int):
     '''
@@ -288,9 +306,14 @@ class Private(object):
       "order_index": order_index,
     }
 
-    return self.__create_order_batch(
+    tx = self.__create_order_batch(
       self.eth_signer.address, sub_account_id, [order]
     )
+    events = self.__parse_log(tx, "LogCancelLimitOrder")
+    args = {}
+    args["tx"] = events[0]["transactionHash"]
+    args["order"] = events[0]["args"]
+    return args
 
   def __add_slippage(self, value: float):
     return decimal.Decimal(value) * (BPS + 25) / BPS
@@ -299,11 +322,8 @@ class Private(object):
     return decimal.Decimal(value) * (BPS - 25) / BPS
 
   def __create_order_batch(self, account: str, sub_account_id: int, orders):
-    limit_trade_handler_instance = load_contract(
-      self.eth_provider, LIMIT_TRADE_HANDLER_ADDRESS, LIMIT_TRADE_HANDLER_ABI_PATH)
-
     (cmds, datas) = self.__prepare_batch_input(orders)
-    return limit_trade_handler_instance.functions.batch(
+    return self.limit_trade_handler_instance.functions.batch(
       account,
       sub_account_id,
       cmds,
@@ -363,3 +383,8 @@ class Private(object):
   def __check_sub_account_id_param(self, sub_account_id):
     if sub_account_id not in range(0, 256):
       raise Exception("Invalid sub account id")
+
+  def __parse_log(self, tx, topic):
+    receipt = self.eth_provider.eth.get_transaction_receipt(tx)
+    return self.limit_trade_handler_instance.events[topic](
+      ).process_receipt(receipt, DISCARD)

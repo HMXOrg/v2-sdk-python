@@ -19,18 +19,23 @@ async def main():
   create_market_order = client.private.create_market_order(
     0, MARKET_ETH_USD, Action.BUY, 100, False, ADDRESS_ZERO
   )
-  print(f'Create market order tx: {create_market_order.hex()}\n')
+  print(f'Create market order tx: {create_market_order["tx"].hex()}\n')
+  await asyncio.sleep(2)
 
   create_order = client.private.create_trigger_order(
     0, MARKET_ETH_USD, Action.BUY, 100, 1800, True, False)
-  print(f'Create order tx: {create_order.hex()}\n')
+  print(f'Create order tx: {create_order["tx"].hex()}\n')
+  await asyncio.sleep(2)
 
   update_order = client.private.update_trigger_order(
-    0, 128, Action.SELL, 50, 1700, True, False, ADDRESS_ZERO)
-  print(f'Update order tx: {update_order.hex()}\n')
+    0, create_order["order"]["orderIndex"], Action.SELL, 50, 1700, True, False, ADDRESS_ZERO)
+  print(f'Update order tx: {update_order["tx"].hex()}\n')
+  await asyncio.sleep(2)
 
-  cancel_order = client.private.cancel_trigger_order(0, 127)
-  print(f'Cancle order tx: {cancel_order.hex()}\n')
+  cancel_order = client.private.cancel_trigger_order(
+    0, update_order["order"]["orderIndex"])
+  print(f'Cancle order tx: {cancel_order["tx"].hex()}\n')
+  await asyncio.sleep(2)
 
 if __name__ == '__main__':
   asyncio.run(main())

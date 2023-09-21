@@ -1,0 +1,1190 @@
+[
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "IPerpStorage_BadLen",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "IPerpStorage_NotWhiteListed",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
+      }
+    ],
+    "name": "Initialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "executorAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isServiceExecutor",
+        "type": "bool"
+      }
+    ],
+    "name": "LogSetServiceExecutor",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "assetClasses",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "reserveValueE30",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "sumBorrowingRate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lastBorrowingTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "sumBorrowingFeeE30",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "sumSettledBorrowingFeeE30",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_marketIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isLong",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_size",
+        "type": "uint256"
+      }
+    ],
+    "name": "decreasePositionSize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "_assetClassIndex",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_reserve",
+        "type": "uint256"
+      }
+    ],
+    "name": "decreaseReserved",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_limit",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_offset",
+        "type": "uint256"
+      }
+    ],
+    "name": "getActivePositionIds",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "_ids",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_limit",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_offset",
+        "type": "uint256"
+      }
+    ],
+    "name": "getActivePositions",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "primaryAccount",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "marketIndex",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "avgEntryPriceE30",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "entryBorrowingRate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "reserveValueE30",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastIncreaseTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "positionSizeE30",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "realizedPnl",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "lastFundingAccrued",
+            "type": "int256"
+          },
+          {
+            "internalType": "uint8",
+            "name": "subAccountId",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct IPerpStorage.Position[]",
+        "name": "_positions",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_limit",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_offset",
+        "type": "uint256"
+      }
+    ],
+    "name": "getActiveSubAccounts",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "_subAccounts",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_assetClassIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAssetClassByIndex",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "reserveValueE30",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sumBorrowingRate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastBorrowingTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sumBorrowingFeeE30",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sumSettledBorrowingFeeE30",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IPerpStorage.AssetClass",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getGlobalState",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "reserveValueE30",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IPerpStorage.GlobalState",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_marketIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMarketByIndex",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "longPositionSize",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "longAccumSE",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "longAccumS2E",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "shortPositionSize",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "shortAccumSE",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "shortAccumS2E",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "currentFundingRate",
+            "type": "int256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastFundingTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "accumFundingLong",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "accumFundingShort",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "fundingAccrued",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct IPerpStorage.Market",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_subAccount",
+        "type": "address"
+      }
+    ],
+    "name": "getNumberOfSubAccountPosition",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_positionId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getPositionById",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "primaryAccount",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "marketIndex",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "avgEntryPriceE30",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "entryBorrowingRate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "reserveValueE30",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastIncreaseTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "positionSizeE30",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "realizedPnl",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "lastFundingAccrued",
+            "type": "int256"
+          },
+          {
+            "internalType": "uint8",
+            "name": "subAccountId",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct IPerpStorage.Position",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_subAccount",
+        "type": "address"
+      }
+    ],
+    "name": "getPositionBySubAccount",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "primaryAccount",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "marketIndex",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "avgEntryPriceE30",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "entryBorrowingRate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "reserveValueE30",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastIncreaseTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "positionSizeE30",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "realizedPnl",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "lastFundingAccrued",
+            "type": "int256"
+          },
+          {
+            "internalType": "uint8",
+            "name": "subAccountId",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct IPerpStorage.Position[]",
+        "name": "_subAccountPositions",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_subAccount",
+        "type": "address"
+      }
+    ],
+    "name": "getPositionIds",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "_positionIds",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "globalState",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "reserveValueE30",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_marketIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isLong",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_size",
+        "type": "uint256"
+      }
+    ],
+    "name": "increasePositionSize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "markets",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "longPositionSize",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "longAccumSE",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "longAccumS2E",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "shortPositionSize",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "shortAccumSE",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "shortAccumS2E",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int256",
+        "name": "currentFundingRate",
+        "type": "int256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lastFundingTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int256",
+        "name": "accumFundingLong",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "accumFundingShort",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "fundingAccrued",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "positions",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "primaryAccount",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "marketIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "avgEntryPriceE30",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "entryBorrowingRate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "reserveValueE30",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lastIncreaseTimestamp",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int256",
+        "name": "positionSizeE30",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "realizedPnl",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "lastFundingAccrued",
+        "type": "int256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "subAccountId",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_subAccount",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_positionId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "removePositionFromSubAccount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_subAccount",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_positionId",
+        "type": "bytes32"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "primaryAccount",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "marketIndex",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "avgEntryPriceE30",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "entryBorrowingRate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "reserveValueE30",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastIncreaseTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "positionSizeE30",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "realizedPnl",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "lastFundingAccrued",
+            "type": "int256"
+          },
+          {
+            "internalType": "uint8",
+            "name": "subAccountId",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct IPerpStorage.Position",
+        "name": "position",
+        "type": "tuple"
+      }
+    ],
+    "name": "savePosition",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "serviceExecutors",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_executorAddresses",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bool[]",
+        "name": "_isServiceExecutors",
+        "type": "bool[]"
+      }
+    ],
+    "name": "setServiceExecutorBatch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_executorAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isServiceExecutor",
+        "type": "bool"
+      }
+    ],
+    "name": "setServiceExecutors",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "subAccountBorrowingFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "subAccountPositionIds",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "_assetClassIndex",
+        "type": "uint8"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "reserveValueE30",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sumBorrowingRate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastBorrowingTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sumBorrowingFeeE30",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sumSettledBorrowingFeeE30",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IPerpStorage.AssetClass",
+        "name": "_newAssetClass",
+        "type": "tuple"
+      }
+    ],
+    "name": "updateAssetClass",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_marketIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_newPositionSize",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_newAccumSE",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_newAccumS2E",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateGlobalLongMarketById",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_marketIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_newPositionSize",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_newAccumSE",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_newAccumS2E",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateGlobalShortMarketById",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "reserveValueE30",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IPerpStorage.GlobalState",
+        "name": "_newGlobalState",
+        "type": "tuple"
+      }
+    ],
+    "name": "updateGlobalState",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_marketIndex",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "longPositionSize",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "longAccumSE",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "longAccumS2E",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "shortPositionSize",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "shortAccumSE",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "shortAccumS2E",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "currentFundingRate",
+            "type": "int256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastFundingTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "accumFundingLong",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "accumFundingShort",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "fundingAccrued",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct IPerpStorage.Market",
+        "name": "_market",
+        "type": "tuple"
+      }
+    ],
+    "name": "updateMarket",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

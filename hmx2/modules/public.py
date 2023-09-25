@@ -1,35 +1,25 @@
 from web3 import Web3
 from hmx2.constants import (
   TOKEN_PROFILE,
-  COLLATERAL_WETH,
-    MULTICALL_ADDRESS,
-    CROSS_MARGIN_HANDLER_ADDRESS,
-    LIMIT_TRADE_HANDLER_ADDRESS,
-    VAULT_STORAGE_ADDRESS,
-    PERP_STORAGE_ADDRESS,
-    CONFIG_STORAGE_ADDRESS,
-    CROSS_MARGIN_HANDLER_ABI_PATH,
-    LIMIT_TRADE_HANDLER_ABI_PATH,
-    VAULT_STORAGE_ABI_PATH,
-    PERP_STORAGE_ABI_PATH,
-    CONFIG_STORAGE_ABI_PATH,
-    ERC20_ABI_PATH,
-    COLLATERALS,
-    COLLATERAL_ASSET_ID_MAP,
-    ADDRESS_ZERO,
-    MAX_UINT,
-    EXECUTION_FEE,
-    BPS,
-    HOURS,
-    DAYS,
-    YEARS,
-    MARKET_PROFILE
+  MULTICALL_ADDRESS,
+  VAULT_STORAGE_ADDRESS,
+  PERP_STORAGE_ADDRESS,
+  CONFIG_STORAGE_ADDRESS,
+  VAULT_STORAGE_ABI_PATH,
+  PERP_STORAGE_ABI_PATH,
+  CONFIG_STORAGE_ABI_PATH,
+  COLLATERALS,
+  COLLATERAL_ASSET_ID_MAP,
+  HOURS,
+  DAYS,
+  YEARS,
+  MARKET_PROFILE
 )
 from hmx2.helpers.contract_loader import load_contract
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
-from hmx2.modules.calculator.fee import FeeCalculator
+from hmx2.modules.calculator.calculator import Calculator
 from simple_multicall import Multicall
-from eth_abi.abi import encode, decode
+from eth_abi.abi import decode
 
 
 class Public(object):
@@ -116,6 +106,34 @@ class Public(object):
       "accum_funding_long": accum_funding_long,
       "accum_funding_short": accum_funding_short,
       "funding_accrued": funding_accrued,
+    }
+
+  def get_position(self, account: str, sub_account_id: int, market_index: int):
+    position_id = self.get_position_id(account, sub_account_id, market_index)
+    (
+      primary_account,
+      market_index,
+      avg_entry_priceE30,
+      entry_borrowing_rate,
+      reserve_value_e30,
+      last_increase_timestamp,
+      position_size_e30,
+      realized_pnl,
+      last_funding_accrued,
+      sub_account_id
+    ) = self.perp_storage_instance.functions.positions(position_id).call()
+
+    return {
+      "primary_account": primary_account,
+        "market_index": market_index,
+        "avg_entry_priceE30": avg_entry_priceE30,
+        "entry_borrowing_rate": entry_borrowing_rate,
+        "reserve_value_e30": reserve_value_e30,
+        "last_increase_timestamp": last_increase_timestamp,
+        "position_size_e30": position_size_e30,
+        "realized_pnl": realized_pnl,
+        "last_funding_accrued": last_funding_accrued,
+        "sub_account_id": sub_account_id,
     }
 
   def multicall_market_data(self, market_index: int):
@@ -272,9 +290,25 @@ class Public(object):
       ]
     )
 
-  def get_market_price(self, market_index: int):
-    return self.oracle_middleware.get_price(
-      MARKET_PROFILE[market_index]["asset"])
+  def get_price(self, market_index: int, buy: bool, size: float):
+    data = self.multicall_market_data(market_index)
+    oracle_price = self.oracle_middleware.get_price(
+      MARKET_PROFILE[market_index]["asset"]) * 10**30
+    adaptive_price = Calculator.get_adaptive_price(
+      oracle_price,
+      data["market"]["long_position_size"],
+      data["market"]["short_position_size"],
+      data["market_config"]["max_skew_scale_usd"],
+      Web3.to_wei(size, "tether") if buy else -Web3.to_wei(size, "tether")
+    )
+    price_impact = (adaptive_price * 10**30 // oracle_price) - 10**30
+
+    return {
+      "market": MARKET_PROFILE[market_index]["name"],
+      "price": oracle_price / 10**30,
+      "adaptive_price": adaptive_price / 10**30,
+      "price_impact": price_impact * 100 / 10**30,
+    }
 
   def get_market_info(self, market_index: int):
     '''
@@ -290,14 +324,14 @@ class Public(object):
     price = self.oracle_middleware.get_price(
       MARKET_PROFILE[market_index]["asset"])
 
-    funding_rate = FeeCalculator.get_funding_rate(
+    funding_rate = Calculator.get_funding_rate(
       data["trading_config"],
       data["market_config"],
       data["market"],
       block["timestamp"],
     )
 
-    borrowing_rate = FeeCalculator.get_borrowing_rate(
+    borrowing_rate = Calculator.get_borrowing_rate(
       data["asset_class_config"], data["asset_class"], tvl)
 
     return {
@@ -317,4 +351,37 @@ class Public(object):
         "24H": borrowing_rate * DAYS / 10**18,
         "1Y": borrowing_rate * YEARS / 10**18,
       }
+    }
+
+  def get_sub_account(self, account: str, sub_account_id: int):
+    return Web3.to_checksum_address(hex(int(account, 16) ^ sub_account_id))
+
+  def get_position_id(self, account: str, sub_account_id: int, market_index: int):
+    return Web3.solidity_keccak(
+      ['address', 'uint256'],
+      [self.get_sub_account(account, sub_account_id), market_index]
+    )
+
+  def get_position_info(self, account: str, sub_account_id: int, market_index: int):
+    data = self.multicall_market_data(market_index)
+    position = self.get_position(account, sub_account_id, market_index)
+    block = self.get_block()
+    price = int(self.oracle_middleware.get_price(
+        MARKET_PROFILE[market_index]["asset"]) * 10 ** 30)
+
+    pnl = Calculator.get_pnl(
+      position, data["market"], data["market_config"], data["trading_config"], price, block["timestamp"])
+
+    current_funding_accrued = Calculator.get_next_funding_accrued(
+      data["trading_config"], data["market_config"], data["market"], block["timestamp"])
+    Calculator.get_fuding_fee(
+      position["position_size_e30"], current_funding_accrued, position["last_funding_accrued"])
+
+    return {
+      "primary_account": position["primary_account"],
+      "sub_account_id": position["sub_account_id"],
+      "market": MARKET_PROFILE[market_index]["name"],
+      "position_size_e30": position["position_size_e30"] / 10**30,
+      "avg_entry_priceE30": position["avg_entry_priceE30"] / 10**30,
+      "pnl": pnl / 10**30,
     }

@@ -1,0 +1,132 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "contract IEcoPyth",
+        "name": "ecoPyth_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IGmxGlpManager",
+        "name": "glpManager_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IERC20",
+        "name": "sGlp_",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "_prevMaxGlpPriceDiff",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "_newMaxGlpPriceDiff",
+        "type": "uint32"
+      }
+    ],
+    "name": "LogSetMaxGlpPriceDiff",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "assetId",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "int64",
+            "name": "priceE8",
+            "type": "int64"
+          },
+          {
+            "internalType": "uint160",
+            "name": "publishTime",
+            "type": "uint160"
+          },
+          {
+            "internalType": "uint32",
+            "name": "maxDiffBps",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct IEcoPythCalldataBuilder.BuildData[]",
+        "name": "_data",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "build",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_minPublishTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "_priceUpdateCalldata",
+        "type": "bytes32[]"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "_publishTimeUpdateCalldata",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ecoPyth",
+    "outputs": [
+      {
+        "internalType": "contract IEcoPyth",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "glpManager",
+    "outputs": [
+      {
+        "internalType": "contract IGmxGlpManager",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "sGlp",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

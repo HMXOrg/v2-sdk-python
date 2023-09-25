@@ -18,6 +18,7 @@ from hmx2.constants import (
     ERC20_ABI_PATH,
     COLLATERALS,
     COLLATERAL_ASSET_ID_MAP,
+    MARKET_ASSET_ID_MAP,
     ADDRESS_ZERO,
     MAX_UINT,
     EXECUTION_FEE,
@@ -615,7 +616,7 @@ class Private(object):
     ]
     collateral_usd = [
       self.oracle_middleware.get_price(
-        COLLATERAL_ASSET_ID_MAP[collateral]) * 1e10
+        COLLATERAL_ASSET_ID_MAP[collateral]) * 1e30
       for collateral in COLLATERALS
     ]
     results = self.multicall_instance.call(calls)
@@ -627,3 +628,64 @@ class Private(object):
           for index, collateral in enumerate(COLLATERALS)
       ]
     )
+
+  def get_position(self, account: str, sub_account_id: int, market_index: int):
+    position_id = self.get_position_id(account, sub_account_id, market_index)
+    (
+      primary_account,
+      market_index,
+      avg_entry_priceE30,
+      entry_borrowing_rate,
+      reserve_value_e30,
+      last_increase_timestamp,
+      position_size_e30,
+      realized_pnl,
+      last_funding_accrued,
+      sub_account_id
+    ) = self.perp_storage_instance.functions.positions(position_id).call()
+
+    return {
+       "primary_account": primary_account,
+        "market_index": market_index,
+        "avg_entry_priceE30": avg_entry_priceE30,
+        "entry_borrowing_rate": entry_borrowing_rate,
+        "reserve_value_e30": reserve_value_e30,
+        "last_increase_timestamp": last_increase_timestamp,
+        "position_size_e30": position_size_e30,
+        "realized_pnl": realized_pnl,
+        "last_funding_accrued": last_funding_accrued,
+        "sub_account_id": sub_account_id,
+    }
+
+  def get_sub_account(self, account: str, sub_account_id: int):
+    return Web3.to_checksum_address(hex(int(account, 16) ^ sub_account_id))
+
+  def get_position_id(self, account: str, sub_account_id: int, market_index: int):
+    return Web3.solidity_keccak(
+      ['address', 'uint256'],
+      [self.get_sub_account(account, sub_account_id), market_index]
+    )
+
+  def get_position_info(self, account: str, sub_account_id: int, market_index: int):
+    data = self.multicall_market_data(market_index)
+    position = self.get_position(account, sub_account_id, market_index)
+    block = self.get_block()
+    price = int(self.oracle_middleware.get_price(
+      MARKET_ASSET_ID_MAP[market_index]) * 10 ** 30)
+
+    pnl = FeeCalculator.get_pnl(
+      position, data["market"], data["market_config"], data["trading_config"], price, block["timestamp"])
+
+    current_funding_accrued = FeeCalculator.get_next_funding_accrued(
+      data["trading_config"], data["market_config"], data["market"], block["timestamp"])
+    FeeCalculator.get_fuding_fee(
+      position["position_size_e30"], current_funding_accrued, position["last_funding_accrued"])
+
+    return {
+      "primary_account": position["primary_account"],
+      "sub_account_id": position["sub_account_id"],
+      "market_index": position["market_index"],
+      "position_size_e30": position["position_size_e30"],
+      "avg_entry_priceE30": position["avg_entry_priceE30"],
+      "pnl": pnl,
+    }

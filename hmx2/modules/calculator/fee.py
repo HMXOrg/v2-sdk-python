@@ -28,7 +28,7 @@ class FeeCalculator:
     if max_funding_rate == 0 or max_skew_scale_usd == 0:
       return 0
     market_skew_usd_e30 = long_position_size - short_position_size
-    ratio = market_skew_usd_e30 * max_funding_rate / max_skew_scale_usd
+    ratio = market_skew_usd_e30 * max_funding_rate // max_skew_scale_usd
     return min(max_funding_rate, ratio) if (ratio > 0) else max(max_funding_rate * -1, ratio)
 
   @staticmethod
@@ -58,3 +58,65 @@ class FeeCalculator:
     if hlp_tvl == 0:
       return 0
     return base_borrowing_rate * reserve_value_e30 / hlp_tvl
+
+  @staticmethod
+  def get_pnl(position, market, market_config, trading_config, market_price: int, block_timestamp: int):
+    adaptive_price = FeeCalculator.get_adaptive_price(
+      market_price,
+      market["long_position_size"],
+      market["short_position_size"],
+      market_config["max_skew_scale_usd"],
+      position["position_size_e30"] * -1
+    )
+    (is_profit, delta) = FeeCalculator.get_delta(
+      position["avg_entry_priceE30"],
+      adaptive_price,
+      position["position_size_e30"] > 0,
+      abs(position["position_size_e30"]),
+      position["reserve_value_e30"],
+      position["last_increase_timestamp"],
+      trading_config["min_profit_duration"],
+      block_timestamp,
+    )
+    return delta if is_profit else delta * -1
+
+  @staticmethod
+  def get_delta(avg_entry_priceE30: int, market_price: int, is_long: int, size: int, reserve_value_e30: int, last_increase_timestamp: int, min_profit_duration: int, block_timestamp: int):
+    price_delta = avg_entry_priceE30 - \
+        market_price if avg_entry_priceE30 > market_price else market_price - avg_entry_priceE30
+    delta = size * price_delta // avg_entry_priceE30
+    is_profit = market_price > avg_entry_priceE30 if is_long else market_price < avg_entry_priceE30
+
+    if is_profit:
+      delta = min(delta, reserve_value_e30)
+
+      if block_timestamp < (last_increase_timestamp + min_profit_duration):
+        return (is_profit, 0)
+
+    return (is_profit, delta)
+
+  @staticmethod
+  def get_adaptive_price(oracle_price: int, long_position_size: int, short_position_size: int, max_skew: int, size_delta: int):
+    skew = long_position_size - short_position_size
+    premium = skew * 10**30 // max_skew
+    premium_after = (skew + size_delta) * 10**30 // max_skew
+    premium_median = (premium + premium_after) // 2
+    return oracle_price * (10**30 + premium_median) // 10**30
+
+  @staticmethod
+  def get_next_funding_accrued(trading_config, market_config, market, block_timestamp):
+    proportionnal_elapsed_in_day = FeeCalculator.proportional_elapsed_in_day(
+      block_timestamp, trading_config["funding_interval"], market["last_funding_time"])
+
+    funding_rate = FeeCalculator.get_funding_rate_velocity_with_out_interval(
+      market_config["max_funding_rate"], market_config["max_skew_scale_usd"], market["long_position_size"], market["short_position_size"])
+
+    next_funding_rate = market["current_funding_rate"] + funding_rate
+
+    return (market["funding_accrued"] + market["current_funding_rate"] +
+            next_funding_rate) * proportionnal_elapsed_in_day // 2 // 1e18
+
+  @staticmethod
+  def get_fuding_fee(size: int, current_funding_accrued: int, last_funding_accrued: int):
+    funding_rate = current_funding_accrued - last_funding_accrued
+    return size * funding_rate // 10**18

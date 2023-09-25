@@ -74,7 +74,7 @@ class TestCreateMarketOrder:
     # deposit USDC.e as collateral
     client.private.deposit_erc20_collateral(0, COLLATERAL_USDCe, 1000)
     # create long market order
-    client.private.create_market_order(0, MARKET_ETH_USD, 1000, False)
+    client.private.create_market_order(0, MARKET_ETH_USD, True, 1000, False)
     # execute the order
     order_execution_helper.execute_orders(
       [DEFAULT_PUBLIC_ADDRESS], [0], [0], True)

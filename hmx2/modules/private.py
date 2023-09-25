@@ -22,6 +22,7 @@ from hmx2.constants import (
     MAX_UINT,
     EXECUTION_FEE,
     BPS,
+    MARKET_PROFILE,
 )
 from hmx2.enum import Cmd
 from hmx2.helpers.contract_loader import load_contract
@@ -397,3 +398,294 @@ class Private(object):
     receipt = self.eth_provider.eth.get_transaction_receipt(tx)
     return self.limit_trade_handler_instance.events[topic](
       ).process_receipt(receipt, DISCARD)
+
+  def get_trading_config(self):
+    (
+      funding_interval,
+      min_profit_duration,
+      dev_fee_rate_bps,
+      max_position
+    ) = self.config_storage_instance.functions.tradingConfig().call()
+    return {
+       "funding_interval": funding_interval,
+        "min_profit_duration": min_profit_duration,
+        "dev_fee_rate_bps": dev_fee_rate_bps,
+        "max_position": max_position,
+    }
+
+  def get_market_config(self, market_index: int):
+    (
+      asset_id,
+      max_long_position_size,
+      max_short_position_size,
+      increase_position_fee_rate_bps,
+      decrease_position_fee_rate_bps,
+      initial_margin_fraction_bps,
+      maintenance_margin_fraction_bps,
+      max_profit_rate_bps,
+      asset_class,
+      allow_increase_position,
+      active,
+      (max_skew_scale_usd, max_funding_rate)
+    ) = self.config_storage_instance.functions.marketConfigs(market_index).call()
+    return {
+      "asset_id": asset_id.hex(),
+      "max_long_position_size": max_long_position_size,
+      "max_short_position_size": max_short_position_size,
+      "increase_position_fee_rate_bps": increase_position_fee_rate_bps,
+      "decrease_position_fee_rate_bps": decrease_position_fee_rate_bps,
+      "initial_margin_fraction_bps": initial_margin_fraction_bps,
+      "maintenance_margin_fraction_bps": maintenance_margin_fraction_bps,
+      "max_profit_rate_bps": max_profit_rate_bps,
+      "asset_class": asset_class,
+      "allow_increase_position": allow_increase_position,
+      "active": active,
+      "max_skew_scale_usd": max_skew_scale_usd,
+      "max_funding_rate": max_funding_rate
+    }
+
+  def get_market_info(self, market_index: int):
+    '''
+    Get a market info
+
+    :param market_index: requied
+    :type market_index: int in list Market
+    '''
+    data = self.multicall_market_data(market_index)
+    block = self.get_block()
+    tvl = self.get_hlp_tvl()
+
+    funding_rate = FeeCalculator.get_funding_rate(
+      data["trading_config"],
+      data["market_config"],
+      data["market"],
+      block["timestamp"],
+    )
+
+    borrowing_rate = FeeCalculator.get_borrowing_rate(
+      data["asset_class_config"], data["asset_class"], tvl)
+
+    return {
+      "market": data["market"],
+      "asset_class": data["asset_class"],
+      "market_config": data["market_config"],
+      "asset_class_config": data["asset_class_config"],
+      "trading_config": data["trading_config"],
+      "funding_rate": funding_rate,
+      "borrowing_rate": borrowing_rate
+    }
+
+  def get_block(self):
+    return self.eth_provider.eth.get_block("latest")
+
+  def multicall_market_data(self, market_index: int):
+    calls = [
+      self.multicall_instance.create_call(
+        self.config_storage_instance, "marketConfigs", [market_index]
+      ),
+      self.multicall_instance.create_call(
+        self.perp_storage_instance, "markets", [market_index]
+      ),
+      self.multicall_instance.create_call(
+        self.config_storage_instance, "tradingConfig", []
+      )
+    ]
+
+    results = self.multicall_instance.call(calls)
+    data = results[1]
+    (
+      asset_id,
+      max_long_position_size,
+      max_short_position_size,
+      increase_position_fee_rate_bps,
+      decrease_position_fee_rate_bps,
+      initial_margin_fraction_bps,
+      maintenance_margin_fraction_bps,
+      max_profit_rate_bps,
+      asset_class,
+      allow_increase_position,
+      active,
+      max_skew_scale_usd,
+      max_funding_rate,
+    ) = decode(
+        ['bytes32', 'uint256', 'uint256', 'uint32', 'uint32', 'uint32',
+         'uint32', 'uint32', 'uint8', 'bool', 'bool', 'uint256', 'uint256'],
+        data.pop(0)
+      )
+    (
+      long_position_size,
+      long_accum_se,
+      long_accum_s2e,
+      short_position_size,
+      short_accum_se,
+      short_accum_s2e,
+      current_funding_rate,
+      last_funding_time,
+      accum_funding_long,
+      accum_funding_short,
+      funding_accrued,
+    ) = decode(
+      ['uint256', 'uint256', 'uint256', 'uint256', 'uint256',
+       'uint256', 'int256', 'uint256', 'int256', 'int256', 'int256'],
+      data.pop(0)
+    )
+    (
+      funding_interval,
+      min_profit_duration,
+      dev_fee_rate_bps,
+      max_position
+    ) = decode(
+      ['uint256', 'uint256', 'uint32', 'uint8'],
+      data.pop(0)
+    )
+
+    calls = [
+      self.multicall_instance.create_call(
+        self.config_storage_instance, "assetClassConfigs", [asset_class]
+      ),
+      self.multicall_instance.create_call(
+        self.perp_storage_instance, "assetClasses", [asset_class]
+      ),
+    ]
+    results = self.multicall_instance.call(calls)
+    data = results[1]
+    base_borrowing_rate = int(data.pop(0).hex(), 16)
+    (
+      reserve_value_e30,
+      sum_borrowing_rate,
+      last_borrowing_time,
+      sum_borrowing_fee_e30,
+      sum_settled_borrowing_fee_e30
+    ) = decode(
+      ['uint256', 'uint256', 'uint256', 'uint256', 'uint256'],
+      data.pop(0)
+    )
+
+    return {
+      "market_config": {
+        "asset_id": asset_id.hex(),
+        "max_long_position_size": max_long_position_size,
+        "max_short_position_size": max_short_position_size,
+        "increase_position_fee_rate_bps": increase_position_fee_rate_bps,
+        "decrease_position_fee_rate_bps": decrease_position_fee_rate_bps,
+        "initial_margin_fraction_bps": initial_margin_fraction_bps,
+        "maintenance_margin_fraction_bps": maintenance_margin_fraction_bps,
+        "max_profit_rate_bps": max_profit_rate_bps,
+        "asset_class": asset_class,
+        "allow_increase_position": allow_increase_position,
+        "active": active,
+        "max_skew_scale_usd": max_skew_scale_usd,
+        "max_funding_rate": max_funding_rate
+      },
+      "market": {
+        "long_position_size": long_position_size,
+        "long_accum_se": long_accum_se,
+        "long_accum_s2e": long_accum_s2e,
+        "short_position_size": short_position_size,
+        "short_accum_se": short_accum_se,
+        "short_accum_s2e": short_accum_s2e,
+        "current_funding_rate": current_funding_rate,
+        "last_funding_time": last_funding_time,
+        "accum_funding_long": accum_funding_long,
+        "accum_funding_short": accum_funding_short,
+        "funding_accrued": funding_accrued
+      },
+      "trading_config": {
+        "funding_interval": funding_interval,
+        "min_profit_duration": min_profit_duration,
+        "dev_fee_rate_bps": dev_fee_rate_bps,
+        "max_position": max_position
+      },
+      "asset_class_config": {
+        "base_borrowing_rate": base_borrowing_rate
+      },
+      "asset_class": {
+        "reserve_value_e30": reserve_value_e30,
+        "sum_borrowing_rate": sum_borrowing_rate,
+        "last_borrowing_time": last_borrowing_time,
+        "sum_borrowing_fee_e30": sum_borrowing_fee_e30,
+        "sum_settled_borrowing_fee_e30": sum_settled_borrowing_fee_e30
+      }
+    }
+
+  def get_hlp_tvl(self):
+    calls = [
+      self.multicall_instance.create_call(
+        self.vault_storage_instance, "hlpLiquidity", [collateral])
+      for collateral in COLLATERALS
+    ]
+    collateral_usd = [
+      self.oracle_middleware.get_price(
+        COLLATERAL_ASSET_ID_MAP[collateral]) * 1e30
+      for collateral in COLLATERALS
+    ]
+    results = self.multicall_instance.call(calls)
+
+    return sum(
+      [
+        int(results[1][index].hex(), 16) *
+          collateral_usd[index] // 10 ** TOKEN_PROFILE[collateral]["decimals"]
+          for index, collateral in enumerate(COLLATERALS)
+      ]
+    )
+
+  def get_position(self, account: str, sub_account_id: int, market_index: int):
+    position_id = self.get_position_id(account, sub_account_id, market_index)
+    (
+      primary_account,
+      market_index,
+      avg_entry_priceE30,
+      entry_borrowing_rate,
+      reserve_value_e30,
+      last_increase_timestamp,
+      position_size_e30,
+      realized_pnl,
+      last_funding_accrued,
+      sub_account_id
+    ) = self.perp_storage_instance.functions.positions(position_id).call()
+
+    return {
+       "primary_account": primary_account,
+        "market_index": market_index,
+        "avg_entry_priceE30": avg_entry_priceE30,
+        "entry_borrowing_rate": entry_borrowing_rate,
+        "reserve_value_e30": reserve_value_e30,
+        "last_increase_timestamp": last_increase_timestamp,
+        "position_size_e30": position_size_e30,
+        "realized_pnl": realized_pnl,
+        "last_funding_accrued": last_funding_accrued,
+        "sub_account_id": sub_account_id,
+    }
+
+  def get_sub_account(self, account: str, sub_account_id: int):
+    return Web3.to_checksum_address(hex(int(account, 16) ^ sub_account_id))
+
+  def get_position_id(self, account: str, sub_account_id: int, market_index: int):
+    return Web3.solidity_keccak(
+      ['address', 'uint256'],
+      [self.get_sub_account(account, sub_account_id), market_index]
+    )
+
+  def get_position_info(self, account: str, sub_account_id: int, market_index: int):
+    data = self.multicall_market_data(market_index)
+    position = self.get_position(account, sub_account_id, market_index)
+    block = self.get_block()
+    price = int(self.oracle_middleware.get_price(
+       MARKET_PROFILE[market_index]["asset"]) * 10 ** 30)
+
+    pnl = FeeCalculator.get_pnl(
+      position, data["market"], data["market_config"], data["trading_config"], price, block["timestamp"])
+
+    current_funding_accrued = FeeCalculator.get_next_funding_accrued(
+      data["trading_config"], data["market_config"], data["market"], block["timestamp"])
+    FeeCalculator.get_fuding_fee(
+      position["position_size_e30"], current_funding_accrued, position["last_funding_accrued"])
+
+    return {
+      "primary_account": position["primary_account"],
+      "sub_account_id": position["sub_account_id"],
+      "market_index": position["market_index"],
+      "position_size_e30": position["position_size_e30"],
+      "avg_entry_priceE30": position["avg_entry_priceE30"],
+      "pnl": pnl,
+    }

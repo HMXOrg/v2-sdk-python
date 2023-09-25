@@ -1,0 +1,912 @@
+[
+  { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
+  { "inputs": [], "name": "HMXLib_WrongSubAccountId", "type": "error" },
+  { "inputs": [], "name": "ICrossMarginHandler_BadAmount", "type": "error" },
+  {
+    "inputs": [],
+    "name": "ICrossMarginHandler_InCorrectValueTransfer",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ICrossMarginHandler_InsufficientExecutionFee",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ICrossMarginHandler_InvalidAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ICrossMarginHandler_MismatchMsgValue",
+    "type": "error"
+  },
+  { "inputs": [], "name": "ICrossMarginHandler_NoOrder", "type": "error" },
+  {
+    "inputs": [],
+    "name": "ICrossMarginHandler_NotExecutionState",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ICrossMarginHandler_NotOrderOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ICrossMarginHandler_NotWNativeToken",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ICrossMarginHandler_NotWhitelisted",
+    "type": "error"
+  },
+  { "inputs": [], "name": "ICrossMarginHandler_Unauthorized", "type": "error" },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
+      }
+    ],
+    "name": "Initialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint8",
+        "name": "subAccountId",
+        "type": "uint8"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "orderId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "executionFee",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "shouldUnwrap",
+        "type": "bool"
+      }
+    ],
+    "name": "LogCancelWithdrawOrder",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint8",
+        "name": "subAccountId",
+        "type": "uint8"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "orderId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "executionFee",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "shouldUnwrap",
+        "type": "bool"
+      }
+    ],
+    "name": "LogCreateWithdrawOrder",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "primaryAccount",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "subAccountId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "LogDepositCollateral",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint8",
+        "name": "subAccountId",
+        "type": "uint8"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "orderId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "shouldUnwrap",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isSuccess",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "errMsg",
+        "type": "string"
+      }
+    ],
+    "name": "LogExecuteWithdrawOrder",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "oldValue",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "LogMaxExecutionChuck",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "oldCrossMarginService",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newCrossMarginService",
+        "type": "address"
+      }
+    ],
+    "name": "LogSetCrossMarginService",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "oldValue",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "LogSetMinExecutionFee",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "executor",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isAllow",
+        "type": "bool"
+      }
+    ],
+    "name": "LogSetOrderExecutor",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "oldPyth",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newPyth",
+        "type": "address"
+      }
+    ],
+    "name": "LogSetPyth",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "primaryAccount",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "subAccountId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "LogWithdrawCollateral",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_orderIndex", "type": "uint256" }
+    ],
+    "name": "cancelWithdrawOrder",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint8", "name": "_subAccountId", "type": "uint8" },
+      { "internalType": "address", "name": "_tokenOut", "type": "address" },
+      { "internalType": "uint256", "name": "_amountIn", "type": "uint256" },
+      { "internalType": "uint256", "name": "_minAmountOut", "type": "uint256" }
+    ],
+    "name": "convertSGlpCollateral",
+    "outputs": [
+      { "internalType": "uint256", "name": "_amountOut", "type": "uint256" }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint8", "name": "_subAccountId", "type": "uint8" },
+      { "internalType": "address", "name": "_token", "type": "address" },
+      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
+      { "internalType": "uint256", "name": "_executionFee", "type": "uint256" },
+      { "internalType": "bool", "name": "_shouldUnwrap", "type": "bool" }
+    ],
+    "name": "createWithdrawCollateralOrder",
+    "outputs": [
+      { "internalType": "uint256", "name": "_orderId", "type": "uint256" }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "crossMarginService",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint8", "name": "_subAccountId", "type": "uint8" },
+      { "internalType": "address", "name": "_token", "type": "address" },
+      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
+      { "internalType": "bool", "name": "_shouldWrap", "type": "bool" }
+    ],
+    "name": "depositCollateral",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_endIndex", "type": "uint256" },
+      {
+        "internalType": "address payable",
+        "name": "_feeReceiver",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "_priceData",
+        "type": "bytes32[]"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "_publishTimeData",
+        "type": "bytes32[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_minPublishTime",
+        "type": "uint256"
+      },
+      { "internalType": "bytes32", "name": "_encodedVaas", "type": "bytes32" }
+    ],
+    "name": "executeOrder",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          { "internalType": "uint256", "name": "orderId", "type": "uint256" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" },
+          {
+            "internalType": "uint256",
+            "name": "executionFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint48",
+            "name": "createdTimestamp",
+            "type": "uint48"
+          },
+          {
+            "internalType": "uint48",
+            "name": "executedTimestamp",
+            "type": "uint48"
+          },
+          {
+            "internalType": "address payable",
+            "name": "account",
+            "type": "address"
+          },
+          { "internalType": "address", "name": "token", "type": "address" },
+          {
+            "internalType": "contract CrossMarginService",
+            "name": "crossMarginService",
+            "type": "address"
+          },
+          { "internalType": "uint8", "name": "subAccountId", "type": "uint8" },
+          {
+            "internalType": "enum ICrossMarginHandler.WithdrawOrderStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          { "internalType": "bool", "name": "shouldUnwrap", "type": "bool" }
+        ],
+        "internalType": "struct ICrossMarginHandler.WithdrawOrder",
+        "name": "_order",
+        "type": "tuple"
+      }
+    ],
+    "name": "executeWithdrawOrder",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_limit", "type": "uint256" },
+      { "internalType": "uint256", "name": "_offset", "type": "uint256" }
+    ],
+    "name": "getActiveWithdrawOrders",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "uint256", "name": "orderId", "type": "uint256" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" },
+          {
+            "internalType": "uint256",
+            "name": "executionFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint48",
+            "name": "createdTimestamp",
+            "type": "uint48"
+          },
+          {
+            "internalType": "uint48",
+            "name": "executedTimestamp",
+            "type": "uint48"
+          },
+          {
+            "internalType": "address payable",
+            "name": "account",
+            "type": "address"
+          },
+          { "internalType": "address", "name": "token", "type": "address" },
+          {
+            "internalType": "contract CrossMarginService",
+            "name": "crossMarginService",
+            "type": "address"
+          },
+          { "internalType": "uint8", "name": "subAccountId", "type": "uint8" },
+          {
+            "internalType": "enum ICrossMarginHandler.WithdrawOrderStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          { "internalType": "bool", "name": "shouldUnwrap", "type": "bool" }
+        ],
+        "internalType": "struct ICrossMarginHandler.WithdrawOrder[]",
+        "name": "_withdrawOrder",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_subAccount", "type": "address" },
+      { "internalType": "uint256", "name": "_limit", "type": "uint256" },
+      { "internalType": "uint256", "name": "_offset", "type": "uint256" }
+    ],
+    "name": "getExecutedWithdrawOrders",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "uint256", "name": "orderId", "type": "uint256" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" },
+          {
+            "internalType": "uint256",
+            "name": "executionFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint48",
+            "name": "createdTimestamp",
+            "type": "uint48"
+          },
+          {
+            "internalType": "uint48",
+            "name": "executedTimestamp",
+            "type": "uint48"
+          },
+          {
+            "internalType": "address payable",
+            "name": "account",
+            "type": "address"
+          },
+          { "internalType": "address", "name": "token", "type": "address" },
+          {
+            "internalType": "contract CrossMarginService",
+            "name": "crossMarginService",
+            "type": "address"
+          },
+          { "internalType": "uint8", "name": "subAccountId", "type": "uint8" },
+          {
+            "internalType": "enum ICrossMarginHandler.WithdrawOrderStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          { "internalType": "bool", "name": "shouldUnwrap", "type": "bool" }
+        ],
+        "internalType": "struct ICrossMarginHandler.WithdrawOrder[]",
+        "name": "_withdrawOrder",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getWithdrawOrderLength",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getWithdrawOrders",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "uint256", "name": "orderId", "type": "uint256" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" },
+          {
+            "internalType": "uint256",
+            "name": "executionFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint48",
+            "name": "createdTimestamp",
+            "type": "uint48"
+          },
+          {
+            "internalType": "uint48",
+            "name": "executedTimestamp",
+            "type": "uint48"
+          },
+          {
+            "internalType": "address payable",
+            "name": "account",
+            "type": "address"
+          },
+          { "internalType": "address", "name": "token", "type": "address" },
+          {
+            "internalType": "contract CrossMarginService",
+            "name": "crossMarginService",
+            "type": "address"
+          },
+          { "internalType": "uint8", "name": "subAccountId", "type": "uint8" },
+          {
+            "internalType": "enum ICrossMarginHandler.WithdrawOrderStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          { "internalType": "bool", "name": "shouldUnwrap", "type": "bool" }
+        ],
+        "internalType": "struct ICrossMarginHandler.WithdrawOrder[]",
+        "name": "_withdrawOrders",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_crossMarginService",
+        "type": "address"
+      },
+      { "internalType": "address", "name": "_pyth", "type": "address" },
+      {
+        "internalType": "uint256",
+        "name": "_minExecutionOrderFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxExecutionChuck",
+        "type": "uint256"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "maxExecutionChuck",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "minExecutionOrderFee",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nextExecutionOrderIndex",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "name": "orderExecutors",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pyth",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_crossMarginService",
+        "type": "address"
+      }
+    ],
+    "name": "setCrossMarginService",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_maxExecutionChuck",
+        "type": "uint256"
+      }
+    ],
+    "name": "setMaxExecutionChuck",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_newMinExecutionFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "setMinExecutionFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_executor", "type": "address" },
+      { "internalType": "bool", "name": "_isAllow", "type": "bool" }
+    ],
+    "name": "setOrderExecutor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_pyth", "type": "address" }
+    ],
+    "name": "setPyth",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "name": "subAccountExecutedWithdrawOrders",
+    "outputs": [
+      { "internalType": "uint256", "name": "orderId", "type": "uint256" },
+      { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "uint256", "name": "executionFee", "type": "uint256" },
+      {
+        "internalType": "uint48",
+        "name": "createdTimestamp",
+        "type": "uint48"
+      },
+      {
+        "internalType": "uint48",
+        "name": "executedTimestamp",
+        "type": "uint48"
+      },
+      {
+        "internalType": "address payable",
+        "name": "account",
+        "type": "address"
+      },
+      { "internalType": "address", "name": "token", "type": "address" },
+      {
+        "internalType": "contract CrossMarginService",
+        "name": "crossMarginService",
+        "type": "address"
+      },
+      { "internalType": "uint8", "name": "subAccountId", "type": "uint8" },
+      {
+        "internalType": "enum ICrossMarginHandler.WithdrawOrderStatus",
+        "name": "status",
+        "type": "uint8"
+      },
+      { "internalType": "bool", "name": "shouldUnwrap", "type": "bool" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "newOwner", "type": "address" }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "withdrawOrders",
+    "outputs": [
+      { "internalType": "uint256", "name": "orderId", "type": "uint256" },
+      { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "uint256", "name": "executionFee", "type": "uint256" },
+      {
+        "internalType": "uint48",
+        "name": "createdTimestamp",
+        "type": "uint48"
+      },
+      {
+        "internalType": "uint48",
+        "name": "executedTimestamp",
+        "type": "uint48"
+      },
+      {
+        "internalType": "address payable",
+        "name": "account",
+        "type": "address"
+      },
+      { "internalType": "address", "name": "token", "type": "address" },
+      {
+        "internalType": "contract CrossMarginService",
+        "name": "crossMarginService",
+        "type": "address"
+      },
+      { "internalType": "uint8", "name": "subAccountId", "type": "uint8" },
+      {
+        "internalType": "enum ICrossMarginHandler.WithdrawOrderStatus",
+        "name": "status",
+        "type": "uint8"
+      },
+      { "internalType": "bool", "name": "shouldUnwrap", "type": "bool" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  { "stateMutability": "payable", "type": "receive" }
+]

@@ -16,7 +16,7 @@ The `Client` object contains two major attributes: Public and Private. As the na
 
 ### Public functions
 
-```
+```python
 from hmx2.hmx_client import Client
 from hmx2.constants import MARKET_ETH_USD
 from hmx2.enum import Action
@@ -41,7 +41,7 @@ client.public.get_position_info(some_account, some_sub_account_id, MARKET_ETH_US
 
 ### Private function
 
-```
+```python
 from hmx2.hmx_client import Client
 from hmx2.constants import MARKET_ETH_USD
 from hmx2.constants import COLLATERAL_USDCe
@@ -94,3 +94,7 @@ $ make test
 ```
 
 Please note that to run tests, Tenderly account is required.
+
+## License
+
+The primary license for HMXOrg/v2-sdk-python is the MIT License, see [here](https://github.com/HMXOrg/v2-sdk-python/blob/main/LICENSE).

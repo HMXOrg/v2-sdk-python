@@ -58,7 +58,8 @@ hmx_client = Client(
 client.private.get_public_address()
 # Deposit ETH as collateral
 client.private.deposit_eth_collateral(sub_account_id=0, amount=10.123)
-# Deposit ERC20 as collateral. This function will automatically approve CrossMarginHandler if needed.
+# Deposit ERC20 as collateral. This function will automatically
+# approve CrossMarginHandler if needed.
 client.private.deposit_erc20_collateral(sub_account_id=0, token_address=COLLATERAL_USDCe, amount=100.10)
 # Create a market order
 create_market_order = client.private.create_market_order(
@@ -66,7 +67,8 @@ create_market_order = client.private.create_market_order(
 )
 print(create_market_order)
 # Create a trigger order
-# trigger_above_threshold = The current price must go above (if True) or below (if False) the trigger price in order for the order to be executed
+# trigger_above_threshold = The current price must go above (if True) or below (if False)
+# the trigger price in order for the order to be executed
 create_order = client.private.create_trigger_order(
   sub_account_id=0,
   market_index=MARKET_ETH_USD,

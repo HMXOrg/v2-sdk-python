@@ -17,7 +17,72 @@ The `Client` object contains two major attributes: Public and Private. As the na
 ### Public functions
 
 ```
+from hmx2.hmx_client import Client
+from hmx2.constants import MARKET_ETH_USD
+from hmx2.enum import Action
 
+#
+# Using publicly access functions
+#
+hmx_client = Client(
+    rpc_url=RPC_URL
+)
+# Get oracle price, adaptive price, and price impact of a new position
+client.public.get_price(MARKET_ETH_USD, Action.SELL, 1000)
+# Get market information
+client.public.get_market_info(MARKET_ETH_USD)
+# Get sub account in address format
+client.public.get_sub_account(1)
+# Get position ID
+client.public.get_position_id(some_account, some_sub_account_id, MARKET_ETH_USD)
+# Get position info
+client.public.get_position_info(some_account, some_sub_account_id, MARKET_ETH_USD)
+```
+
+### Private function
+
+```
+from hmx2.hmx_client import Client
+from hmx2.constants import MARKET_ETH_USD
+from hmx2.constants import COLLATERAL_USDCe
+from hmx2.enum import Action
+
+#
+# Initailized client with private key
+#
+hmx_client = Client(
+    eth_private_key=PRIVATE_KEY,
+    rpc_url=RPC_URL
+)
+# Get public address of the ethereum key
+client.private.get_public_address()
+# Deposit ETH as collateral
+client.private.deposit_eth_collateral(sub_account_id=0, amount=10.123)
+# Deposit ERC20 as collateral. This function will automatically approve CrossMarginHandler if needed.
+client.private.deposit_erc20_collateral(sub_account_id=0, token_address=COLLATERAL_USDCe, amount=100.10)
+# Create a market order
+create_market_order = client.private.create_market_order(
+  sub_account_id=0, market_index=MARKET_ETH_USD, buy=Action.BUY, size=100, reduce_only=False
+)
+print(create_market_order)
+# Create a trigger order
+# trigger_above_threshold = The current price must go above (if True) or below (if False) the trigger price in order for the order to be executed
+create_order = client.private.create_trigger_order(
+  sub_account_id=0,
+  market_index=MARKET_ETH_USD,
+  buy=Action.BUY,
+  size=100,
+  trigger_price=1800,
+  trigger_above_threshold=True,
+  reduce_only=False)
+print(create_order)
+# Update the order
+update_order = client.private.update_trigger_order(
+  0, create_order["order"]["orderIndex"], Action.SELL, 50, 1700, True, False)
+print(update_order)
+# Cancel the order
+cancel_order = client.private.cancel_trigger_order(
+  0, update_order["order"]["orderIndex"])
 ```
 
 ## Running Tests
@@ -27,3 +92,5 @@ To run tests, you will need have to clone the repo, update .env, and run:
 ```
 $ make test
 ```
+
+Please note that to run tests, Tenderly account is required.

@@ -35,85 +35,12 @@ class Public(object):
     self.multicall_instance = Multicall(w3=self.eth_provider,
                                         chain='arbitrum', custom_address=MULTICALL_ADDRESS)
 
-  def get_trading_config(self):
-    (
-      funding_interval,
-      min_profit_duration,
-      dev_fee_rate_bps,
-      max_position
-    ) = self.config_storage_instance.functions.tradingConfig().call()
-    return {
-       "funding_interval": funding_interval,
-        "min_profit_duration": min_profit_duration,
-        "dev_fee_rate_bps": dev_fee_rate_bps,
-        "max_position": max_position,
-    }
-
-  def get_market_config(self, market_index: int):
-    (
-      asset_id,
-      max_long_position_size,
-      max_short_position_size,
-      increase_position_fee_rate_bps,
-      decrease_position_fee_rate_bps,
-      initial_margin_fraction_bps,
-      maintenance_margin_fraction_bps,
-      max_profit_rate_bps,
-      asset_class,
-      allow_increase_position,
-      active,
-      (max_skew_scale_usd, max_funding_rate)
-    ) = self.config_storage_instance.functions.marketConfigs(market_index).call()
-    return {
-      "asset_id": asset_id.hex(),
-      "max_long_position_size": max_long_position_size,
-      "max_short_position_size": max_short_position_size,
-      "increase_position_fee_rate_bps": increase_position_fee_rate_bps,
-      "decrease_position_fee_rate_bps": decrease_position_fee_rate_bps,
-      "initial_margin_fraction_bps": initial_margin_fraction_bps,
-      "maintenance_margin_fraction_bps": maintenance_margin_fraction_bps,
-      "max_profit_rate_bps": max_profit_rate_bps,
-      "asset_class": asset_class,
-      "allow_increase_position": allow_increase_position,
-      "active": active,
-      "max_skew_scale_usd": max_skew_scale_usd,
-      "max_funding_rate": max_funding_rate
-    }
-
-  def get_market(self, market_index: int):
-    (
-      long_position_size,
-      long_accum_se,
-      long_accum_s2e,
-      short_position_size,
-      short_accum_se,
-      short_accum_s2e,
-      current_funding_rate,
-      last_funding_time,
-      accum_funding_long,
-      accum_funding_short,
-      funding_accrued
-    ) = self.perp_storage_instance.functions.markets(market_index).call()
-    return {
-      "long_position_size": long_position_size / 1e30,
-      "long_accum_se": long_accum_se,
-      "long_accum_s2e": long_accum_s2e,
-      "short_position_size": short_position_size,
-      "short_accum_se": short_accum_se,
-      "short_accum_s2e": short_accum_s2e,
-      "current_funding_rate": current_funding_rate,
-      "last_funding_time": last_funding_time,
-      "accum_funding_long": accum_funding_long,
-      "accum_funding_short": accum_funding_short,
-      "funding_accrued": funding_accrued,
-    }
-
-  def get_position(self, account: str, sub_account_id: int, market_index: int):
+  def __get_position(self, account: str, sub_account_id: int, market_index: int):
     position_id = self.get_position_id(account, sub_account_id, market_index)
     (
       primary_account,
       market_index,
-      avg_entry_priceE30,
+      avg_entry_price_e30,
       entry_borrowing_rate,
       reserve_value_e30,
       last_increase_timestamp,
@@ -126,7 +53,7 @@ class Public(object):
     return {
       "primary_account": primary_account,
         "market_index": market_index,
-        "avg_entry_priceE30": avg_entry_priceE30,
+        "avg_entry_price_e30": avg_entry_price_e30,
         "entry_borrowing_rate": entry_borrowing_rate,
         "reserve_value_e30": reserve_value_e30,
         "last_increase_timestamp": last_increase_timestamp,
@@ -136,7 +63,7 @@ class Public(object):
         "sub_account_id": sub_account_id,
     }
 
-  def multicall_market_data(self, market_index: int):
+  def __multicall_market_data(self, market_index: int):
     calls = [
       self.multicall_instance.create_call(
         self.config_storage_instance, "marketConfigs", [market_index]
@@ -266,10 +193,10 @@ class Public(object):
       }
     }
 
-  def get_block(self):
+  def __get_block(self):
     return self.eth_provider.eth.get_block("latest")
 
-  def get_hlp_tvl(self):
+  def __get_hlp_tvl(self):
     calls = [
       self.multicall_instance.create_call(
         self.vault_storage_instance, "hlpLiquidity", [collateral])
@@ -291,7 +218,7 @@ class Public(object):
     )
 
   def get_price(self, market_index: int, buy: bool, size: float):
-    data = self.multicall_market_data(market_index)
+    data = self.__multicall_market_data(market_index)
     oracle_price = self.oracle_middleware.get_price(
       MARKET_PROFILE[market_index]["asset"]) * 10**30
     adaptive_price = Calculator.get_adaptive_price(
@@ -317,9 +244,9 @@ class Public(object):
     :param market_index: requied
     :type market_index: int in list Market
     '''
-    data = self.multicall_market_data(market_index)
-    block = self.get_block()
-    tvl = self.get_hlp_tvl()
+    data = self.__multicall_market_data(market_index)
+    block = self.__get_block()
+    tvl = self.__get_hlp_tvl()
 
     price = self.oracle_middleware.get_price(
       MARKET_PROFILE[market_index]["asset"])
@@ -363,9 +290,9 @@ class Public(object):
     )
 
   def get_position_info(self, account: str, sub_account_id: int, market_index: int):
-    data = self.multicall_market_data(market_index)
-    position = self.get_position(account, sub_account_id, market_index)
-    block = self.get_block()
+    data = self.__multicall_market_data(market_index)
+    position = self.__get_position(account, sub_account_id, market_index)
+    block = self.__get_block()
     price = int(self.oracle_middleware.get_price(
         MARKET_PROFILE[market_index]["asset"]) * 10 ** 30)
 
@@ -381,7 +308,7 @@ class Public(object):
       "primary_account": position["primary_account"],
       "sub_account_id": position["sub_account_id"],
       "market": MARKET_PROFILE[market_index]["name"],
-      "position_size_e30": position["position_size_e30"] / 10**30,
-      "avg_entry_priceE30": position["avg_entry_priceE30"] / 10**30,
+      "position_size": position["position_size_e30"] / 10**30,
+      "avg_entry_price": position["avg_entry_price_e30"] / 10**30,
       "pnl": pnl / 10**30,
     }

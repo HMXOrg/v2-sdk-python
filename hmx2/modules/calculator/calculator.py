@@ -69,7 +69,7 @@ class Calculator:
       position["position_size_e30"] * -1
     )
     (is_profit, delta) = Calculator.get_delta(
-      position["avg_entry_priceE30"],
+      position["avg_entry_price_e30"],
       adaptive_price,
       position["position_size_e30"] > 0,
       abs(position["position_size_e30"]),
@@ -81,14 +81,14 @@ class Calculator:
     return delta if is_profit else delta * -1
 
   @staticmethod
-  def get_delta(avg_entry_priceE30: int, market_price: int, is_long: int, size: int, reserve_value_e30: int, last_increase_timestamp: int, min_profit_duration: int, block_timestamp: int):
-    if avg_entry_priceE30 == 0:
+  def get_delta(avg_entry_price_e30: int, market_price: int, is_long: int, size: int, reserve_value_e30: int, last_increase_timestamp: int, min_profit_duration: int, block_timestamp: int):
+    if avg_entry_price_e30 == 0:
       return (False, 0)
 
-    price_delta = avg_entry_priceE30 - \
-        market_price if avg_entry_priceE30 > market_price else market_price - avg_entry_priceE30
-    delta = size * price_delta // avg_entry_priceE30
-    is_profit = market_price > avg_entry_priceE30 if is_long else market_price < avg_entry_priceE30
+    price_delta = avg_entry_price_e30 - \
+        market_price if avg_entry_price_e30 > market_price else market_price - avg_entry_price_e30
+    delta = size * price_delta // avg_entry_price_e30
+    is_profit = market_price > avg_entry_price_e30 if is_long else market_price < avg_entry_price_e30
 
     if is_profit:
       delta = min(delta, reserve_value_e30)

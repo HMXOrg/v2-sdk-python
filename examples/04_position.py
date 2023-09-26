@@ -20,8 +20,8 @@ async def main():
   print(
     f'Account: {position["primary_account"]}-{position["sub_account_id"]}')
   print(f'Market: {position["market"]}')
-  print('Size: {0:.4f}'.format(position["position_size_e30"]))
-  print('Entry price: {0:.6f}'.format(position["avg_entry_priceE30"]))
+  print('Size: {0:.4f}'.format(position["position_size"]))
+  print('Entry price: {0:.6f}'.format(position["avg_entry_price"]))
   print('Pnl: {0:.4f}'.format(position["pnl"]))
 
 if __name__ == '__main__':

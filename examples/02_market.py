@@ -17,28 +17,50 @@ async def main():
    )
 
   # ETH
-  eth_market_info = client.private.get_market_info(MARKET_ETH_USD)
-  print('MARKET ETHUSD')
-  print('Long: {0:.2f}'.format(
-    (eth_market_info["market"]["long_position_size"] / 1e30)))
-  print('Short: {0:.2f}'.format(
-    (eth_market_info["market"]["short_position_size"] / 1e30)))
-  print('Funding fee per hour: {0:.6f}%'.format(
-    (eth_market_info["funding_rate"] * HOURS / DAYS * 100 / 1e18)))
-  print('Borrowing fee per hour: {0:.6f}%'.format(
-    (eth_market_info["borrowing_rate"] * HOURS / 1e18)))
+  eth_market_info = client.public.get_market_info(MARKET_ETH_USD)
+  print('Market {0}'.format(eth_market_info["market"]))
+  print('Price: {0:.4f}'.format(eth_market_info["price"]))
+  print('Long: {0:.2f}'.format((eth_market_info["long_size"])))
+  print('Short: {0:.2f}'.format((eth_market_info["short_size"])))
+  print('Funding rate 1H: {0:.6f}%'.format(
+    (eth_market_info["funding_rate"]["1H"])))
+  print('Funding rate 8H: {0:.6f}%'.format(
+    (eth_market_info["funding_rate"]["8H"])))
+  print('Funding rate 24H: {0:.6f}%'.format(
+    (eth_market_info["funding_rate"]["24H"])))
+  print('Funding rate 1Y: {0:.6f}%'.format(
+    (eth_market_info["funding_rate"]["1Y"])))
+  print('Borrowing rate 1H: {0:.6f}%'.format(
+    (eth_market_info["borrowing_rate"]["1H"])))
+  print('Borrowing rate 8H: {0:.6f}%'.format(
+    (eth_market_info["borrowing_rate"]["8H"])))
+  print('Borrowing rate 24H: {0:.6f}%'.format(
+    (eth_market_info["borrowing_rate"]["24H"])))
+  print('Borrowing rate 1Y: {0:.6f}%'.format(
+    (eth_market_info["borrowing_rate"]["1Y"])))
 
   # BTC
-  btc_market_info = client.private.get_market_info(MARKET_BTC_USD)
-  print('MARKET BTCUSD')
-  print('Long: {0:.2f}'.format(
-    (btc_market_info["market"]["long_position_size"] / 1e30)))
-  print('Short: {0:.2f}'.format(
-    (btc_market_info["market"]["short_position_size"] / 1e30)))
-  print('Funding fee per hour: {0:.6f}%'.format(
-    (btc_market_info["funding_rate"] * HOURS / DAYS * 100 / 1e18)))
-  print('Borrowing fee per hour: {0:.6f}%'.format(
-    (btc_market_info["borrowing_rate"] * HOURS / 1e18)))
+  btc_market_info = client.public.get_market_info(MARKET_BTC_USD)
+  print('Market {0}'.format(btc_market_info["market"]))
+  print('Price: {0:.4f}'.format(btc_market_info["price"]))
+  print('Long: {0:.2f}'.format((btc_market_info["long_size"])))
+  print('Short: {0:.2f}'.format((btc_market_info["short_size"])))
+  print('Funding rate 1H: {0:.6f}%'.format(
+    (btc_market_info["funding_rate"]["1H"])))
+  print('Funding rate 8H: {0:.6f}%'.format(
+    (btc_market_info["funding_rate"]["8H"])))
+  print('Funding rate 24H: {0:.6f}%'.format(
+    (btc_market_info["funding_rate"]["24H"])))
+  print('Funding rate 1Y: {0:.6f}%'.format(
+    (btc_market_info["funding_rate"]["1Y"])))
+  print('Borrowing rate 1H: {0:.6f}%'.format(
+    (btc_market_info["borrowing_rate"]["1H"])))
+  print('Borrowing rate 8H: {0:.6f}%'.format(
+    (btc_market_info["borrowing_rate"]["8H"])))
+  print('Borrowing rate 24H: {0:.6f}%'.format(
+    (btc_market_info["borrowing_rate"]["24H"])))
+  print('Borrowing rate 1Y: {0:.6f}%'.format(
+    (btc_market_info["borrowing_rate"]["1Y"])))
 
 if __name__ == '__main__':
   asyncio.run(main())

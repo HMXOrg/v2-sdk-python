@@ -20,7 +20,7 @@ class Client(object):
     self.__oracle_middleware = OracleMiddleware(pyth_oracle, glp_oracle)
 
     self.__private = None
-    self.__public = Public(self.__eth_provider)
+    self.__public = Public(self.__eth_provider, self.__oracle_middleware)
 
   @property
   def public(self):

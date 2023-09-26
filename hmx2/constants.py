@@ -186,32 +186,104 @@ COLLATERAL_ASSET_ID_MAP = {
   COLLATERAL_ARB: ASSET_ARB
 }
 
-# ------ Market IDs Map ----
-MARKET_ASSET_ID_MAP = {
-  MARKET_ETH_USD: ASSET_ETH,
-  MARKET_BTC_USD: ASSET_BTC,
-  MARKET_AAPL_USD: ASSET_AAPL,
-  MARKET_JPY_USD: ASSET_JPY,
-  MARKET_XAU_USD: ASSET_XAU,
-  MARKET_AMZN_USD: ASSET_AMZN,
-  MARKET_MSFT_USD: ASSET_MSFT,
-  MARKET_TSLA_USD: ASSET_TSLA,
-  MARKET_EUR_USD: ASSET_EUR,
-  MARKET_XAG_USD: ASSET_XAG,
-  MARKET_AUD_USD: ASSET_AUD,
-  MARKET_GBP_USD: ASSET_GBP,
-  MARKET_ADA_USD: ASSET_ADA,
-  MARKET_MATIC_USD: ASSET_MATIC,
-  MARKET_SUI_USD: ASSET_SUI,
-  MARKET_ARB_USD: ASSET_ARB,
-  MARKET_OP_USD: ASSET_OP,
-  MARKET_LTC_USD: ASSET_LTC,
-  MARKET_COIN_USD: ASSET_COIN,
-  MARKET_GOOG_USD: ASSET_GOOG,
-  MARKET_BNB_USD: ASSET_BNB,
-  MARKET_SOL_USD: ASSET_SOL,
-  MARKET_QQQ_USD: ASSET_QQQ,
-  MARKET_XRP_USD: ASSET_XRP,
+# ------ Market ----
+MARKET_PROFILE = {
+  MARKET_ETH_USD: {
+    "name": "ETHUSD",
+    "asset": ASSET_ETH
+  },
+  MARKET_BTC_USD: {
+    "name": "BTCUSD",
+    "asset": ASSET_BTC
+  },
+  MARKET_AAPL_USD: {
+    "name": "AAPLUSD",
+    "asset": ASSET_AAPL
+  },
+  MARKET_JPY_USD: {
+    "name": "JPYUSD",
+    "asset": ASSET_JPY
+  },
+  MARKET_XAU_USD: {
+    "name": "XAUUSD",
+    "asset": ASSET_XAU
+  },
+  MARKET_AMZN_USD: {
+    "name": "AMZNUSD",
+    "asset": ASSET_AMZN
+  },
+  MARKET_MSFT_USD: {
+    "name": "MSFTUSD",
+    "asset": ASSET_MSFT
+  },
+  MARKET_TSLA_USD: {
+    "name": "TSLAUSD",
+    "asset": ASSET_TSLA
+  },
+  MARKET_EUR_USD: {
+    "name": "EURUSD",
+    "asset": ASSET_EUR
+  },
+  MARKET_XAG_USD: {
+    "name": "XAGUSD",
+    "asset": ASSET_XAG
+  },
+  MARKET_AUD_USD: {
+    "name": "AUDUSD",
+    "asset": ASSET_AUD
+  },
+  MARKET_GBP_USD: {
+    "name": "GBPUSD",
+    "asset": ASSET_GBP
+  },
+  MARKET_ADA_USD: {
+    "name": "ADAUSD",
+    "asset": ASSET_ADA
+  },
+  MARKET_MATIC_USD: {
+    "name": "MATICUSD",
+    "asset": ASSET_MATIC
+  },
+  MARKET_SUI_USD: {
+    "name": "SUIUSD",
+    "asset": ASSET_SUI
+  },
+  MARKET_ARB_USD: {
+    "name": "ARBUSD",
+    "asset": ASSET_ARB
+  },
+  MARKET_OP_USD: {
+    "name": "OPUSD",
+    "asset": ASSET_OP
+  },
+  MARKET_LTC_USD: {
+    "name": "LTCUSD",
+    "asset": ASSET_LTC
+  },
+  MARKET_COIN_USD: {
+    "name": "COINUSD",
+    "asset": ASSET_COIN
+  },
+  MARKET_GOOG_USD: {
+    "name": "GOOGUSD",
+    "asset": ASSET_GOOG
+  },
+  MARKET_BNB_USD: {
+    "name": "BNBUSD",
+    "asset": ASSET_BNB
+  },
+  MARKET_SOL_USD: {
+    "name": "SOLUSD",
+    "asset": ASSET_SOL
+  },
+  MARKET_QQQ_USD: {
+    "name": "QQQUSD",
+    "asset": ASSET_QQQ
+  },
+  MARKET_XRP_USD: {
+    "name": "XRPUSD",
+    "asset": ASSET_XRP
+  },
 }
 
 # Address

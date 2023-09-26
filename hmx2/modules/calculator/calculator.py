@@ -1,10 +1,10 @@
 from hmx2.constants import DAYS
 
 
-class FeeCalculator:
+class Calculator:
   @staticmethod
   def get_funding_rate(trading_config, market_config, market, block_timestamp: int):
-    next_funding_rate = FeeCalculator.get_funding_rate_velocity(
+    next_funding_rate = Calculator.get_funding_rate_velocity(
       market_config["max_funding_rate"],
       market_config["max_skew_scale_usd"],
       market["long_position_size"],
@@ -17,11 +17,11 @@ class FeeCalculator:
 
   @staticmethod
   def get_funding_rate_velocity(max_funding_rate: int, max_skew_scale_usd: int, long_position_size: int, short_position_size: int, block_timestamp: int, funding_interval: int, last_funding_time: int) -> int:
-    funding_rate = FeeCalculator.get_funding_rate_velocity_with_out_interval(
+    funding_rate = Calculator.get_funding_rate_velocity_with_out_interval(
       max_funding_rate, max_skew_scale_usd, long_position_size, short_position_size)
-    interval = FeeCalculator.proportional_elapsed_in_day(
+    interval = Calculator.proportional_elapsed_in_day(
       block_timestamp, funding_interval, last_funding_time)
-    return funding_rate * interval / 1e18
+    return funding_rate * interval // 10**18
 
   @staticmethod
   def get_funding_rate_velocity_with_out_interval(max_funding_rate: int, max_skew_scale_usd: int, long_position_size: int, short_position_size: int) -> int:
@@ -34,22 +34,22 @@ class FeeCalculator:
   @staticmethod
   def proportional_elapsed_in_day(block_timestamp: int, funding_interval: int, last_funding_time: int) -> int:
     elapsed_intervals = (
-      block_timestamp - last_funding_time) / funding_interval
-    intervals_in_one_day = DAYS / funding_interval
-    return elapsed_intervals * 1e18 / intervals_in_one_day
+      block_timestamp - last_funding_time) // funding_interval
+    intervals_in_one_day = DAYS // funding_interval
+    return elapsed_intervals * 10**18 // intervals_in_one_day
 
   @staticmethod
   def get_borrowing_rate(asset_class_config, asset_class, hlp_tvl):
-    return FeeCalculator.get_next_borrowing_rate_without_interval(
-      asset_class_config["base_borrowing_rate"], asset_class["reserve_value_e30"], hlp_tvl) / 1e18
+    return Calculator.get_next_borrowing_rate_without_interval(
+      asset_class_config["base_borrowing_rate"], asset_class["reserve_value_e30"], hlp_tvl) // 10**18
 
   @staticmethod
   def get_next_borrowing_rate(base_borrowing_rate: int, reserve_value_e30: int, hlp_tvl: int, block_timestamp: int, last_borrowing_time: int, funding_interval: int):
     if last_borrowing_time + funding_interval > block_timestamp:
       return 0
-    borrowing_rate = FeeCalculator.get_next_borrowing_rate_without_interval(
+    borrowing_rate = Calculator.get_next_borrowing_rate_without_interval(
       base_borrowing_rate, reserve_value_e30, hlp_tvl)
-    intervals = (block_timestamp - last_borrowing_time) / funding_interval
+    intervals = (block_timestamp - last_borrowing_time) // funding_interval
 
     return borrowing_rate * intervals
 
@@ -57,19 +57,19 @@ class FeeCalculator:
   def get_next_borrowing_rate_without_interval(base_borrowing_rate: int, reserve_value_e30: int, hlp_tvl: int):
     if hlp_tvl == 0:
       return 0
-    return base_borrowing_rate * reserve_value_e30 / hlp_tvl
+    return base_borrowing_rate * reserve_value_e30 // hlp_tvl
 
   @staticmethod
   def get_pnl(position, market, market_config, trading_config, market_price: int, block_timestamp: int):
-    adaptive_price = FeeCalculator.get_adaptive_price(
+    adaptive_price = Calculator.get_adaptive_price(
       market_price,
       market["long_position_size"],
       market["short_position_size"],
       market_config["max_skew_scale_usd"],
       position["position_size_e30"] * -1
     )
-    (is_profit, delta) = FeeCalculator.get_delta(
-      position["avg_entry_priceE30"],
+    (is_profit, delta) = Calculator.get_delta(
+      position["avg_entry_price_e30"],
       adaptive_price,
       position["position_size_e30"] > 0,
       abs(position["position_size_e30"]),
@@ -81,11 +81,14 @@ class FeeCalculator:
     return delta if is_profit else delta * -1
 
   @staticmethod
-  def get_delta(avg_entry_priceE30: int, market_price: int, is_long: int, size: int, reserve_value_e30: int, last_increase_timestamp: int, min_profit_duration: int, block_timestamp: int):
-    price_delta = avg_entry_priceE30 - \
-        market_price if avg_entry_priceE30 > market_price else market_price - avg_entry_priceE30
-    delta = size * price_delta // avg_entry_priceE30
-    is_profit = market_price > avg_entry_priceE30 if is_long else market_price < avg_entry_priceE30
+  def get_delta(avg_entry_price_e30: int, market_price: int, is_long: int, size: int, reserve_value_e30: int, last_increase_timestamp: int, min_profit_duration: int, block_timestamp: int):
+    if avg_entry_price_e30 == 0:
+      return (False, 0)
+
+    price_delta = avg_entry_price_e30 - \
+        market_price if avg_entry_price_e30 > market_price else market_price - avg_entry_price_e30
+    delta = size * price_delta // avg_entry_price_e30
+    is_profit = market_price > avg_entry_price_e30 if is_long else market_price < avg_entry_price_e30
 
     if is_profit:
       delta = min(delta, reserve_value_e30)
@@ -105,10 +108,10 @@ class FeeCalculator:
 
   @staticmethod
   def get_next_funding_accrued(trading_config, market_config, market, block_timestamp):
-    proportionnal_elapsed_in_day = FeeCalculator.proportional_elapsed_in_day(
+    proportionnal_elapsed_in_day = Calculator.proportional_elapsed_in_day(
       block_timestamp, trading_config["funding_interval"], market["last_funding_time"])
 
-    funding_rate = FeeCalculator.get_funding_rate_velocity_with_out_interval(
+    funding_rate = Calculator.get_funding_rate_velocity_with_out_interval(
       market_config["max_funding_rate"], market_config["max_skew_scale_usd"], market["long_position_size"], market["short_position_size"])
 
     next_funding_rate = market["current_funding_rate"] + funding_rate

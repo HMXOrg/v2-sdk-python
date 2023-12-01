@@ -237,6 +237,9 @@ class Public(object):
       "price_impact": price_impact * 100 / 10**30,
     }
 
+  def get_price(self, asset_id: str):
+    return self.oracle_middleware.get_price(asset_id)
+
   def get_market_info(self, market_index: int):
     '''
     Get a market info

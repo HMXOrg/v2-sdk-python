@@ -1,0 +1,297 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "contract IGmxV2Reader",
+        "name": "reader_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "dataStore_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "marketToken_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "indexToken_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "indexTokenDecimals_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "longToken_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "longTokenDecimals_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "shortToken_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "shortTokenDecimals_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "indexTokenPriceAssetId_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "longTokenPriceAssetId_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "shortTokenPriceAssetId_",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "MAX_PNL_FACTOR_FOR_DEPOSITS",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "dataStore",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "assetId",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "int64",
+            "name": "priceE8",
+            "type": "int64"
+          },
+          {
+            "internalType": "uint160",
+            "name": "publishTime",
+            "type": "uint160"
+          },
+          {
+            "internalType": "uint32",
+            "name": "maxDiffBps",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct IEcoPythCalldataBuilder3.BuildData[]",
+        "name": "_buildDatas",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "getPrice",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "price",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "priceE8s",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "getPrice",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "price",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "indexToken",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "indexTokenDecimals",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "indexTokenPriceAssetId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "longToken",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "longTokenDecimals",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "longTokenPriceAssetId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "marketToken",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "reader",
+    "outputs": [
+      {
+        "internalType": "contract IGmxV2Reader",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "shortToken",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "shortTokenDecimals",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "shortTokenPriceAssetId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

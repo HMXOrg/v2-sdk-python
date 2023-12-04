@@ -1,7 +1,7 @@
 import os
 import asyncio
 from hmx2.hmx_client import Client
-from hmx2.constants import MARKET_ETH_USD
+from hmx2.constants import MARKET_DIX_USD
 from hmx2.enum import Action
 from dotenv import load_dotenv
 
@@ -17,7 +17,7 @@ async def main():
      rpc_url=RPC_URL
    )
 
-  eth_price = client.public.get_price(MARKET_ETH_USD, Action.SELL, 1000)
+  eth_price = client.public.get_price(MARKET_DIX_USD, Action.SELL, 1000)
   print('Market {0}'.format(eth_price["market"]))
   print('Price: {0:.4f}'.format(eth_price["price"]))
   print('Adaptive price {0:.4f}'.format(eth_price["adaptive_price"]))

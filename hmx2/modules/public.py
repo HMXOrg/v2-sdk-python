@@ -5,9 +5,11 @@ from hmx2.constants import (
   VAULT_STORAGE_ADDRESS,
   PERP_STORAGE_ADDRESS,
   CONFIG_STORAGE_ADDRESS,
+  TRADE_HELPER_ADDRESS,
   VAULT_STORAGE_ABI_PATH,
   PERP_STORAGE_ABI_PATH,
   CONFIG_STORAGE_ABI_PATH,
+  TRADE_HELPER_ABI_PATH,
   COLLATERALS,
   COLLATERAL_ASSET_ID_MAP,
   HOURS,
@@ -32,6 +34,9 @@ class Public(object):
       self.eth_provider, CONFIG_STORAGE_ADDRESS, CONFIG_STORAGE_ABI_PATH)
     self.vault_storage_instance = load_contract(
       self.eth_provider, VAULT_STORAGE_ADDRESS, VAULT_STORAGE_ABI_PATH)
+    self.trade_helper_instance = load_contract(
+      self.eth_provider, TRADE_HELPER_ADDRESS, TRADE_HELPER_ABI_PATH
+    )
     self.multicall_instance = Multicall(w3=self.eth_provider,
                                         chain='arbitrum', custom_address=MULTICALL_ADDRESS)
 
@@ -312,3 +317,31 @@ class Public(object):
       "avg_entry_price": position["avg_entry_price_e30"] / 10**30,
       "pnl": pnl / 10**30,
     }
+  
+  def get_adaptive_fee(self, size_delta: int, market_index: int, is_increase: bool):
+    base_fee_bps = 7
+    raw_market_config = self.config_storage_instance.functions.getMarketConfigByIndex(market_index).call()
+    (
+      asset_id,
+      max_long_position_size,
+      max_short_position_size,
+      increase_position_fee_rate_bps,
+      decrease_position_fee_rate_bps,
+      initial_margin_fraction_bps,
+      maintenance_margin_fraction_bps,
+      max_profit_rate_bps,
+      asset_class,
+      allow_increase_position,
+      active,
+      funding_rate
+    ) = raw_market_config
+
+    if is_increase:
+      base_fee_bps = increase_position_fee_rate_bps
+    else:
+      base_fee_bps = decrease_position_fee_rate_bps
+
+    raw_fee = self.trade_helper_instance.functions.getAdaptiveFeeBps(size_delta , market_index, base_fee_bps).call()
+    fee = Web3.to_int(raw_fee)
+
+    return fee

@@ -204,7 +204,7 @@ class Public(object):
     ]
     collateral_usd = [
       self.oracle_middleware.get_price(
-        COLLATERAL_ASSET_ID_MAP[collateral]) * 10**10
+        COLLATERAL_ASSET_ID_MAP[collateral]) * 10**30
       for collateral in COLLATERALS
     ]
     results = self.multicall_instance.call(calls)
@@ -293,19 +293,34 @@ class Public(object):
     )
 
   def get_position_info(self, account: str, sub_account_id: int, market_index: int):
-    data = self.__multicall_market_data(market_index)
+    market_data = self.__multicall_market_data(market_index)
+    tvl = self.__get_hlp_tvl()
+
     position = self.__get_position(account, sub_account_id, market_index)
+    reserved_value = position['reserve_value_e30']
+    sum_borrowing_rate = market_data['asset_class']['sum_borrowing_rate']
+    entry_borrowing_rate = position['entry_borrowing_rate']
     block = self.__get_block()
     price = int(self.oracle_middleware.get_price(
         MARKET_PROFILE[market_index]["asset"]) * 10 ** 30)
 
     pnl = Calculator.get_pnl(
-      position, data["market"], data["market_config"], data["trading_config"], price, block["timestamp"])
+      position, market_data["market"], market_data["market_config"], market_data["trading_config"], price, block["timestamp"])
 
     current_funding_accrued = Calculator.get_next_funding_accrued(
-      data["trading_config"], data["market_config"], data["market"], block["timestamp"])
-    Calculator.get_fuding_fee(
+      market_data["trading_config"], market_data["market_config"], market_data["market"], block["timestamp"])
+    get_funding_fee = Calculator.get_funding_fee(
       position["position_size_e30"], current_funding_accrued, position["last_funding_accrued"])
+    
+    next_borrowing_rate = Calculator.get_next_borrowing_rate(
+      market_data['asset_class_config']['base_borrowing_rate'],
+      reserved_value,
+      tvl, 
+      block["timestamp"], 
+      market_data["asset_class"]['last_borrowing_time'], 
+      market_data["trading_config"]['funding_interval'])
+    
+    get_borrowing_fee = Calculator.get_borrowing_fee(reserved_value=reserved_value, sum_borrowing_rate=(sum_borrowing_rate + next_borrowing_rate), entry_borrowing_rate=entry_borrowing_rate)
 
     return {
       "primary_account": position["primary_account"],
@@ -314,4 +329,6 @@ class Public(object):
       "position_size": position["position_size_e30"] / 10**30,
       "avg_entry_price": position["avg_entry_price_e30"] / 10**30,
       "pnl": pnl / 10**30,
+      "get_funding_fee": get_funding_fee / 10**30,
+      "get_borrowing_fee": get_borrowing_fee / 10**30,
     }

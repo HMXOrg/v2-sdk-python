@@ -45,12 +45,11 @@ class Calculator:
 
   @staticmethod
   def get_next_borrowing_rate(base_borrowing_rate: int, reserve_value_e30: int, hlp_tvl: int, block_timestamp: int, last_borrowing_time: int, funding_interval: int):
-    if last_borrowing_time + funding_interval > block_timestamp:
+    if last_borrowing_time + funding_interval > block_timestamp or hlp_tvl == 0:
       return 0
     borrowing_rate = Calculator.get_next_borrowing_rate_without_interval(
       base_borrowing_rate, reserve_value_e30, hlp_tvl)
-    intervals = (block_timestamp - last_borrowing_time) // funding_interval
-
+    intervals = (block_timestamp - last_borrowing_time) - funding_interval
     return borrowing_rate * intervals
 
   @staticmethod
@@ -116,10 +115,15 @@ class Calculator:
 
     next_funding_rate = market["current_funding_rate"] + funding_rate
 
-    return (market["funding_accrued"] + market["current_funding_rate"] +
-            next_funding_rate) * proportionnal_elapsed_in_day // 2 // 1e18
+    return market["funding_accrued"] + ((market["current_funding_rate"] +
+            next_funding_rate) * proportionnal_elapsed_in_day // 2) // 1e18
 
   @staticmethod
-  def get_fuding_fee(size: int, current_funding_accrued: int, last_funding_accrued: int):
+  def get_funding_fee(size: int, current_funding_accrued: int, last_funding_accrued: int):
     funding_rate = current_funding_accrued - last_funding_accrued
     return size * funding_rate // 10**18
+
+  @staticmethod
+  def get_borrowing_fee(reserved_value: int, sum_borrowing_rate: int, entry_borrowing_rate: int):
+    borrowing_rate = sum_borrowing_rate - entry_borrowing_rate
+    return (reserved_value * borrowing_rate) // 10**18

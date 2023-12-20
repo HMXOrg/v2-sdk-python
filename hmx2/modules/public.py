@@ -309,7 +309,7 @@ class Public(object):
 
     current_funding_accrued = Calculator.get_next_funding_accrued(
       market_data["trading_config"], market_data["market_config"], market_data["market"], block["timestamp"])
-    get_funding_fee = Calculator.get_funding_fee(
+    funding_fee = Calculator.get_funding_fee(
       position["position_size_e30"], current_funding_accrued, position["last_funding_accrued"])
     
     next_borrowing_rate = Calculator.get_next_borrowing_rate(
@@ -320,7 +320,7 @@ class Public(object):
       market_data["asset_class"]['last_borrowing_time'], 
       market_data["trading_config"]['funding_interval'])
     
-    get_borrowing_fee = Calculator.get_borrowing_fee(reserved_value=reserved_value, sum_borrowing_rate=(sum_borrowing_rate + next_borrowing_rate), entry_borrowing_rate=entry_borrowing_rate)
+    borrowing_fee = Calculator.get_borrowing_fee(reserved_value=reserved_value, sum_borrowing_rate=(sum_borrowing_rate + next_borrowing_rate), entry_borrowing_rate=entry_borrowing_rate)
 
     return {
       "primary_account": position["primary_account"],
@@ -329,6 +329,6 @@ class Public(object):
       "position_size": position["position_size_e30"] / 10**30,
       "avg_entry_price": position["avg_entry_price_e30"] / 10**30,
       "pnl": pnl / 10**30,
-      "get_funding_fee": get_funding_fee / 10**30,
-      "get_borrowing_fee": get_borrowing_fee / 10**30,
+      "funding_fee": funding_fee / 10**30,
+      "borrowing_fee": borrowing_fee / 10**30,
     }

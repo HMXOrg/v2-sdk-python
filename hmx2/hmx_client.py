@@ -7,6 +7,7 @@ from hmx2.constants import (
   ASSET_BTC,
   ASSET_ETH,
   ASSET_USDC,
+  ONCHAIN_PRICELENS_ADDRESS,
 )
 from hmx2.modules.private import Private
 from hmx2.modules.public import Public
@@ -14,6 +15,7 @@ from hmx2.modules.oracle.pyth_oracle import PythOracle
 from hmx2.modules.oracle.glp_oracle import GlpOracle
 from hmx2.modules.oracle.cix_oracle import CixOracle
 from hmx2.modules.oracle.gm_oracle import GmOracle
+from hmx2.modules.oracle.onchain_pricelens_oracle import OnchainPricelensOracle
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 
 
@@ -33,9 +35,10 @@ class Client(object):
                              ASSET_BTC, ASSET_BTC, ASSET_USDC], pyth_oracle, self.__eth_provider)
     gm_eth_oracle = GmOracle(GM_ETH_PRICE_ADAPTER_ADDRESS, [
         ASSET_ETH, ASSET_ETH, ASSET_USDC], pyth_oracle, self.__eth_provider)
+    onchain_pricelens_oracle = OnchainPricelensOracle(ONCHAIN_PRICELENS_ADDRESS, pyth_oracle, self.__eth_provider)
 
     self.__oracle_middleware = OracleMiddleware(
-      pyth_oracle, glp_oracle, dix_oracle, gm_btc_oracle, gm_eth_oracle)
+      pyth_oracle, glp_oracle, dix_oracle, gm_btc_oracle, gm_eth_oracle, onchain_pricelens_oracle)
 
     self.__private = None
     self.__public = Public(self.__eth_provider, self.__oracle_middleware)

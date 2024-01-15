@@ -217,7 +217,14 @@ class Public(object):
       ]
     )
 
-  def get_price(self, market_index: int, buy: bool, size: float):
+  def get_price(self, market_index: int, buy: bool = None, size: float = None):
+
+    if buy is None and size is None:
+      return {
+        "market": MARKET_PROFILE[market_index]["name"],
+        "price": self.oracle_middleware.get_price(MARKET_PROFILE[market_index]["asset"])
+      }
+    
     data = self.__multicall_market_data(market_index)
     oracle_price = self.oracle_middleware.get_price(
       MARKET_PROFILE[market_index]["asset"]) * 10**30
@@ -237,8 +244,6 @@ class Public(object):
       "price_impact": price_impact * 100 / 10**30,
     }
 
-  def get_price(self, asset_id: str):
-    return self.oracle_middleware.get_price(asset_id)
 
   def get_market_info(self, market_index: int):
     '''

@@ -1,5 +1,5 @@
 # ------ Pyth Network ------
-DEFAULT_PYTH_PRICE_SERVICE_URL = "https://xc-mainnet.pyth.network"
+DEFAULT_PYTH_PRICE_SERVICE_URL = "https://hermes.pyth.network"
 
 # ------ Contract Address ------
 MULTICALL_ADDRESS = "0xcA11bde05977b3631167028862bE2a173976CA11"

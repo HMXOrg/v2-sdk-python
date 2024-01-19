@@ -1,0 +1,1151 @@
+[
+  { "stateMutability": "nonpayable", "type": "constructor", "inputs": [] },
+  {
+    "type": "error",
+    "inputs": [],
+    "name": "ITradeHelper_BorrowingFeeCannotBeCovered"
+  },
+  {
+    "type": "error",
+    "inputs": [],
+    "name": "ITradeHelper_FundingFeeCannotBeCovered"
+  },
+  { "type": "error", "inputs": [], "name": "ITradeHelper_InvalidAddress" },
+  {
+    "type": "error",
+    "inputs": [],
+    "name": "ITradeHelper_TradingFeeCannotBeCovered"
+  },
+  {
+    "type": "error",
+    "inputs": [],
+    "name": "ITradeHelper_UnrealizedPnlCannotBeCovered"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "version",
+        "internalType": "uint8",
+        "type": "uint8",
+        "indexed": false
+      }
+    ],
+    "name": "Initialized"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": true
+      },
+      {
+        "name": "oldFundingRate",
+        "internalType": "int256",
+        "type": "int256",
+        "indexed": false
+      },
+      {
+        "name": "newFundingRate",
+        "internalType": "int256",
+        "type": "int256",
+        "indexed": false
+      }
+    ],
+    "name": "LogFundingRate"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "token",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "feeUsd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "amount",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogReceivedFundingFeeAmount"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "feeUsd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogReceivedFundingFeeValue"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "token",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "usd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "amount",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogReceivedUnRealizedPnlAmount"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "usd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogReceivedUnRealizedPnlValue"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "oldAdaptiveFeeCalculator",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "adaptiveFeeCalculator",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      }
+    ],
+    "name": "LogSetAdaptiveFeeCalculator"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "oldConfigStorage",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "newConfigStorage",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      }
+    ],
+    "name": "LogSetConfigStorage"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "oldMaxAdaptiveFeeBps",
+        "internalType": "uint32",
+        "type": "uint32",
+        "indexed": true
+      },
+      {
+        "name": "maxAdaptiveFeeBps",
+        "internalType": "uint32",
+        "type": "uint32",
+        "indexed": true
+      }
+    ],
+    "name": "LogSetMaxAdaptiveFeeBps"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "oldOrderbookOracle",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "orderbookOracle",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      }
+    ],
+    "name": "LogSetOrderbookOracle"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "oldPerpStorage",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "newPerpStorage",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      }
+    ],
+    "name": "LogSetPerpStorage"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "oldVaultStorage",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "newVaultStorage",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      }
+    ],
+    "name": "LogSetVaultStorage"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "token",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "feeUsd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "devFeeAmount",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "hlpFeeAmount",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogSettleBorrowingFeeAmount"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "feeUsd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogSettleBorrowingFeeValue"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "token",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "feeUsd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "amount",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogSettleFundingFeeAmount"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "feeUsd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogSettleFundingFeeValue"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "token",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "usd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "amount",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogSettleLiquidationFeeAmount"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "usd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogSettleLiquidationFeeValue"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "token",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "feeUsd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "amount",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogSettleSettlementFeeAmount"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "token",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "feeUsd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "devFeeAmount",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "protocolFeeAmount",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogSettleTradingFeeAmount"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "feeUsd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogSettleTradingFeeValue"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "token",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "usd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "amount",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogSettleUnRealizedPnlAmount"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "positionId",
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "subAccount",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "usd",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogSettleUnRealizedPnlValue"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "previousOwner",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "newOwner",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      }
+    ],
+    "name": "OwnershipTransferred"
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "_assetClassIndex",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      {
+        "name": "_borrowingFeeToBeSettled",
+        "internalType": "uint256",
+        "type": "uint256"
+      }
+    ],
+    "name": "accumSettledBorrowingFee",
+    "outputs": []
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "adaptiveFeeCalculator",
+    "outputs": [
+      {
+        "name": "",
+        "internalType": "contract AdaptiveFeeCalculator",
+        "type": "address"
+      }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "calculator",
+    "outputs": [
+      { "name": "", "internalType": "contract Calculator", "type": "address" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "configStorage",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_positionId", "internalType": "bytes32", "type": "bytes32" },
+      { "name": "_subAccount", "internalType": "address", "type": "address" },
+      { "name": "_unrealizedPnl", "internalType": "int256", "type": "int256" },
+      { "name": "_fundingFee", "internalType": "int256", "type": "int256" },
+      { "name": "_borrowingFee", "internalType": "uint256", "type": "uint256" },
+      { "name": "_tradingFee", "internalType": "uint256", "type": "uint256" },
+      {
+        "name": "_liquidationFee",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      { "name": "_liquidator", "internalType": "address", "type": "address" },
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "decreaseCollateral",
+    "outputs": []
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_sizeDelta", "internalType": "int256", "type": "int256" },
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" },
+      { "name": "_baseFeeBps", "internalType": "uint32", "type": "uint32" }
+    ],
+    "name": "getAdaptiveFeeBps",
+    "outputs": [
+      { "name": "feeBps", "internalType": "uint32", "type": "uint32" }
+    ]
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_positionId", "internalType": "bytes32", "type": "bytes32" },
+      { "name": "_subAccount", "internalType": "address", "type": "address" },
+      { "name": "_unrealizedPnl", "internalType": "int256", "type": "int256" },
+      { "name": "_fundingFee", "internalType": "int256", "type": "int256" },
+      { "name": "_tpToken", "internalType": "address", "type": "address" },
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "increaseCollateral",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_perpStorage", "internalType": "address", "type": "address" },
+      { "name": "_vaultStorage", "internalType": "address", "type": "address" },
+      { "name": "_configStorage", "internalType": "address", "type": "address" }
+    ],
+    "name": "initialize",
+    "outputs": []
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "maxAdaptiveFeeBps",
+    "outputs": [{ "name": "", "internalType": "uint32", "type": "uint32" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "orderbookOracle",
+    "outputs": [
+      {
+        "name": "",
+        "internalType": "contract OrderbookOracle",
+        "type": "address"
+      }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "perpStorage",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [],
+    "name": "reloadConfig",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "_adaptiveFeeCalculator",
+        "internalType": "address",
+        "type": "address"
+      }
+    ],
+    "name": "setAdaptiveFeeCalculator",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_configStorage", "internalType": "address", "type": "address" }
+    ],
+    "name": "setConfigStorage",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "_maxAdaptiveFeeBps",
+        "internalType": "uint32",
+        "type": "uint32"
+      }
+    ],
+    "name": "setMaxAdaptiveFeeBps",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "_orderbookOracle",
+        "internalType": "address",
+        "type": "address"
+      }
+    ],
+    "name": "setOrderbookOracle",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_perpStorage", "internalType": "address", "type": "address" }
+    ],
+    "name": "setPerpStorage",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_vaultStorage", "internalType": "address", "type": "address" }
+    ],
+    "name": "setVaultStorage",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_positionId", "internalType": "bytes32", "type": "bytes32" },
+      {
+        "name": "_position",
+        "internalType": "struct IPerpStorage.Position",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "primaryAccount",
+            "internalType": "address",
+            "type": "address"
+          },
+          {
+            "name": "marketIndex",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "avgEntryPriceE30",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "entryBorrowingRate",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "reserveValueE30",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "lastIncreaseTimestamp",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "positionSizeE30",
+            "internalType": "int256",
+            "type": "int256"
+          },
+          { "name": "realizedPnl", "internalType": "int256", "type": "int256" },
+          {
+            "name": "lastFundingAccrued",
+            "internalType": "int256",
+            "type": "int256"
+          },
+          { "name": "subAccountId", "internalType": "uint8", "type": "uint8" }
+        ]
+      },
+      { "name": "_sizeDelta", "internalType": "int256", "type": "int256" },
+      { "name": "_positionFeeBPS", "internalType": "uint32", "type": "uint32" },
+      { "name": "_assetClassIndex", "internalType": "uint8", "type": "uint8" }
+    ],
+    "name": "settleAllFees",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "newOwner", "internalType": "address", "type": "address" }
+    ],
+    "name": "transferOwnership",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_assetClassIndex", "internalType": "uint8", "type": "uint8" }
+    ],
+    "name": "updateBorrowingRate",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_positionId", "internalType": "bytes32", "type": "bytes32" },
+      { "name": "_subAccount", "internalType": "address", "type": "address" },
+      {
+        "name": "_position",
+        "internalType": "struct IPerpStorage.Position",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "primaryAccount",
+            "internalType": "address",
+            "type": "address"
+          },
+          {
+            "name": "marketIndex",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "avgEntryPriceE30",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "entryBorrowingRate",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "reserveValueE30",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "lastIncreaseTimestamp",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "positionSizeE30",
+            "internalType": "int256",
+            "type": "int256"
+          },
+          { "name": "realizedPnl", "internalType": "int256", "type": "int256" },
+          {
+            "name": "lastFundingAccrued",
+            "internalType": "int256",
+            "type": "int256"
+          },
+          { "name": "subAccountId", "internalType": "uint8", "type": "uint8" }
+        ]
+      },
+      { "name": "_sizeDelta", "internalType": "int256", "type": "int256" },
+      { "name": "_positionFeeBPS", "internalType": "uint32", "type": "uint32" },
+      { "name": "_assetClassIndex", "internalType": "uint8", "type": "uint8" },
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" },
+      { "name": "isAdaptiveFee", "internalType": "bool", "type": "bool" }
+    ],
+    "name": "updateFeeStates",
+    "outputs": [
+      { "name": "_tradingFee", "internalType": "uint256", "type": "uint256" },
+      { "name": "_borrowingFee", "internalType": "uint256", "type": "uint256" },
+      { "name": "_fundingFee", "internalType": "int256", "type": "int256" }
+    ]
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "updateFundingRate",
+    "outputs": []
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "vaultStorage",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
+  }
+]

@@ -384,9 +384,6 @@ class Public(object):
 
     if buy is None and size is None:
       price = self.oracle_middleware.get_price(MARKET_PROFILE[market_index]["asset"])
-      print(MARKET_PROFILE[market_index]["name"])
-      print("price", price)
-      print('-----------------------------------------------------------------------------------------------')
       asset_decimal = MARKET_PROFILE[market_index]["display_decimal"]
       return {
         "market": MARKET_PROFILE[market_index]["name"],
@@ -394,7 +391,6 @@ class Public(object):
         "adaptive_price": None,
         "price_impact": None,
       }
-  
     data = self.__multicall_market_data(market_index)
     oracle_price = self.oracle_middleware.get_price(
       MARKET_PROFILE[market_index]["asset"]) * 10**30

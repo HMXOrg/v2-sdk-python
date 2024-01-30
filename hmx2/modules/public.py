@@ -24,7 +24,6 @@ from simple_multicall import Multicall
 from eth_abi.abi import decode
 
 
-
 class Public(object):
   def __init__(self, eth_provider: Web3, oracle_middleware: OracleMiddleware):
     self.eth_provider = eth_provider
@@ -368,7 +367,7 @@ class Public(object):
   def __get_block(self):
     return self.eth_provider.eth.get_block("latest")
 
-  def __get_hlp_tvl(self, is_max_price: bool):
+  def __get_hlp_tvl(self, is_max_price: bool = True):
     return self.calculator_instance.functions.getHLPValueE30(is_max_price).call()
 
   def get_price(self, market_index: int, buy: bool = None, size: float = None):
@@ -427,7 +426,7 @@ class Public(object):
     '''
     data = self.__multicall_market_data(market_index)
     block = self.__get_block()
-    tvl = self.__get_hlp_tvl(True)
+    tvl = self.__get_hlp_tvl()
 
     price = self.get_price(market_index)["price"]
 
@@ -466,7 +465,7 @@ class Public(object):
       Returns:
         market info dict with market_index as key
     '''
-    tvl = self.__get_hlp_tvl(True)
+    tvl = self.__get_hlp_tvl()
     block = self.__get_block()
 
     market_info = {}
@@ -528,7 +527,7 @@ class Public(object):
 
   def get_position_info(self, account: str, sub_account_id: int, market_index: int):
     market_data = self.__multicall_market_data(market_index)
-    tvl = self.__get_hlp_tvl(True)
+    tvl = self.__get_hlp_tvl()
 
     position = self.__get_position(account, sub_account_id, market_index)
     reserved_value = position['reserve_value_e30']

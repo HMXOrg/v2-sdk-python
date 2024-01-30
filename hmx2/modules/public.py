@@ -382,9 +382,9 @@ class Public(object):
         price object
     '''
 
+    price = self.oracle_middleware.get_price(MARKET_PROFILE[market_index]["asset"])
+    asset_decimal = MARKET_PROFILE[market_index]["display_decimal"]
     if buy is None and size is None:
-      price = self.oracle_middleware.get_price(MARKET_PROFILE[market_index]["asset"])
-      asset_decimal = MARKET_PROFILE[market_index]["display_decimal"]
       return {
         "market": MARKET_PROFILE[market_index]["name"],
         "price": round(price, asset_decimal),
@@ -392,8 +392,7 @@ class Public(object):
         "price_impact": None,
       }
     data = self.__multicall_market_data(market_index)
-    oracle_price = self.oracle_middleware.get_price(
-      MARKET_PROFILE[market_index]["asset"]) * 10**30
+    oracle_price = price * 10**30
     adaptive_price = Calculator.get_adaptive_price(
       oracle_price,
       data["market"]["long_position_size"],
@@ -405,8 +404,8 @@ class Public(object):
 
     return {
       "market": MARKET_PROFILE[market_index]["name"],
-      "price": round(oracle_price, asset_decimal) / 10**30,
-      "adaptive_price": round(adaptive_price, asset_decimal) / 10**30,
+      "price": round(oracle_price / 10**30, asset_decimal),
+      "adaptive_price": round(adaptive_price / 10**30, asset_decimal),
       "price_impact": price_impact * 100 / 10**30,
     }
 

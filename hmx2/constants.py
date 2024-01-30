@@ -14,6 +14,7 @@ GM_BTC_PRICE_ADAPTER_ADDRESS = "0x85680bba8a94c9be1DDd7Be802885DFCe95F8164"
 GM_ETH_PRICE_ADAPTER_ADDRESS = "0x700083c72eBc86CbFc865830F5706a2DbC392f26"
 TRADE_HELPER_ADDRESS = "0x963Cbe4cFcDC58795869be74b80A328b022DE00C"
 ONCHAIN_PRICELENS_ADDRESS = "0x7D8eAa8dF02526c711F4ff1f97F6c5324212DBBa"
+CALCULATOR_ADDRESS = "0x0FdE910552977041Dc8c7ef652b5a07B40B9e006"
 
 # ------ ABI Path ------
 ERC20_ABI_PATH = "abis/ERC20.json"
@@ -27,6 +28,7 @@ CIX_PRICE_ADAPTER_ABI_PATH = "abis/CIXPriceAdapter.json"
 GM_PRICE_ADAPTER_ABI_PATH = "abis/GMPriceAdapter.json"
 TRADE_HELPER_ABI_PATH = "abis/TradeHelper.json"
 ONCHAIN_PRICELENS_ABI_PATH = "abis/OnchainPricelens.json"
+CALCULATOR_ABI_PATH = "abis/Calculator.json"
 
 # ------ Market ------
 MARKET_ETH_USD = 0
@@ -77,6 +79,7 @@ MARKET_1000PEPE_USD = 44
 MARKET_1000SHIB_USD = 45
 MARKET_USD_SEK = 46
 MARKET_ICP_USD = 47
+MARKET_MANTA_USD = 48
 
 # ------ Token Profiles ------
 TOKEN_PROFILE = {
@@ -265,6 +268,7 @@ ASSET_ATOM = "ATOM"
 ASSET_1000SHIB = "1000SHIB"
 ASSET_1000PEPE = "1000PEPE"
 ASSET_ICP = "ICP"
+ASSET_MANTA = "MANTA"
 
 ASSETS = [ASSET_ETH, ASSET_BTC, ASSET_AAPL, ASSET_JPY, ASSET_XAU, ASSET_AMZN,
           ASSET_MSFT, ASSET_TSLA, ASSET_EUR, ASSET_XAG, ASSET_AUD, ASSET_GBP,
@@ -275,7 +279,7 @@ ASSETS = [ASSET_ETH, ASSET_BTC, ASSET_AAPL, ASSET_JPY, ASSET_XAU, ASSET_AMZN,
           ASSET_HKD, ASSET_BCH, ASSET_MEME, ASSET_gmBTC, ASSET_gmETH, ASSET_SEK,
           ASSET_DIX, ASSET_JTO, ASSET_STX, ASSET_ORDI, ASSET_TIA, ASSET_AVAX,
           ASSET_INJ, ASSET_DOT, ASSET_SEI, ASSET_ATOM, ASSET_1000SHIB, ASSET_1000PEPE,
-          ASSET_ICP]
+          ASSET_ICP, ASSET_MANTA]
 
 # ------ Asset IDs Map ----
 COLLATERAL_ASSET_ID_MAP = {
@@ -292,199 +296,263 @@ COLLATERAL_ASSET_ID_MAP = {
   COLLATERAL_gmETH: ASSET_gmETH,
 }
 
+DELISTED_MARKET = [
+    MARKET_AAPL_USD, 
+    MARKET_AMZN_USD, 
+    MARKET_MSFT_USD, 
+    MARKET_TSLA_USD, 
+    MARKET_COIN_USD, 
+    MARKET_GOOG_USD, 
+    MARKET_QQQ_USD, 
+    MARKET_NVDA_USD
+    ]
+
 # ------ Market ----
 MARKET_PROFILE = {
   MARKET_ETH_USD: {
     "name": "ETHUSD",
-    "asset": ASSET_ETH
+    "asset": ASSET_ETH,
+    "display_decimal": 2,
   },
   MARKET_BTC_USD: {
     "name": "BTCUSD",
-    "asset": ASSET_BTC
+    "asset": ASSET_BTC,
+    "display_decimal": 2,
   },
   MARKET_AAPL_USD: {
     "name": "AAPLUSD",
-    "asset": ASSET_AAPL
+    "asset": ASSET_AAPL,
+    "display_decimal": 2,
   },
   MARKET_JPY_USD: {
     "name": "JPYUSD",
-    "asset": ASSET_JPY
+    "asset": ASSET_JPY,
+    "display_decimal": 8,
   },
   MARKET_XAU_USD: {
     "name": "XAUUSD",
-    "asset": ASSET_XAU
+    "asset": ASSET_XAU,
+    "display_decimal": 2,
   },
   MARKET_AMZN_USD: {
     "name": "AMZNUSD",
-    "asset": ASSET_AMZN
+    "asset": ASSET_AMZN,
+    "display_decimal": 2,
   },
   MARKET_MSFT_USD: {
     "name": "MSFTUSD",
-    "asset": ASSET_MSFT
+    "asset": ASSET_MSFT,
+    "display_decimal": 2,
   },
   MARKET_TSLA_USD: {
     "name": "TSLAUSD",
-    "asset": ASSET_TSLA
+    "asset": ASSET_TSLA,
+    "display_decimal": 2,
   },
   MARKET_EUR_USD: {
     "name": "EURUSD",
-    "asset": ASSET_EUR
+    "asset": ASSET_EUR,
+    "display_decimal": 5,
   },
   MARKET_XAG_USD: {
     "name": "XAGUSD",
-    "asset": ASSET_XAG
+    "asset": ASSET_XAG,
+    "display_decimal": 3,
   },
   MARKET_AUD_USD: {
     "name": "AUDUSD",
-    "asset": ASSET_AUD
+    "asset": ASSET_AUD,
+    "display_decimal": 5,
   },
   MARKET_GBP_USD: {
     "name": "GBPUSD",
-    "asset": ASSET_GBP
+    "asset": ASSET_GBP,
+    "display_decimal": 5,
   },
   MARKET_ADA_USD: {
     "name": "ADAUSD",
-    "asset": ASSET_ADA
+    "asset": ASSET_ADA,
+    "display_decimal": 4,
   },
   MARKET_MATIC_USD: {
     "name": "MATICUSD",
-    "asset": ASSET_MATIC
+    "asset": ASSET_MATIC,
+    "display_decimal": 4,
   },
   MARKET_SUI_USD: {
     "name": "SUIUSD",
-    "asset": ASSET_SUI
+    "asset": ASSET_SUI,
+    "display_decimal": 4,
   },
   MARKET_ARB_USD: {
     "name": "ARBUSD",
-    "asset": ASSET_ARB
+    "asset": ASSET_ARB,
+    "display_decimal": 4,
   },
   MARKET_OP_USD: {
     "name": "OPUSD",
-    "asset": ASSET_OP
+    "asset": ASSET_OP,
+    "display_decimal": 4,
   },
   MARKET_LTC_USD: {
     "name": "LTCUSD",
-    "asset": ASSET_LTC
+    "asset": ASSET_LTC,
+    "display_decimal": 2,
   },
   MARKET_COIN_USD: {
     "name": "COINUSD",
-    "asset": ASSET_COIN
+    "asset": ASSET_COIN,
+    "display_decimal": 2,
   },
   MARKET_GOOG_USD: {
     "name": "GOOGUSD",
-    "asset": ASSET_GOOG
+    "asset": ASSET_GOOG,
+    "display_decimal": 2,
   },
   MARKET_BNB_USD: {
     "name": "BNBUSD",
-    "asset": ASSET_BNB
+    "asset": ASSET_BNB,
+    "display_decimal": 2,
   },
   MARKET_SOL_USD: {
     "name": "SOLUSD",
-    "asset": ASSET_SOL
+    "asset": ASSET_SOL,
+    "display_decimal": 3,
   },
   MARKET_QQQ_USD: {
     "name": "QQQUSD",
-    "asset": ASSET_QQQ
+    "asset": ASSET_QQQ,
+    "display_decimal": 2,
   },
   MARKET_XRP_USD: {
     "name": "XRPUSD",
-    "asset": ASSET_XRP
+    "asset": ASSET_XRP,
+    "display_decimal": 4,
   },
   MARKET_NVDA_USD: {
     "name": "NVDAUSD",
-    "asset": ASSET_NVDA
+    "asset": ASSET_NVDA,
+    "display_decimal": 2,
   },
   MARKET_LINK_USD: {
     "name": "LINKUSD",
-    "asset": ASSET_LINK
+    "asset": ASSET_LINK,
+    "display_decimal": 3,
   },
   MARKET_USD_CHF: {
     "name": "USDCHF",
-    "asset": ASSET_CHF
+    "asset": ASSET_CHF,
+    "display_decimal": 5,
   },
   MARKET_DOGE_USD: {
     "name": "DOGEUSD",
-    "asset": ASSET_DOGE
+    "asset": ASSET_DOGE,
+    "display_decimal": 5,
   },
   MARKET_USD_CAD: {
     "name": "USDCAD",
-    "asset": ASSET_CAD
+    "asset": ASSET_CAD,
+    "display_decimal": 5,
   },
   MARKET_USD_SGD: {
     "name": "USDSGD",
-    "asset": ASSET_SGD
+    "asset": ASSET_SGD,
+    "display_decimal": 5,
   },
   MARKET_USD_CNH: {
     "name": "USDCNH",
-    "asset": ASSET_CNH
+    "asset": ASSET_CNH,
+    "display_decimal": 5,
   },
   MARKET_USD_HKD: {
     "name": "USDHKD",
-    "asset": ASSET_HKD
+    "asset": ASSET_HKD,
+    "display_decimal": 5,
   },
   MARKET_BCH_USD: {
     "name": "BCHUSD",
-    "asset": ASSET_BCH
+    "asset": ASSET_BCH,
+    "display_decimal": 2,
   },
   MARKET_MEME_USD: {
     "name": "MEMEUSD",
-    "asset": ASSET_MEME
+    "asset": ASSET_MEME,
+    "display_decimal": 8,
   },
   MARKET_DIX_USD: {
     "name": "DIXUSD",
-    "asset": ASSET_DIX
+    "asset": ASSET_DIX,
+    "display_decimal": 4,
   },
   MARKET_JTO_USD: {
     "name": "JTOUSD",
-    "asset": ASSET_JTO
+    "asset": ASSET_JTO,
+    "display_decimal": 4,
   },
   MARKET_STX_USD: {
     "name": "STXUSD",
-    "asset": ASSET_STX
+    "asset": ASSET_STX,
+    "display_decimal": 4,
   },
   MARKET_ORDI_USD: {
     "name": "ORDIUSD",
-    "asset": ASSET_ORDI
+    "asset": ASSET_ORDI,
+    "display_decimal": 3,
   },
   MARKET_TIA_USD: {
     "name": "TIAUSD",
-    "asset": ASSET_TIA
+    "asset": ASSET_TIA,
+    "display_decimal": 4,
   },
   MARKET_AVAX_USD: {
     "name": "AVAXUSD",
-    "asset": ASSET_AVAX
+    "asset": ASSET_AVAX,
+    "display_decimal": 3,
   },
   MARKET_INJ_USD: {
     "name": "INJUSD",
-    "asset": ASSET_INJ
+    "asset": ASSET_INJ,
+    "display_decimal": 3,
   },
   MARKET_DOT_USD: {
     "name": "DOTUSD",
-    "asset": ASSET_DOT
+    "asset": ASSET_DOT,
+    "display_decimal": 3,
   },
   MARKET_SEI_USD: {
     "name": "SEIUSD",
-    "asset": ASSET_SEI
+    "asset": ASSET_SEI,
+    "display_decimal": 4,
   },
   MARKET_ATOM_USD: {
     "name": "ATOMUSD",
-    "asset": ASSET_ATOM
+    "asset": ASSET_ATOM,
+    "display_decimal": 3,
   },
   MARKET_1000PEPE_USD: {
     "name": "1000PEPEUSD",
-    "asset": ASSET_1000PEPE
+    "asset": ASSET_1000PEPE,
+    "display_decimal": 8,
   },
   MARKET_1000SHIB_USD: {
     "name": "1000SHIBUSD",
-    "asset": ASSET_1000SHIB
+    "asset": ASSET_1000SHIB,
+    "display_decimal": 8,
   },
   MARKET_USD_SEK: {
     "name": "USDSEK",
-    "asset": ASSET_SEK
+    "asset": ASSET_SEK,
+    "display_decimal": 5,
   },
   MARKET_ICP_USD: {
     "name": "ICPUSD",
-    "asset": ASSET_ICP
+    "asset": ASSET_ICP,
+    "display_decimal": 3,
+  },
+  MARKET_MANTA_USD: {
+    "name": "MANTAUSD",
+    "asset": ASSET_MANTA,
+    "display_decimal": 3,
   },
 }
 

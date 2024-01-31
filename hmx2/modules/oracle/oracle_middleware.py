@@ -37,13 +37,13 @@ class OracleMiddleware(object):
 
     if asset_id == ASSET_gmETH:
       return self.gm_eth_oracle.get_price(asset_id)
-    
+
     if asset_id == ASSET_wstETH:
       return self.onchain_pricelens_oracle.get_price(asset_id)
 
     if asset_id in [ASSET_1000PEPE, ASSET_1000SHIB]:
       return self.pyth_oracle.get_price(asset_id) * 1000
-    
+
     if asset_id in [ASSET_JPY]:
       return 1 / self.pyth_oracle.get_price(asset_id)
 

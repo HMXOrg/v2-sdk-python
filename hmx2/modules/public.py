@@ -70,13 +70,14 @@ class Public(object):
         "last_funding_accrued": last_funding_accrued,
         "sub_account_id": sub_account_id,
     }
-  
+
   def __multicall_all_market_data(self):
-    ACTIVE_MARKET = [x for x in MARKET_PROFILE.keys() if x not in DELISTED_MARKET]
+    ACTIVE_MARKET = [
+      x for x in MARKET_PROFILE.keys() if x not in DELISTED_MARKET]
     market_config_calls = list(map(lambda market_index: self.multicall_instance.create_call(
         self.config_storage_instance, "marketConfigs", [market_index]
       ), ACTIVE_MARKET))
-    
+
     market_config_results = self.multicall_instance.call(market_config_calls)
     data = market_config_results[1]
 
@@ -99,10 +100,10 @@ class Public(object):
         max_funding_rate,
       ) = decode(
           ['bytes32', 'uint256', 'uint256', 'uint32', 'uint32', 'uint32',
-          'uint32', 'uint32', 'uint8', 'bool', 'bool', 'uint256', 'uint256'],
+           'uint32', 'uint32', 'uint8', 'bool', 'bool', 'uint256', 'uint256'],
           data.pop(0)
         )
-      
+
       market_config_data[market_index] = {
         "asset_id": asset_id.hex(),
         "max_long_position_size": max_long_position_size,
@@ -122,29 +123,29 @@ class Public(object):
     market_calls = list(map(lambda market_index: self.multicall_instance.create_call(
         self.perp_storage_instance, "markets", [market_index]
       ), ACTIVE_MARKET))
-    
+
     market_results = self.multicall_instance.call(market_calls)
     data = market_results[1]
-    
+
     market_data = {}
     for market_index in ACTIVE_MARKET:
       (
-      long_position_size,
-      long_accum_se,
-      long_accum_s2e,
-      short_position_size,
-      short_accum_se,
-      short_accum_s2e,
-      current_funding_rate,
-      last_funding_time,
-      accum_funding_long,
-      accum_funding_short,
-      funding_accrued,
-    ) = decode(
-      ['uint256', 'uint256', 'uint256', 'uint256', 'uint256',
-       'uint256', 'int256', 'uint256', 'int256', 'int256', 'int256'],
-      data.pop(0)
-    )
+          long_position_size,
+          long_accum_se,
+          long_accum_s2e,
+          short_position_size,
+          short_accum_se,
+          short_accum_s2e,
+          current_funding_rate,
+          last_funding_time,
+          accum_funding_long,
+          accum_funding_short,
+          funding_accrued,
+      ) = decode(
+          ['uint256', 'uint256', 'uint256', 'uint256', 'uint256',
+           'uint256', 'int256', 'uint256', 'int256', 'int256', 'int256'],
+          data.pop(0)
+      )
       market_data[market_index] = {
         "long_position_size": long_position_size,
         "long_accum_se": long_accum_se,
@@ -158,16 +159,16 @@ class Public(object):
         "accum_funding_short": accum_funding_short,
         "funding_accrued": funding_accrued
       }
-    
+
     trade_config_result = self.config_storage_instance.functions.tradingConfig().call()
-    
+
     (
       funding_interval,
       min_profit_duration,
       dev_fee_rate_bps,
       max_position
     ) = trade_config_result
-    
+
     trade_config_data = {
         "funding_interval": funding_interval,
         "min_profit_duration": min_profit_duration,
@@ -175,15 +176,17 @@ class Public(object):
         "max_position": max_position
       }
 
-    market_asset_class_map = {market_index: market_config_data[market_index]['asset_class'] for market_index in ACTIVE_MARKET}
+    market_asset_class_map = {
+      market_index: market_config_data[market_index]['asset_class'] for market_index in ACTIVE_MARKET}
 
     asset_class_list = list(set(market_asset_class_map.values()))
 
     asset_class_config_calls = list(map(lambda asset_class: self.multicall_instance.create_call(
         self.config_storage_instance, "assetClassConfigs", [asset_class]
       ), asset_class_list))
-    
-    asset_class_config_results = self.multicall_instance.call(asset_class_config_calls)
+
+    asset_class_config_results = self.multicall_instance.call(
+      asset_class_config_calls)
     data = asset_class_config_results[1]
 
     asset_class_config_data = {}
@@ -197,7 +200,7 @@ class Public(object):
     asset_class_calls = list(map(lambda asset_class: self.multicall_instance.create_call(
         self.perp_storage_instance, "assetClasses", [asset_class]
       ), asset_class_list))
-    
+
     asset_class_results = self.multicall_instance.call(asset_class_calls)
     data = asset_class_results[1]
 
@@ -205,15 +208,15 @@ class Public(object):
 
     for asset_class in asset_class_list:
       (
-      reserve_value_e30,
-      sum_borrowing_rate,
-      last_borrowing_time,
-      sum_borrowing_fee_e30,
-      sum_settled_borrowing_fee_e30
-    ) = decode(
-      ['uint256', 'uint256', 'uint256', 'uint256', 'uint256'],
-      data.pop(0)
-    )
+          reserve_value_e30,
+          sum_borrowing_rate,
+          last_borrowing_time,
+          sum_borrowing_fee_e30,
+          sum_settled_borrowing_fee_e30
+      ) = decode(
+          ['uint256', 'uint256', 'uint256', 'uint256', 'uint256'],
+          data.pop(0)
+      )
       asset_class_data[asset_class] = {
         "reserve_value_e30": reserve_value_e30,
         "sum_borrowing_rate": sum_borrowing_rate,
@@ -382,7 +385,8 @@ class Public(object):
         price object
     '''
 
-    price = self.oracle_middleware.get_price(MARKET_PROFILE[market_index]["asset"])
+    price = self.oracle_middleware.get_price(
+      MARKET_PROFILE[market_index]["asset"])
     asset_decimal = MARKET_PROFILE[market_index]["display_decimal"]
     if buy is None and size is None:
       return {
@@ -408,7 +412,6 @@ class Public(object):
       "adaptive_price": round(adaptive_price / 10**30, asset_decimal),
       "price_impact": price_impact * 100 / 10**30,
     }
-
 
   def get_market_info(self, market_index: int):
     '''Get a market info
@@ -466,7 +469,6 @@ class Public(object):
     market_info = {}
     raw_market_data = self.__multicall_all_market_data()
 
-
     for market_index in MARKET_PROFILE.keys():
       if market_index not in DELISTED_MARKET:
         current_raw_market_data = raw_market_data[market_index]
@@ -480,8 +482,7 @@ class Public(object):
 
         borrowing_rate = Calculator.get_borrowing_rate(
           current_raw_market_data["asset_class_config"], current_raw_market_data["asset_class"], tvl)
-        
-        
+
         market_info[market_index] = {
           "market": MARKET_PROFILE[market_index]["name"],
           "price": price,
@@ -539,16 +540,17 @@ class Public(object):
       market_data["trading_config"], market_data["market_config"], market_data["market"], block["timestamp"])
     funding_fee = Calculator.get_funding_fee(
       position["position_size_e30"], current_funding_accrued, position["last_funding_accrued"])
-    
+
     next_borrowing_rate = Calculator.get_next_borrowing_rate(
       market_data['asset_class_config']['base_borrowing_rate'],
       reserved_value,
-      tvl, 
-      block["timestamp"], 
-      market_data["asset_class"]['last_borrowing_time'], 
+      tvl,
+      block["timestamp"],
+      market_data["asset_class"]['last_borrowing_time'],
       market_data["trading_config"]['funding_interval'])
-    
-    borrowing_fee = Calculator.get_borrowing_fee(reserved_value=reserved_value, sum_borrowing_rate=(sum_borrowing_rate + next_borrowing_rate), entry_borrowing_rate=entry_borrowing_rate)
+
+    borrowing_fee = Calculator.get_borrowing_fee(reserved_value=reserved_value, sum_borrowing_rate=(
+      sum_borrowing_rate + next_borrowing_rate), entry_borrowing_rate=entry_borrowing_rate)
 
     return {
       "primary_account": position["primary_account"],
@@ -560,10 +562,11 @@ class Public(object):
       "funding_fee": funding_fee / 10**30,
       "borrowing_fee": borrowing_fee / 10**30,
     }
-  
+
   def get_adaptive_fee(self, size_delta: int, market_index: int, is_increase: bool):
     base_fee_bps = 7
-    raw_market_config = self.config_storage_instance.functions.getMarketConfigByIndex(market_index).call()
+    raw_market_config = self.config_storage_instance.functions.getMarketConfigByIndex(
+      market_index).call()
     (
       asset_id,
       max_long_position_size,
@@ -584,7 +587,8 @@ class Public(object):
     else:
       base_fee_bps = decrease_position_fee_rate_bps
 
-    raw_fee = self.trade_helper_instance.functions.getAdaptiveFeeBps(size_delta , market_index, base_fee_bps).call()
+    raw_fee = self.trade_helper_instance.functions.getAdaptiveFeeBps(
+      size_delta, market_index, base_fee_bps).call()
     fee = Web3.to_int(raw_fee)
 
     return fee

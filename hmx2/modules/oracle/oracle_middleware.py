@@ -3,7 +3,8 @@ from hmx2.modules.oracle.glp_oracle import GlpOracle
 from hmx2.modules.oracle.cix_oracle import CixOracle
 from hmx2.modules.oracle.gm_oracle import GmOracle
 from hmx2.modules.oracle.onchain_pricelens_oracle import OnchainPricelensOracle
-from hmx2.constants import ASSETS, ASSET_gmBTC, ASSET_gmETH, ASSET_DIX, ASSET_GLP, ASSET_wstETH, ASSET_1000PEPE, ASSET_1000SHIB, ASSET_JPY
+from hmx2.constants import ASSETS, MARKET_PROFILE, ASSET_gmBTC, ASSET_gmETH, ASSET_DIX, ASSET_GLP, ASSET_wstETH, ASSET_1000PEPE, ASSET_1000SHIB, ASSET_JPY
+from typing import List
 
 
 class OracleMiddleware(object):
@@ -48,3 +49,45 @@ class OracleMiddleware(object):
       return 1 / self.pyth_oracle.get_price(asset_id)
 
     return self.pyth_oracle.get_price(asset_id)
+
+  def get_multiple_price(self, asset_ids: List[str]):
+
+    price_object = {}
+
+    if set(asset_ids) - set(ASSETS):
+      raise Exception('Invalid asset_ids')
+
+    if ASSET_GLP in asset_ids:
+      price_object[ASSET_GLP] = self.glp_oracle.get_price(ASSET_GLP)
+      asset_ids.remove(ASSET_GLP)
+
+    if ASSET_DIX in asset_ids:
+      price_object[ASSET_DIX] = self.dix_oracle.get_price(ASSET_DIX)
+      asset_ids.remove(ASSET_DIX)
+
+    if ASSET_gmBTC in asset_ids:
+      price_object[ASSET_gmBTC] = self.gm_btc_oracle.get_price(ASSET_gmBTC)
+      asset_ids.remove(ASSET_gmBTC)
+
+    if ASSET_gmETH in asset_ids:
+      price_object[ASSET_gmETH] = self.gm_eth_oracle.get_price(ASSET_gmETH)
+      asset_ids.remove(ASSET_gmETH)
+
+    if ASSET_wstETH in asset_ids:
+      price_object[ASSET_wstETH] = self.onchain_pricelens_oracle.get_price(
+        ASSET_wstETH)
+      asset_ids.remove(ASSET_wstETH)
+
+    raw_prices = self.pyth_oracle.get_multiple_price(asset_ids)
+
+    for index, asset_id in enumerate(asset_ids):
+      if asset_id in [ASSET_1000PEPE, ASSET_1000SHIB]:
+        price_object[asset_id] = raw_prices[index] * 1000
+
+      elif asset_id in [ASSET_JPY]:
+        price_object[asset_id] = 1 / raw_prices[index]
+
+      else:
+        price_object[asset_id] = raw_prices[index]
+
+    return price_object

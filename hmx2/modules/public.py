@@ -15,13 +15,14 @@ from hmx2.constants import (
   DAYS,
   YEARS,
   MARKET_PROFILE,
-  DELISTED_MARKET
+  DELISTED_MARKET,
 )
 from hmx2.helpers.contract_loader import load_contract
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from hmx2.modules.calculator.calculator import Calculator
 from simple_multicall import Multicall
 from eth_abi.abi import decode
+from typing import List
 
 
 class Public(object):
@@ -71,6 +72,76 @@ class Public(object):
         "sub_account_id": sub_account_id,
     }
 
+  def __get_all_position(self, account: str, sub_account_list: List[int]):
+
+    if sub_account_list == []:
+      sub_account_list = list(map(lambda sub_account_id: self.get_sub_account(
+        account, sub_account_id), range(0, 256)))
+    else:
+      sub_account_list = list(map(lambda sub_account_id: self.get_sub_account(
+       account, sub_account_id), sub_account_list))
+
+    position_number_call = list(map(lambda sub_account_address: self.multicall_instance.create_call(
+        self.perp_storage_instance, "getNumberOfSubAccountPosition", [
+          sub_account_address]
+      ), sub_account_list))
+
+    position_number_result = self.multicall_instance.call(position_number_call)
+    data = position_number_result[1]
+
+    active_sub_account_number = []
+    position_number = {}
+    for sub_account_id, sub_account_address in enumerate(sub_account_list):
+      sub_account_position_number = decode(['uint256'], data.pop(0))
+
+      if sub_account_position_number[0] > 0:
+        position_number[sub_account_address] = sub_account_position_number[0]
+        active_sub_account_number.append(sub_account_id)
+    sub_account_list = active_sub_account_number
+
+    position_data = {}
+
+    position_calls = list(map(lambda active_sub_account_address: self.multicall_instance.create_call(
+        self.perp_storage_instance, "getPositionBySubAccount",
+        [active_sub_account_address]
+      ), list(position_number.keys())))
+
+    position_result = self.multicall_instance.call(position_calls)
+    data = position_result[1]
+
+    position_data = {}
+
+    for sub_account_id in sub_account_list:
+      data_pop = data.pop(0)
+      (
+          raw_sub_account_position
+        ) = decode(
+            ['(address,uint256,uint256,uint256,uint256,uint256,int256,int256,int256,uint8)[]'],
+            data_pop
+        )
+      raw_sub_account_position = [
+        x for y in raw_sub_account_position for x in y]
+
+      sub_account_position = []
+      for positon in raw_sub_account_position:
+        _position = {
+          "primary_account": positon[0],
+          "market_index": positon[1],
+          "avg_entry_price_e30": positon[2],
+          "entry_borrowing_rate": positon[3],
+          "reserve_value_e30": positon[4],
+          "last_increase_timestamp": positon[5],
+          "position_size_e30": positon[6],
+          "realized_pnl": positon[7],
+          "last_funding_accrued": positon[8],
+          "sub_account_id": positon[9],
+        }
+        sub_account_position.append(_position)
+
+      position_data[sub_account_id] = sub_account_position
+
+    return position_data
+
   def __multicall_all_market_data(self):
     ACTIVE_MARKET = [
       x for x in MARKET_PROFILE.keys() if x not in DELISTED_MARKET]
@@ -78,8 +149,18 @@ class Public(object):
         self.config_storage_instance, "marketConfigs", [market_index]
       ), ACTIVE_MARKET))
 
-    market_config_results = self.multicall_instance.call(market_config_calls)
-    data = market_config_results[1]
+    market_data_calls = list(map(lambda market_index: self.multicall_instance.create_call(
+        self.perp_storage_instance, "markets", [market_index]
+      ), ACTIVE_MARKET))
+
+    trade_config_call = [self.multicall_instance.create_call(
+        self.config_storage_instance, "tradingConfig", []
+      )]
+
+    market_calls = market_config_calls + market_data_calls + trade_config_call
+
+    market_results = self.multicall_instance.call(market_calls)
+    data = market_results[1]
 
     market_config_data = {}
 
@@ -120,13 +201,6 @@ class Public(object):
         "max_funding_rate": max_funding_rate
       }
 
-    market_calls = list(map(lambda market_index: self.multicall_instance.create_call(
-        self.perp_storage_instance, "markets", [market_index]
-      ), ACTIVE_MARKET))
-
-    market_results = self.multicall_instance.call(market_calls)
-    data = market_results[1]
-
     market_data = {}
     for market_index in ACTIVE_MARKET:
       (
@@ -160,14 +234,12 @@ class Public(object):
         "funding_accrued": funding_accrued
       }
 
-    trade_config_result = self.config_storage_instance.functions.tradingConfig().call()
-
     (
       funding_interval,
       min_profit_duration,
       dev_fee_rate_bps,
       max_position
-    ) = trade_config_result
+    ) = decode(['uint256', 'uint256', 'uint32', 'uint8',], data.pop(0))
 
     trade_config_data = {
         "funding_interval": funding_interval,
@@ -185,9 +257,15 @@ class Public(object):
         self.config_storage_instance, "assetClassConfigs", [asset_class]
       ), asset_class_list))
 
-    asset_class_config_results = self.multicall_instance.call(
-      asset_class_config_calls)
-    data = asset_class_config_results[1]
+    asset_class_calls = list(map(lambda asset_class: self.multicall_instance.create_call(
+        self.perp_storage_instance, "assetClasses", [asset_class]
+      ), asset_class_list))
+
+    asset_call = asset_class_config_calls + asset_class_calls
+
+    asset_result = self.multicall_instance.call(
+      asset_call)
+    data = asset_result[1]
 
     asset_class_config_data = {}
 
@@ -196,13 +274,6 @@ class Public(object):
       asset_class_config_data[asset_class] = {
         "base_borrowing_rate": base_borrowing_rate
       }
-
-    asset_class_calls = list(map(lambda asset_class: self.multicall_instance.create_call(
-        self.perp_storage_instance, "assetClasses", [asset_class]
-      ), asset_class_list))
-
-    asset_class_results = self.multicall_instance.call(asset_class_calls)
-    data = asset_class_results[1]
 
     asset_class_data = {}
 
@@ -413,6 +484,28 @@ class Public(object):
       "price_impact": price_impact * 100 / 10**30,
     }
 
+  def get_multiple_price(self, market_indices: List[int] = []):
+    if not market_indices:
+      market_indices = list(set(MARKET_PROFILE.keys()) - set(DELISTED_MARKET))
+
+    asset_ids = list(
+      map(lambda market_index: MARKET_PROFILE[market_index]["asset"], market_indices))
+
+    price_object = self.oracle_middleware.get_multiple_price(
+        asset_ids
+      )
+
+    market_prices = {}
+
+    for market_index in market_indices:
+      asset_id = MARKET_PROFILE[market_index]["asset"]
+      asset_decimal = MARKET_PROFILE[market_index]["display_decimal"]
+      price = round(
+        price_object[asset_id], asset_decimal)
+      market_prices[market_index] = price
+
+    return market_prices
+
   def get_market_info(self, market_index: int):
     '''Get a market info
 
@@ -469,10 +562,12 @@ class Public(object):
     market_info = {}
     raw_market_data = self.__multicall_all_market_data()
 
+    market_prices = self.get_multiple_price()
+
     for market_index in MARKET_PROFILE.keys():
       if market_index not in DELISTED_MARKET:
         current_raw_market_data = raw_market_data[market_index]
-        price = self.get_price(market_index)["price"]
+        price = market_prices[market_index]
         funding_rate = Calculator.get_funding_rate(
           current_raw_market_data["trading_config"],
           current_raw_market_data["market_config"],
@@ -501,6 +596,7 @@ class Public(object):
             "1Y": borrowing_rate * YEARS * 100 / 10**18,
           }
         }
+
     return market_info
 
   def get_sub_account(self, account: str, sub_account_id: int):
@@ -520,6 +616,65 @@ class Public(object):
       ['address', 'uint256'],
       [self.get_sub_account(account, sub_account_id), market_index]
     )
+
+  def get_all_position_info(self, account: str, sub_account_id: List[int] = []):
+    market_datas = self.__multicall_all_market_data()
+    tvl = self.__get_hlp_tvl()
+    block = self.__get_block()
+
+    positions = self.__get_all_position(account, sub_account_id)
+
+    positions_flat = [
+        x for y in list(positions.values()) for x in y]
+
+    active_market_list = set(
+      map(lambda position: position['market_index'], positions_flat))
+
+    price_map = self.get_multiple_price(active_market_list)
+
+    position_infos = []
+
+    for position in positions_flat:
+      market_index = position['market_index']
+      market_data = market_datas[market_index]
+
+      reserved_value = position['reserve_value_e30']
+      sum_borrowing_rate = market_data['asset_class']['sum_borrowing_rate']
+      entry_borrowing_rate = position['entry_borrowing_rate']
+      price = price_map[market_index]
+
+      pnl = Calculator.get_pnl(
+        position, market_data["market"], market_data["market_config"], market_data["trading_config"], price, block["timestamp"])
+
+      current_funding_accrued = Calculator.get_next_funding_accrued(
+        market_data["trading_config"], market_data["market_config"], market_data["market"], block["timestamp"])
+      funding_fee = Calculator.get_funding_fee(
+        position["position_size_e30"], current_funding_accrued, position["last_funding_accrued"])
+
+      next_borrowing_rate = Calculator.get_next_borrowing_rate(
+        market_data['asset_class_config']['base_borrowing_rate'],
+        reserved_value,
+        tvl,
+        block["timestamp"],
+        market_data["asset_class"]['last_borrowing_time'],
+        market_data["trading_config"]['funding_interval'])
+
+      borrowing_fee = Calculator.get_borrowing_fee(reserved_value=reserved_value, sum_borrowing_rate=(
+        sum_borrowing_rate + next_borrowing_rate), entry_borrowing_rate=entry_borrowing_rate)
+
+      position_info = {
+        "primary_account": position["primary_account"],
+        "sub_account_id": position["sub_account_id"],
+        "market": MARKET_PROFILE[market_index]["name"],
+        "position_size": position["position_size_e30"] / 10**30,
+        "avg_entry_price": position["avg_entry_price_e30"] / 10**30,
+        "pnl": pnl / 10**30,
+        "funding_fee": funding_fee / 10**30,
+        "borrowing_fee": borrowing_fee / 10**30,
+      }
+      position_infos.append(position_info)
+
+    return position_infos
 
   def get_position_info(self, account: str, sub_account_id: int, market_index: int):
     market_data = self.__multicall_market_data(market_index)

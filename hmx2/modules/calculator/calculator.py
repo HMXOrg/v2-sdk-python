@@ -41,7 +41,7 @@ class Calculator:
   @staticmethod
   def get_borrowing_rate(asset_class_config, asset_class, hlp_tvl):
     return Calculator.get_next_borrowing_rate_without_interval(
-      asset_class_config["base_borrowing_rate"], asset_class["reserve_value_e30"], hlp_tvl) // 10**18
+      asset_class_config["base_borrowing_rate"], asset_class["reserve_value_e30"], hlp_tvl)
 
   @staticmethod
   def get_next_borrowing_rate(base_borrowing_rate: int, reserve_value_e30: int, hlp_tvl: int, block_timestamp: int, last_borrowing_time: int, funding_interval: int):

@@ -3,7 +3,7 @@ from hmx2.modules.oracle.glp_oracle import GlpOracle
 from hmx2.modules.oracle.cix_oracle import CixOracle
 from hmx2.modules.oracle.gm_oracle import GmOracle
 from hmx2.modules.oracle.onchain_pricelens_oracle import OnchainPricelensOracle
-from hmx2.constants import ASSETS, ASSET_gmBTC, ASSET_gmETH, ASSET_DIX, ASSET_GLP, ASSET_wstETH
+from hmx2.constants import ASSETS, ASSET_gmBTC, ASSET_gmETH, ASSET_DIX, ASSET_GLP, ASSET_wstETH, ASSET_1000PEPE, ASSET_1000SHIB, ASSET_JPY
 
 
 class OracleMiddleware(object):
@@ -37,8 +37,14 @@ class OracleMiddleware(object):
 
     if asset_id == ASSET_gmETH:
       return self.gm_eth_oracle.get_price(asset_id)
-    
+
     if asset_id == ASSET_wstETH:
       return self.onchain_pricelens_oracle.get_price(asset_id)
+
+    if asset_id in [ASSET_1000PEPE, ASSET_1000SHIB]:
+      return self.pyth_oracle.get_price(asset_id) * 1000
+
+    if asset_id in [ASSET_JPY]:
+      return 1 / self.pyth_oracle.get_price(asset_id)
 
     return self.pyth_oracle.get_price(asset_id)

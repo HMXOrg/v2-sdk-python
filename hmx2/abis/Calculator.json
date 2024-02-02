@@ -1,0 +1,756 @@
+[
+  { "stateMutability": "nonpayable", "type": "constructor", "inputs": [] },
+  { "type": "error", "inputs": [], "name": "ICalculator_InvalidAddress" },
+  { "type": "error", "inputs": [], "name": "ICalculator_InvalidArray" },
+  { "type": "error", "inputs": [], "name": "ICalculator_InvalidAveragePrice" },
+  { "type": "error", "inputs": [], "name": "ICalculator_InvalidBorrowingFee" },
+  { "type": "error", "inputs": [], "name": "ICalculator_InvalidPrice" },
+  { "type": "error", "inputs": [], "name": "ICalculator_PoolImbalance" },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "version",
+        "internalType": "uint8",
+        "type": "uint8",
+        "indexed": false
+      }
+    ],
+    "name": "Initialized"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "oldConfigStorage",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "configStorage",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      }
+    ],
+    "name": "LogSetConfigStorage"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "oldOracle",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "newOracle",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      }
+    ],
+    "name": "LogSetOracle"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "oldPerpStorage",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "perpStorage",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      }
+    ],
+    "name": "LogSetPerpStorage"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "oldTradeHelper",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "tradeHelper",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      }
+    ],
+    "name": "LogSetTradeHelper"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "oldVaultStorage",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "vaultStorage",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      }
+    ],
+    "name": "LogSetVaultStorage"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "previousOwner",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "newOwner",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      }
+    ],
+    "name": "OwnershipTransferred"
+  },
+  {
+    "stateMutability": "pure",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "_marketPositionSize",
+        "internalType": "int256",
+        "type": "int256"
+      },
+      {
+        "name": "_marketAveragePrice",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      { "name": "_sizeDelta", "internalType": "int256", "type": "int256" },
+      {
+        "name": "_positionClosePrice",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      {
+        "name": "_positionNextClosePrice",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      {
+        "name": "_positionRealizedPnl",
+        "internalType": "int256",
+        "type": "int256"
+      }
+    ],
+    "name": "calculateMarketAveragePrice",
+    "outputs": [
+      {
+        "name": "_newAvaragePrice",
+        "internalType": "uint256",
+        "type": "uint256"
+      }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "_positionSizeE30",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "calculatePositionIMR",
+    "outputs": [
+      { "name": "_imrE30", "internalType": "uint256", "type": "uint256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "_positionSizeE30",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "calculatePositionMMR",
+    "outputs": [
+      { "name": "_mmrE30", "internalType": "uint256", "type": "uint256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "configStorage",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
+  },
+  {
+    "stateMutability": "pure",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "fromTokenDecimals",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      {
+        "name": "toTokenDecimals",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      { "name": "amount", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "convertTokenDecimals",
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_isMaxPrice", "internalType": "bool", "type": "bool" }
+    ],
+    "name": "getAUME30",
+    "outputs": [{ "name": "aum", "internalType": "uint256", "type": "uint256" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_token", "internalType": "address", "type": "address" },
+      {
+        "name": "_tokenValueE30",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      {
+        "name": "_configStorage",
+        "internalType": "contract ConfigStorage",
+        "type": "address"
+      }
+    ],
+    "name": "getAddLiquidityFeeBPS",
+    "outputs": [{ "name": "", "internalType": "uint32", "type": "uint32" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_assetClassIndex", "internalType": "uint8", "type": "uint8" },
+      {
+        "name": "_reservedValue",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      {
+        "name": "_entryBorrowingRate",
+        "internalType": "uint256",
+        "type": "uint256"
+      }
+    ],
+    "name": "getBorrowingFee",
+    "outputs": [
+      { "name": "borrowingFee", "internalType": "uint256", "type": "uint256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_subAccount", "internalType": "address", "type": "address" },
+      {
+        "name": "_limitPriceE30",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      { "name": "_limitAssetId", "internalType": "bytes32", "type": "bytes32" }
+    ],
+    "name": "getCollateralValue",
+    "outputs": [
+      {
+        "name": "_collateralValueE30",
+        "internalType": "uint256",
+        "type": "uint256"
+      }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "position",
+        "internalType": "struct IPerpStorage.Position",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "primaryAccount",
+            "internalType": "address",
+            "type": "address"
+          },
+          {
+            "name": "marketIndex",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "avgEntryPriceE30",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "entryBorrowingRate",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "reserveValueE30",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "lastIncreaseTimestamp",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "positionSizeE30",
+            "internalType": "int256",
+            "type": "int256"
+          },
+          { "name": "realizedPnl", "internalType": "int256", "type": "int256" },
+          {
+            "name": "lastFundingAccrued",
+            "internalType": "int256",
+            "type": "int256"
+          },
+          { "name": "subAccountId", "internalType": "uint8", "type": "uint8" }
+        ]
+      },
+      { "name": "_markPrice", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "getDelta",
+    "outputs": [
+      { "name": "", "internalType": "bool", "type": "bool" },
+      { "name": "", "internalType": "uint256", "type": "uint256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_size", "internalType": "uint256", "type": "uint256" },
+      { "name": "_isLong", "internalType": "bool", "type": "bool" },
+      { "name": "_markPrice", "internalType": "uint256", "type": "uint256" },
+      { "name": "_averagePrice", "internalType": "uint256", "type": "uint256" },
+      {
+        "name": "_lastIncreaseTimestamp",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "getDelta",
+    "outputs": [
+      { "name": "", "internalType": "bool", "type": "bool" },
+      { "name": "", "internalType": "uint256", "type": "uint256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_subAccount", "internalType": "address", "type": "address" },
+      {
+        "name": "_limitPriceE30",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      { "name": "_limitAssetId", "internalType": "bytes32", "type": "bytes32" }
+    ],
+    "name": "getEquity",
+    "outputs": [
+      { "name": "_equityValueE30", "internalType": "int256", "type": "int256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_subAccount", "internalType": "address", "type": "address" },
+      {
+        "name": "_injectedAssetIds",
+        "internalType": "bytes32[]",
+        "type": "bytes32[]"
+      },
+      {
+        "name": "_injectedPrices",
+        "internalType": "uint256[]",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "getEquityWithInjectedPrices",
+    "outputs": [
+      { "name": "_equityValueE30", "internalType": "int256", "type": "int256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_subAccount", "internalType": "address", "type": "address" },
+      {
+        "name": "_limitPriceE30",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      { "name": "_limitAssetId", "internalType": "bytes32", "type": "bytes32" }
+    ],
+    "name": "getFreeCollateral",
+    "outputs": [
+      { "name": "_freeCollateral", "internalType": "int256", "type": "int256" }
+    ]
+  },
+  {
+    "stateMutability": "pure",
+    "type": "function",
+    "inputs": [
+      { "name": "_size", "internalType": "int256", "type": "int256" },
+      {
+        "name": "_currentFundingAccrued",
+        "internalType": "int256",
+        "type": "int256"
+      },
+      {
+        "name": "_lastFundingAccrued",
+        "internalType": "int256",
+        "type": "int256"
+      }
+    ],
+    "name": "getFundingFee",
+    "outputs": [
+      { "name": "fundingFee", "internalType": "int256", "type": "int256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "getFundingRateVelocity",
+    "outputs": [
+      { "name": "fundingRate", "internalType": "int256", "type": "int256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "getGlobalPNLE30",
+    "outputs": [{ "name": "", "internalType": "int256", "type": "int256" }]
+  },
+  {
+    "stateMutability": "pure",
+    "type": "function",
+    "inputs": [
+      { "name": "_aum", "internalType": "uint256", "type": "uint256" },
+      { "name": "_hlpSupply", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "getHLPPrice",
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_isMaxPrice", "internalType": "bool", "type": "bool" }
+    ],
+    "name": "getHLPValueE30",
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_subAccount", "internalType": "address", "type": "address" }
+    ],
+    "name": "getIMR",
+    "outputs": [
+      { "name": "_imrValueE30", "internalType": "uint256", "type": "uint256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_subAccount", "internalType": "address", "type": "address" }
+    ],
+    "name": "getMMR",
+    "outputs": [
+      { "name": "_mmrValueE30", "internalType": "uint256", "type": "uint256" }
+    ]
+  },
+  {
+    "stateMutability": "pure",
+    "type": "function",
+    "inputs": [
+      { "name": "_aumE30", "internalType": "uint256", "type": "uint256" },
+      { "name": "_totalSupply", "internalType": "uint256", "type": "uint256" },
+      { "name": "_value", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "getMintAmount",
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_assetClassIndex", "internalType": "uint8", "type": "uint8" },
+      { "name": "_hlpTVL", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "getNextBorrowingRate",
+    "outputs": [
+      {
+        "name": "_nextBorrowingRate",
+        "internalType": "uint256",
+        "type": "uint256"
+      }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "getPendingBorrowingFeeE30",
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_token", "internalType": "address", "type": "address" },
+      {
+        "name": "_tokenValueE30",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      {
+        "name": "_configStorage",
+        "internalType": "contract ConfigStorage",
+        "type": "address"
+      }
+    ],
+    "name": "getRemoveLiquidityFeeBPS",
+    "outputs": [{ "name": "", "internalType": "uint32", "type": "uint32" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_token", "internalType": "address", "type": "address" },
+      {
+        "name": "_liquidityUsdDelta",
+        "internalType": "uint256",
+        "type": "uint256"
+      }
+    ],
+    "name": "getSettlementFeeRate",
+    "outputs": [
+      {
+        "name": "_settlementFeeRate",
+        "internalType": "uint256",
+        "type": "uint256"
+      }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_size", "internalType": "int256", "type": "int256" },
+      {
+        "name": "_baseFeeRateBPS",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "getTradingFee",
+    "outputs": [
+      { "name": "tradingFee", "internalType": "uint256", "type": "uint256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_subAccount", "internalType": "address", "type": "address" },
+      {
+        "name": "_limitPriceE30",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      { "name": "_limitAssetId", "internalType": "bytes32", "type": "bytes32" }
+    ],
+    "name": "getUnrealizedPnlAndFee",
+    "outputs": [
+      {
+        "name": "_unrealizedPnlE30",
+        "internalType": "int256",
+        "type": "int256"
+      },
+      {
+        "name": "_unrealizedFeeE30",
+        "internalType": "int256",
+        "type": "int256"
+      }
+    ]
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_oracle", "internalType": "address", "type": "address" },
+      { "name": "_vaultStorage", "internalType": "address", "type": "address" },
+      { "name": "_perpStorage", "internalType": "address", "type": "address" },
+      { "name": "_configStorage", "internalType": "address", "type": "address" }
+    ],
+    "name": "initialize",
+    "outputs": []
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "oracle",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "perpStorage",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "proportionalElapsedInDay",
+    "outputs": [
+      { "name": "elapsed", "internalType": "uint256", "type": "uint256" }
+    ]
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_configStorage", "internalType": "address", "type": "address" }
+    ],
+    "name": "setConfigStorage",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_oracle", "internalType": "address", "type": "address" }
+    ],
+    "name": "setOracle",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_perpStorage", "internalType": "address", "type": "address" }
+    ],
+    "name": "setPerpStorage",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_tradeHelper", "internalType": "address", "type": "address" }
+    ],
+    "name": "setTradeHelper",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_vaultStorage", "internalType": "address", "type": "address" }
+    ],
+    "name": "setVaultStorage",
+    "outputs": []
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "tradeHelper",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "newOwner", "internalType": "address", "type": "address" }
+    ],
+    "name": "transferOwnership",
+    "outputs": []
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "vaultStorage",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
+  }
+]

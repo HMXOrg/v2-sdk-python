@@ -641,7 +641,7 @@ class Public(object):
       reserved_value = position['reserve_value_e30']
       sum_borrowing_rate = market_data['asset_class']['sum_borrowing_rate']
       entry_borrowing_rate = position['entry_borrowing_rate']
-      price = price_map[market_index]
+      price = price_map[market_index] * 10**30
 
       pnl = Calculator.get_pnl(
         position, market_data["market"], market_data["market_config"], market_data["trading_config"], price, block["timestamp"])

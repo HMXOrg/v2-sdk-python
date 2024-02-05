@@ -480,7 +480,7 @@ MARKET_PROFILE = {
     "display_decimal": 8,
   },
   MARKET_DIX_USD: {
-    "name": "DIXUSD",
+    "name": "DIX",
     "asset": ASSET_DIX,
     "display_decimal": 4,
   },

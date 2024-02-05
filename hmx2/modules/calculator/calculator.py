@@ -113,10 +113,11 @@ class Calculator:
     funding_rate = Calculator.get_funding_rate_velocity_with_out_interval(
       market_config["max_funding_rate"], market_config["max_skew_scale_usd"], market["long_position_size"], market["short_position_size"])
 
-    next_funding_rate = market["current_funding_rate"] + funding_rate
+    next_funding_rate = market["current_funding_rate"] + \
+        (funding_rate * proportionnal_elapsed_in_day) // 1e18
 
     return market["funding_accrued"] + ((market["current_funding_rate"] +
-            next_funding_rate) * proportionnal_elapsed_in_day // 2) // 1e18
+                                         next_funding_rate) * proportionnal_elapsed_in_day // 2) // 1e18
 
   @staticmethod
   def get_funding_fee(size: int, current_funding_accrued: int, last_funding_accrued: int):

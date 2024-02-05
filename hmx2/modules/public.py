@@ -638,7 +638,8 @@ class Public(object):
       market_index = position['market_index']
       market_data = market_datas[market_index]
 
-      reserved_value = position['reserve_value_e30']
+      position_reserved_value = position['reserve_value_e30']
+      asset_class_reserved_value = market_data["asset_class"]["reserve_value_e30"]
       sum_borrowing_rate = market_data['asset_class']['sum_borrowing_rate']
       entry_borrowing_rate = position['entry_borrowing_rate']
       price = price_map[market_index] * 10**30
@@ -648,18 +649,19 @@ class Public(object):
 
       current_funding_accrued = Calculator.get_next_funding_accrued(
         market_data["trading_config"], market_data["market_config"], market_data["market"], block["timestamp"])
+
       funding_fee = Calculator.get_funding_fee(
-        position["position_size_e30"], current_funding_accrued, position["last_funding_accrued"])
+        position["position_size_e30"], int(current_funding_accrued), position["last_funding_accrued"])
 
       next_borrowing_rate = Calculator.get_next_borrowing_rate(
         market_data['asset_class_config']['base_borrowing_rate'],
-        reserved_value,
+        asset_class_reserved_value,
         tvl,
         block["timestamp"],
         market_data["asset_class"]['last_borrowing_time'],
         market_data["trading_config"]['funding_interval'])
 
-      borrowing_fee = Calculator.get_borrowing_fee(reserved_value=reserved_value, sum_borrowing_rate=(
+      borrowing_fee = Calculator.get_borrowing_fee(reserved_value=position_reserved_value, sum_borrowing_rate=(
         sum_borrowing_rate + next_borrowing_rate), entry_borrowing_rate=entry_borrowing_rate)
 
       position_info = {
@@ -681,7 +683,9 @@ class Public(object):
     tvl = self.__get_hlp_tvl()
 
     position = self.__get_position(account, sub_account_id, market_index)
-    reserved_value = position['reserve_value_e30']
+    position_reserved_value = position['reserve_value_e30']
+    asset_class_reserved_value = market_data["asset_class"]["reserve_value_e30"]
+
     sum_borrowing_rate = market_data['asset_class']['sum_borrowing_rate']
     entry_borrowing_rate = position['entry_borrowing_rate']
     block = self.__get_block()
@@ -693,18 +697,19 @@ class Public(object):
 
     current_funding_accrued = Calculator.get_next_funding_accrued(
       market_data["trading_config"], market_data["market_config"], market_data["market"], block["timestamp"])
+
     funding_fee = Calculator.get_funding_fee(
       position["position_size_e30"], current_funding_accrued, position["last_funding_accrued"])
 
     next_borrowing_rate = Calculator.get_next_borrowing_rate(
       market_data['asset_class_config']['base_borrowing_rate'],
-      reserved_value,
+      asset_class_reserved_value,
       tvl,
       block["timestamp"],
       market_data["asset_class"]['last_borrowing_time'],
       market_data["trading_config"]['funding_interval'])
 
-    borrowing_fee = Calculator.get_borrowing_fee(reserved_value=reserved_value, sum_borrowing_rate=(
+    borrowing_fee = Calculator.get_borrowing_fee(reserved_value=position_reserved_value, sum_borrowing_rate=(
       sum_borrowing_rate + next_borrowing_rate), entry_borrowing_rate=entry_borrowing_rate)
 
     return {

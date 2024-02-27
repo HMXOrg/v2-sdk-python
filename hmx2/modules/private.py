@@ -1,6 +1,7 @@
 from web3 import Web3, Account
 from web3.middleware.signing import construct_sign_and_send_raw_middleware
 from web3.logs import DISCARD
+from time import sleep
 from hmx2.constants import (
   TOKEN_PROFILE,
   COLLATERAL_WETH,
@@ -108,7 +109,7 @@ class Private(object):
       raise Exception("Invalid collateral address")
     self.__check_sub_account_id_param(sub_account_id)
 
-    amount_wei = amount * 10 ** TOKEN_PROFILE[token_address]["decimals"]
+    amount_wei = int(amount * 10 ** TOKEN_PROFILE[token_address]["decimals"])
     token_instance = load_contract(
       self.eth_provider, token_address, ERC20_ABI_PATH)
 
@@ -139,7 +140,7 @@ class Private(object):
     '''
     self.__check_sub_account_id_param(sub_account_id)
 
-    amount_wei = amount * 10 ** 18
+    amount_wei = int(amount * 10 ** 18)
 
     cross_margin_handler_instance = load_contract(
       self.eth_provider, CROSS_MARGIN_HANDLER_ADDRESS, CROSS_MARGIN_HANDLER_ABI_PATH)
@@ -189,6 +190,8 @@ class Private(object):
     tx = self.__create_order_batch(
       self.eth_signer.address, sub_account_id, [order]
     )
+
+    sleep(1)
     events = self.__parse_log(tx, "LogCreateLimitOrder")
     args = {}
     args["tx"] = events[0]["transactionHash"]

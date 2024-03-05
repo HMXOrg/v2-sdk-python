@@ -5,28 +5,27 @@ from time import sleep
 from hmx2.constants import (
   TOKEN_PROFILE,
   COLLATERAL_WETH,
-    MULTICALL_ADDRESS,
-    CROSS_MARGIN_HANDLER_ADDRESS,
-    LIMIT_TRADE_HANDLER_ADDRESS,
-    VAULT_STORAGE_ADDRESS,
-    PERP_STORAGE_ADDRESS,
-    CONFIG_STORAGE_ADDRESS,
-    CROSS_MARGIN_HANDLER_ABI_PATH,
-    LIMIT_TRADE_HANDLER_ABI_PATH,
-    VAULT_STORAGE_ABI_PATH,
-    PERP_STORAGE_ABI_PATH,
-    CONFIG_STORAGE_ABI_PATH,
-    ERC20_ABI_PATH,
-    COLLATERALS,
-    COLLATERAL_ASSET_ID_MAP,
-    ADDRESS_ZERO,
-    MAX_UINT,
-    EXECUTION_FEE,
-    BPS,
+  CROSS_MARGIN_HANDLER_ADDRESS,
+  LIMIT_TRADE_HANDLER_ADDRESS,
+  VAULT_STORAGE_ADDRESS,
+  PERP_STORAGE_ADDRESS,
+  CONFIG_STORAGE_ADDRESS,
+  CROSS_MARGIN_HANDLER_ABI_PATH,
+  LIMIT_TRADE_HANDLER_ABI_PATH,
+  VAULT_STORAGE_ABI_PATH,
+  PERP_STORAGE_ABI_PATH,
+  CONFIG_STORAGE_ABI_PATH,
+  ERC20_ABI_PATH,
+  COLLATERALS,
+  COLLATERAL_ASSET_ID_MAP,
+  ADDRESS_ZERO,
+  MAX_UINT,
+  EXECUTION_FEE,
+  BPS,
 )
 from hmx2.enum import Cmd
 from hmx2.helpers.contract_loader import load_contract
-from simple_multicall import Multicall
+from simple_multicall_v6 import Multicall
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from eth_abi.abi import encode
 import decimal
@@ -55,7 +54,7 @@ class Private(object):
     self.vault_storage_instance = load_contract(
       self.eth_provider, VAULT_STORAGE_ADDRESS, VAULT_STORAGE_ABI_PATH)
     self.multicall_instance = Multicall(w3=self.eth_provider,
-                                        chain='arbitrum', custom_address=MULTICALL_ADDRESS)
+                                        chain='arbitrum')
 
   def get_public_address(self):
     '''

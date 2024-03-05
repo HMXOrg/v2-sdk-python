@@ -1,6 +1,5 @@
 from web3 import Web3
 from hmx2.constants import (
-  MULTICALL_ADDRESS,
   VAULT_STORAGE_ADDRESS,
   PERP_STORAGE_ADDRESS,
   CONFIG_STORAGE_ADDRESS,
@@ -20,7 +19,7 @@ from hmx2.constants import (
 from hmx2.helpers.contract_loader import load_contract
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from hmx2.modules.calculator.calculator import Calculator
-from simple_multicall import Multicall
+from simple_multicall_v6 import Multicall
 from eth_abi.abi import decode
 from typing import List
 
@@ -42,7 +41,7 @@ class Public(object):
       self.eth_provider, CALCULATOR_ADDRESS, CALCULATOR_ABI_PATH
     )
     self.multicall_instance = Multicall(w3=self.eth_provider,
-                                        chain='arbitrum', custom_address=MULTICALL_ADDRESS)
+                                        chain='arbitrum')
 
   def __get_position(self, account: str, sub_account_id: int, market_index: int):
     position_id = self.get_position_id(account, sub_account_id, market_index)

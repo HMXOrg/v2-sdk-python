@@ -1,3 +1,4 @@
+from typing import List
 from web3 import Web3
 from hmx2.helpers.contract_loader import load_contract
 from hmx2.modules.oracle.pyth_oracle import PythOracle
@@ -6,7 +7,7 @@ import math
 
 
 class GmOracle(object):
-  def __init__(self, gm_adapter_address: str, asset_ids: [], pyth_oracle: PythOracle, eth_provider: Web3):
+  def __init__(self, gm_adapter_address: str, asset_ids: List, pyth_oracle: PythOracle, eth_provider: Web3):
     self.pyth_oracle = pyth_oracle
     self.eth_provider = eth_provider
     # asset_ids[0] = index token asset id

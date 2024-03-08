@@ -1,14 +1,11 @@
 from web3 import Web3, Account
 from hmx2.constants import (
   DEFAULT_PYTH_PRICE_SERVICE_URL,
-  DIX_PRICE_ADAPTER_ADDRESS,
-  GM_BTC_PRICE_ADAPTER_ADDRESS,
-  GM_ETH_PRICE_ADAPTER_ADDRESS,
   ASSET_BTC,
   ASSET_ETH,
   ASSET_USDC,
-  ONCHAIN_PRICELENS_ADDRESS,
 )
+from hmx2.helpers.mapper import get_contract_address
 from hmx2.modules.private import Private
 from hmx2.modules.public import Public
 from hmx2.modules.oracle.pyth_oracle import PythOracle
@@ -27,21 +24,25 @@ class Client(object):
     if eth_private_key is not None:
       self.__eth_signer = Account.from_key(eth_private_key)
 
+    contract_address = get_contract_address(self.__chain_id)
+
     pyth_oracle = PythOracle(self.__chain_id, pyth_price_service_url)
     glp_oracle = GlpOracle(self.__eth_provider)
-    dix_oracle = CixOracle(DIX_PRICE_ADAPTER_ADDRESS,
+    dix_oracle = CixOracle(contract_address["DIX_PRICE_ADAPTER_ADDRESS"],
                            pyth_oracle, self.__eth_provider)
-    gm_btc_oracle = GmOracle(GM_BTC_PRICE_ADAPTER_ADDRESS, [
+    gm_btc_oracle = GmOracle(contract_address["GM_BTC_PRICE_ADAPTER_ADDRESS"], [
                              ASSET_BTC, ASSET_BTC, ASSET_USDC], pyth_oracle, self.__eth_provider)
-    gm_eth_oracle = GmOracle(GM_ETH_PRICE_ADAPTER_ADDRESS, [
+    gm_eth_oracle = GmOracle(contract_address["GM_ETH_PRICE_ADAPTER_ADDRESS"], [
         ASSET_ETH, ASSET_ETH, ASSET_USDC], pyth_oracle, self.__eth_provider)
-    onchain_pricelens_oracle = OnchainPricelensOracle(ONCHAIN_PRICELENS_ADDRESS, pyth_oracle, self.__eth_provider)
+    onchain_pricelens_oracle = OnchainPricelensOracle(
+      contract_address["ONCHAIN_PRICELENS_ADDRESS"], pyth_oracle, self.__eth_provider)
 
     self.__oracle_middleware = OracleMiddleware(
       pyth_oracle, glp_oracle, dix_oracle, gm_btc_oracle, gm_eth_oracle, onchain_pricelens_oracle)
 
     self.__private = None
-    self.__public = Public(self.__eth_provider, self.__oracle_middleware)
+    self.__public = Public(
+      self.__chain_id, self.__eth_provider, self.__oracle_middleware)
 
   @property
   def public(self):

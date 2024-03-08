@@ -1,20 +1,24 @@
 # ------ Pyth Network ------
 DEFAULT_PYTH_PRICE_SERVICE_URL = "https://hermes.pyth.network"
 
-# ------ Contract Address ------
-MULTICALL_ADDRESS = "0xcA11bde05977b3631167028862bE2a173976CA11"
-CROSS_MARGIN_HANDLER_ADDRESS = "0xB189532c581afB4Fbe69aF6dC3CD36769525d446"
-LIMIT_TRADE_HANDLER_ADDRESS = "0xeE116128b9AAAdBcd1f7C18608C5114f594cf5D6"
-VAULT_STORAGE_ADDRESS = "0x56CC5A9c0788e674f17F7555dC8D3e2F1C0313C0"
-GLP_MANAGER_ADDRESS = "0x3963FfC9dff443c2A94f21b129D429891E32ec18"
-PERP_STORAGE_ADDRESS = "0x97e94BdA44a2Df784Ab6535aaE2D62EFC6D2e303"
-CONFIG_STORAGE_ADDRESS = "0xF4F7123fFe42c4C90A4bCDD2317D397E0B7d7cc0"
-DIX_PRICE_ADAPTER_ADDRESS = "0x222918d230c5A29F334fFb3020aD57b8CeBD1B82"
-GM_BTC_PRICE_ADAPTER_ADDRESS = "0x85680bba8a94c9be1DDd7Be802885DFCe95F8164"
-GM_ETH_PRICE_ADAPTER_ADDRESS = "0x700083c72eBc86CbFc865830F5706a2DbC392f26"
-TRADE_HELPER_ADDRESS = "0x963Cbe4cFcDC58795869be74b80A328b022DE00C"
-ONCHAIN_PRICELENS_ADDRESS = "0x7D8eAa8dF02526c711F4ff1f97F6c5324212DBBa"
-CALCULATOR_ADDRESS = "0x0FdE910552977041Dc8c7ef652b5a07B40B9e006"
+CONTRACT_ADDRESS = {
+  # Arbitrum One
+  42161: {
+    "MULTICALL_ADDRESS": "0xcA11bde05977b3631167028862bE2a173976CA11",
+    "CROSS_MARGIN_HANDLER_ADDRESS": "0xB189532c581afB4Fbe69aF6dC3CD36769525d446",
+    "LIMIT_TRADE_HANDLER_ADDRESS": "0xeE116128b9AAAdBcd1f7C18608C5114f594cf5D6",
+    "GLP_MANAGER_ADDRESS": "0x3963FfC9dff443c2A94f21b129D429891E32ec18",
+    "CONFIG_STORAGE_ADDRESS": "0xF4F7123fFe42c4C90A4bCDD2317D397E0B7d7cc0",
+    "PERP_STORAGE_ADDRESS": "0x97e94BdA44a2Df784Ab6535aaE2D62EFC6D2e303",
+    "VAULT_STORAGE_ADDRESS": "0x56CC5A9c0788e674f17F7555dC8D3e2F1C0313C0",
+    "DIX_PRICE_ADAPTER_ADDRESS": "0x222918d230c5A29F334fFb3020aD57b8CeBD1B82",
+    "GM_BTC_PRICE_ADAPTER_ADDRESS": "0x85680bba8a94c9be1DDd7Be802885DFCe95F8164",
+    "GM_ETH_PRICE_ADAPTER_ADDRESS": "0x700083c72eBc86CbFc865830F5706a2DbC392f26",
+    "TRADE_HELPER_ADDRESS": "0x963Cbe4cFcDC58795869be74b80A328b022DE00C",
+    "ONCHAIN_PRICELENS_ADDRESS": "0x7D8eAa8dF02526c711F4ff1f97F6c5324212DBBa",
+    "CALCULATOR_ADDRESS": "0x0FdE910552977041Dc8c7ef652b5a07B40B9e006",
+  }
+}
 
 # ------ ABI Path ------
 ERC20_ABI_PATH = "abis/ERC20.json"
@@ -82,137 +86,6 @@ MARKET_ICP_USD = 47
 MARKET_MANTA_USD = 48
 MARKET_STRK_USD = 49
 MARKET_PYTH_USD = 50
-
-# ------ Token Profiles ------
-TOKEN_PROFILE = {
-  "USDC.e": {
-    "symbol": "USDC.e",
-    "address": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
-    "decimals": 6
-  },
-  "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8": {
-    "symbol": "USDC.e",
-    "address": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
-    "decimals": 6
-  },
-  "USDT": {
-    "symbol": "USDT",
-    "address": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
-    "decimals": 6
-  },
-  "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9": {
-    "symbol": "USDT",
-    "address": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
-    "decimals": 6
-  },
-  "DAI": {
-    "symbol": "DAI",
-    "address": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
-    "decimals": 18
-  },
-  "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1": {
-    "symbol": "DAI",
-    "address": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
-    "decimals": 18
-  },
-  "WETH": {
-    "symbol": "WETH",
-    "address": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
-    "decimals": 18
-  },
-  "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1": {
-    "symbol": "WETH",
-    "address": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
-    "decimals": 18
-  },
-  "WBTC": {
-    "symbol": "WBTC",
-    "address": "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
-    "decimals": 8
-  },
-  "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f": {
-    "symbol": "WBTC",
-    "address": "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
-    "decimals": 8
-  },
-  "sGLP": {
-    "symbol": "sGLP",
-    "address": "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf",
-    "decimals": 18
-  },
-  "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf": {
-    "symbol": "sGLP",
-    "address": "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf",
-    "decimals": 18
-  },
-  "ARB": {
-    "symbol": "ARB",
-    "address": "0x912CE59144191C1204E64559FE8253a0e49E6548",
-    "decimals": 18
-  },
-  "0x912CE59144191C1204E64559FE8253a0e49E6548": {
-    "symbol": "ARB",
-    "address": "0x912CE59144191C1204E64559FE8253a0e49E6548",
-    "decimals": 18
-  },
-  "wstETH": {
-    "symbol": "wstETH",
-    "address": "0x5979D7b546E38E414F7E9822514be443A4800529",
-    "decimals": 18
-  },
-  "0x5979D7b546E38E414F7E9822514be443A4800529": {
-    "symbol": "wstETH",
-    "address": "0x5979D7b546E38E414F7E9822514be443A4800529",
-    "decimals": 18
-  },
-  "USDC": {
-    "symbol": "USDC",
-    "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
-    "decimals": 6
-  },
-  "0xaf88d065e77c8cC2239327C5EDb3A432268e5831": {
-    "symbol": "USDC",
-    "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
-    "decimals": 6
-  },
-  "gmBTC": {
-    "symbol": "gmBTC",
-    "address": "0x47c031236e19d024b42f8AE6780E44A573170703",
-    "decimals": 18
-  },
-  "0x47c031236e19d024b42f8AE6780E44A573170703": {
-    "symbol": "gmBTC",
-    "address": "0x47c031236e19d024b42f8AE6780E44A573170703",
-    "decimals": 18
-  },
-  "gmETH": {
-    "symbol": "gmETH",
-    "address": "0x70d95587d40A2caf56bd97485aB3Eec10Bee6336",
-    "decimals": 18
-  },
-  "0x70d95587d40A2caf56bd97485aB3Eec10Bee6336": {
-    "symbol": "gmETH",
-    "address": "0x70d95587d40A2caf56bd97485aB3Eec10Bee6336",
-    "decimals": 18
-  },
-}
-
-# ------ Collaterals ------
-COLLATERAL_USDCe = TOKEN_PROFILE["USDC.e"]["address"]
-COLLATERAL_USDT = TOKEN_PROFILE["USDT"]["address"]
-COLLATERAL_DAI = TOKEN_PROFILE["DAI"]["address"]
-COLLATERAL_WETH = TOKEN_PROFILE["WETH"]["address"]
-COLLATERAL_WBTC = TOKEN_PROFILE["WBTC"]["address"]
-COLLATERAL_sGLP = TOKEN_PROFILE["sGLP"]["address"]
-COLLATERAL_ARB = TOKEN_PROFILE["ARB"]["address"]
-COLLATERAL_wstETH = TOKEN_PROFILE["wstETH"]["address"]
-COLLATERAL_USDC = TOKEN_PROFILE["USDC"]["address"]
-COLLATERAL_gmBTC = TOKEN_PROFILE["gmBTC"]["address"]
-COLLATERAL_gmETH = TOKEN_PROFILE["gmETH"]["address"]
-
-COLLATERALS = [COLLATERAL_USDCe, COLLATERAL_USDT, COLLATERAL_DAI,
-               COLLATERAL_WETH, COLLATERAL_WBTC, COLLATERAL_sGLP, COLLATERAL_ARB,
-               COLLATERAL_wstETH, COLLATERAL_USDC, COLLATERAL_gmBTC, COLLATERAL_gmETH]
 
 # ------ Assets ------
 ASSET_ETH = "ETH"
@@ -285,20 +158,146 @@ ASSETS = [ASSET_ETH, ASSET_BTC, ASSET_AAPL, ASSET_JPY, ASSET_XAU, ASSET_AMZN,
           ASSET_INJ, ASSET_DOT, ASSET_SEI, ASSET_ATOM, ASSET_1000SHIB, ASSET_1000PEPE,
           ASSET_ICP, ASSET_MANTA, ASSET_STRK, ASSET_PYTH]
 
-# ------ Asset IDs Map ----
-COLLATERAL_ASSET_ID_MAP = {
-  COLLATERAL_USDCe: ASSET_USDC,
-  COLLATERAL_USDT: ASSET_USDT,
-  COLLATERAL_DAI: ASSET_DAI,
-  COLLATERAL_WETH: ASSET_ETH,
-  COLLATERAL_WBTC: ASSET_BTC,
-  COLLATERAL_sGLP: ASSET_GLP,
-  COLLATERAL_ARB: ASSET_ARB,
-  COLLATERAL_wstETH: ASSET_wstETH,
-  COLLATERAL_USDC: ASSET_USDC,
-  COLLATERAL_gmBTC: ASSET_gmBTC,
-  COLLATERAL_gmETH: ASSET_gmETH,
+
+# ------ Token Profiles ------
+TOKEN_PROFILE = {
+  # Arbitrum One
+  42161: {
+    "USDC.e": {
+      "symbol": "USDC.e",
+      "address": "0xB853c09b6d03098b841300daD57701ABcFA80228",
+      "asset": ASSET_USDC,
+      "decimals": 6
+    },
+    "0xB853c09b6d03098b841300daD57701ABcFA80228": {
+      "symbol": "USDC.e",
+      "address": "0xB853c09b6d03098b841300daD57701ABcFA80228",
+      "asset": ASSET_USDC,
+      "decimals": 6
+    },
+    "USDT": {
+      "symbol": "USDT",
+      "address": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+      "asset": ASSET_USDT,
+      "decimals": 6
+    },
+    "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9": {
+      "symbol": "USDT",
+      "address": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+      "asset": ASSET_USDT,
+      "decimals": 6
+    },
+    "DAI": {
+      "symbol": "DAI",
+      "address": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+      "asset": ASSET_DAI,
+      "decimals": 18
+    },
+    "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1": {
+      "symbol": "DAI",
+      "address": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+      "asset": ASSET_DAI,
+      "decimals": 18
+    },
+    "WETH": {
+      "symbol": "WETH",
+      "address": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+      "asset": ASSET_ETH,
+      "decimals": 18
+    },
+    "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1": {
+      "symbol": "WETH",
+      "address": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+      "asset": ASSET_ETH,
+      "decimals": 18
+    },
+    "WBTC": {
+      "symbol": "WBTC",
+      "address": "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
+      "asset": ASSET_BTC,
+      "decimals": 8
+    },
+    "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f": {
+      "symbol": "WBTC",
+      "address": "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
+      "asset": ASSET_BTC,
+      "decimals": 8
+    },
+    "sGLP": {
+      "symbol": "sGLP",
+      "address": "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf",
+      "asset": ASSET_GLP,
+      "decimals": 18
+    },
+    "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf": {
+      "symbol": "sGLP",
+      "address": "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf",
+      "asset": ASSET_GLP,
+      "decimals": 18
+    },
+    "ARB": {
+      "symbol": "ARB",
+      "address": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+      "asset": ASSET_ARB,
+      "decimals": 18
+    },
+    "0x912CE59144191C1204E64559FE8253a0e49E6548": {
+      "symbol": "ARB",
+      "address": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+      "asset": ASSET_ARB,
+      "decimals": 18
+    },
+    "wstETH": {
+      "symbol": "wstETH",
+      "address": "0x5979D7b546E38E414F7E9822514be443A4800529",
+      "asset": ASSET_wstETH,
+      "decimals": 18
+    },
+    "0x5979D7b546E38E414F7E9822514be443A4800529": {
+      "symbol": "wstETH",
+      "address": "0x5979D7b546E38E414F7E9822514be443A4800529",
+      "asset": ASSET_wstETH,
+      "decimals": 18
+    },
+    "USDC": {
+      "symbol": "USDC",
+      "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+      "asset": ASSET_USDC,
+      "decimals": 6
+    },
+    "0xaf88d065e77c8cC2239327C5EDb3A432268e5831": {
+      "symbol": "USDC",
+      "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+      "asset": ASSET_USDC,
+      "decimals": 6
+    },
+    "gmBTC": {
+      "symbol": "gmBTC",
+      "address": "0x47c031236e19d024b42f8AE6780E44A573170703",
+      "asset": ASSET_gmBTC,
+      "decimals": 18
+    },
+    "0x47c031236e19d024b42f8AE6780E44A573170703": {
+      "symbol": "gmBTC",
+      "address": "0x47c031236e19d024b42f8AE6780E44A573170703",
+      "asset": ASSET_gmBTC,
+      "decimals": 18
+    },
+    "gmETH": {
+      "symbol": "gmETH",
+      "address": "0x70d95587d40A2caf56bd97485aB3Eec10Bee6336",
+      "asset": ASSET_gmETH,
+      "decimals": 18
+    },
+    "0x70d95587d40A2caf56bd97485aB3Eec10Bee6336": {
+      "symbol": "gmETH",
+      "address": "0x70d95587d40A2caf56bd97485aB3Eec10Bee6336",
+      "asset": ASSET_gmETH,
+      "decimals": 18
+    },
+  }
 }
+
 
 DELISTED_MARKET = [
     MARKET_AAPL_USD,
@@ -572,6 +571,7 @@ MARKET_PROFILE = {
 
 # Address
 ADDRESS_ZERO = "0x0000000000000000000000000000000000000000"
+BYTE_ZERO = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
 # Math
 MAX_UINT = 2 ** 256 - 1

@@ -34,5 +34,6 @@ htmlcov/
 
 # Local testing
 test_local.py
+test_constant.py
 
 .pypirc

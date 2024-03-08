@@ -1,16 +1,20 @@
 from web3 import Web3
-from hmx2.constants import (
-  BYTE_ZERO,
+from hmx2.constants.contracts import (
   VAULT_STORAGE_ABI_PATH,
   PERP_STORAGE_ABI_PATH,
   CONFIG_STORAGE_ABI_PATH,
   TRADE_HELPER_ABI_PATH,
-  CALCULATOR_ABI_PATH,
+  CALCULATOR_ABI_PATH
+)
+from hmx2.constants.markets import (
+    MARKET_PROFILE,
+    DELISTED_MARKET
+)
+from hmx2.constants.common import (
+  BYTE_ZERO,
   HOURS,
   DAYS,
-  YEARS,
-  MARKET_PROFILE,
-  DELISTED_MARKET,
+  YEARS
 )
 from hmx2.helpers.contract_loader import load_contract
 from hmx2.helpers.mapper import (

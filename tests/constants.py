@@ -1,5 +1,5 @@
 import os
-from hmx2.constants import (
+from hmx2.constants.assets import (
   ASSET_ETH,
   ASSET_BTC,
   ASSET_AAPL,

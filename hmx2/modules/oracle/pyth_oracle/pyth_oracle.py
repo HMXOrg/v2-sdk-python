@@ -1,6 +1,8 @@
 from typing import List
-from .constants import PRICE_FEED_IDS
-from .constants import GET_LATEST_PRICE_FEEDS_ENDPOINT
+from hmx2.constants.pricefeed import (
+  PRICE_FEED_IDS,
+  GET_LATEST_PRICE_FEEDS_ENDPOINT
+)
 import requests
 from urllib.parse import urljoin
 

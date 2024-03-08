@@ -1,9 +1,9 @@
 from web3 import Web3, Account
-from hmx2.constants import (
-  DEFAULT_PYTH_PRICE_SERVICE_URL,
-  ASSET_BTC,
-  ASSET_ETH,
-  ASSET_USDC,
+from hmx2.constants.pricefeed import DEFAULT_PYTH_PRICE_SERVICE_URL
+from hmx2.constants.assets import (
+    ASSET_BTC,
+    ASSET_ETH,
+    ASSET_USDC
 )
 from hmx2.helpers.mapper import get_contract_address
 from hmx2.modules.private import Private

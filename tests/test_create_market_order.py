@@ -10,15 +10,16 @@ from tests.constants import DEFAULT_FORK_BLOCK
 from tests.constants import DEFAULT_PUBLIC_ADDRESS
 from tests.constants import DEFAULT_KEY
 from tests.constants import UNISWAP_SWAP_ROUTER_02_ADDRESS
-from hmx2.constants import ASSET_USDC
-from hmx2.constants import ASSET_USDT
-from hmx2.constants import ASSET_DAI
-from hmx2.constants import ASSET_ETH
-from hmx2.constants import ASSET_BTC
-from hmx2.constants import ASSET_ARB
-from hmx2.constants import COLLATERAL_WETH
-from hmx2.constants import COLLATERAL_USDCe
-from hmx2.constants import MARKET_ETH_USD
+from hmx2.constants.assets import (
+  ASSET_USDC,
+  ASSET_USDT,
+  ASSET_DAI,
+  ASSET_ETH,
+  ASSET_BTC,
+  ASSET_ARB
+)
+from hmx2.constants.markets import MARKET_ETH_USD
+from hmx2.helpers.mapper import get_collateral_address_asset_map
 from hmx2.hmx_client import Client
 import responses
 import pytest
@@ -45,6 +46,7 @@ class TestCreateMarketOrder:
       eth_private_key=DEFAULT_KEY,
       rpc_url=setup_tenderly_helper.rpc_url
     )
+    asset_map = get_collateral_address_asset_map(DEFAULT_CHAIN_ID)
     # mock pyth prices
     mock_pyth_price(DEFAULT_CHAIN_ID, ASSET_USDC, 1)
     mock_pyth_price(DEFAULT_CHAIN_ID, ASSET_USDT, 1)
@@ -68,11 +70,13 @@ class TestCreateMarketOrder:
       rpc_url=setup_tenderly_helper.rpc_url)
     # buy USDC.e
     action_helper.wrap_eth(10)
-    action_helper.approve(COLLATERAL_WETH, UNISWAP_SWAP_ROUTER_02_ADDRESS, 10)
+    action_helper.approve(
+      asset_map['WETH']['address'], UNISWAP_SWAP_ROUTER_02_ADDRESS, 10)
     action_helper.swapExactTokensForTokens(
-      COLLATERAL_WETH, COLLATERAL_USDCe, 500, 10)
+      asset_map['WETH']['address'], asset_map['USDC.e']['address'], 500, 10)
     # deposit USDC.e as collateral
-    client.private.deposit_erc20_collateral(0, COLLATERAL_USDCe, 1000)
+    client.private.deposit_erc20_collateral(
+      0, asset_map['USDC.e']['address'], 1000)
     # create long market order
     client.private.create_market_order(0, MARKET_ETH_USD, True, 1000, False)
     # execute the order

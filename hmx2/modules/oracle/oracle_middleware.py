@@ -3,7 +3,17 @@ from hmx2.modules.oracle.glp_oracle import GlpOracle
 from hmx2.modules.oracle.cix_oracle import CixOracle
 from hmx2.modules.oracle.gm_oracle import GmOracle
 from hmx2.modules.oracle.onchain_pricelens_oracle import OnchainPricelensOracle
-from hmx2.constants import ASSETS, MARKET_PROFILE, ASSET_gmBTC, ASSET_gmETH, ASSET_DIX, ASSET_GLP, ASSET_wstETH, ASSET_1000PEPE, ASSET_1000SHIB, ASSET_JPY
+from hmx2.constants.assets import (
+  ASSETS,
+  ASSET_gmBTC,
+  ASSET_gmETH,
+  ASSET_DIX,
+  ASSET_GLP,
+  ASSET_wstETH,
+  ASSET_1000PEPE,
+  ASSET_1000SHIB,
+  ASSET_JPY
+)
 from typing import List
 
 

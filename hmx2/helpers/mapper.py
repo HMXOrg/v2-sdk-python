@@ -1,7 +1,5 @@
-from hmx2.constants import (
-    TOKEN_PROFILE,
-    CONTRACT_ADDRESS
-)
+from hmx2.constants.tokens import TOKEN_PROFILE
+from hmx2.constants.contracts import CONTRACT_ADDRESS
 
 
 def get_collateral_address_asset_map(chain_id: int):

@@ -1,6 +1,6 @@
 from web3 import Web3, Account
 from web3.middleware import construct_sign_and_send_raw_middleware
-from hmx2.constants import TOKEN_PROFILE
+from hmx2.constants.tokens import TOKEN_PROFILE
 from hmx2.helpers.contract_loader import load_contract
 from tests.constants import UNISWAP_SWAP_ROUTER_02_ADDRESS
 

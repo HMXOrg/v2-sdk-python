@@ -1,4 +1,5 @@
-from hmx2.constants import (
+# ------ Pyth Network ------
+from hmx2.constants.assets import (
   ASSET_ETH,
   ASSET_BTC,
   ASSET_AAPL,
@@ -57,6 +58,8 @@ from hmx2.constants import (
   ASSET_PYTH,
   ASSET_wstETH,
 )
+DEFAULT_PYTH_PRICE_SERVICE_URL = "https://hermes.pyth.network"
+
 
 GET_LATEST_PRICE_FEEDS_ENDPOINT = "api/latest_price_feeds"
 

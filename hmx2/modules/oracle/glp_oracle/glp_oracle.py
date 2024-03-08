@@ -1,7 +1,7 @@
 from web3 import Web3
 from hmx2.helpers.contract_loader import load_contract
-from hmx2.constants import GLP_MANAGER_ABI_PATH
-from hmx2.constants import ASSET_GLP
+from hmx2.constants.contracts import GLP_MANAGER_ABI_PATH
+from hmx2.constants.assets import ASSET_GLP
 from hmx2.helpers.mapper import get_contract_address
 
 

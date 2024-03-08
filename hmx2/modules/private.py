@@ -2,14 +2,16 @@ from web3 import Web3, Account
 from web3.middleware.signing import construct_sign_and_send_raw_middleware
 from web3.logs import DISCARD
 from time import sleep
-from hmx2.constants import (
+from hmx2.constants.contracts import (
   CROSS_MARGIN_HANDLER_ABI_PATH,
   LIMIT_TRADE_HANDLER_ABI_PATH,
   VAULT_STORAGE_ABI_PATH,
   PERP_STORAGE_ABI_PATH,
   CONFIG_STORAGE_ABI_PATH,
   ERC20_ABI_PATH,
-  CALCULATOR_ABI_PATH,
+  CALCULATOR_ABI_PATH
+)
+from hmx2.constants.common import (
   ADDRESS_ZERO,
   MAX_UINT,
   EXECUTION_FEE,

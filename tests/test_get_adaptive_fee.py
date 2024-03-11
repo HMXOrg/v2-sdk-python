@@ -6,7 +6,7 @@ from tests.constants import DEFAULT_CHAIN_ID
 from tests.constants import DEFAULT_FORK_BLOCK
 from tests.constants import DEFAULT_PUBLIC_ADDRESS
 from tests.constants import DEFAULT_KEY
-from hmx2.constants import MARKET_SOL_USD
+from hmx2.constants.markets import MARKET_SOL_USD
 from hmx2.hmx_client import Client
 import pytest
 
@@ -32,5 +32,6 @@ class TestCreateMarketOrder:
       eth_private_key=DEFAULT_KEY,
       rpc_url=setup_tenderly_helper.rpc_url,
     )
-    fee = client.public.get_adaptive_fee(100000 * (10**30) , MARKET_SOL_USD, True)
+    fee = client.public.get_adaptive_fee(
+      100000 * (10**30), MARKET_SOL_USD, True)
     assert True

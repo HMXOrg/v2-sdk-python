@@ -1,31 +1,31 @@
 from web3 import Web3, Account
 from web3.middleware.signing import construct_sign_and_send_raw_middleware
 from web3.logs import DISCARD
-from hmx2.constants import (
-  TOKEN_PROFILE,
-  COLLATERAL_WETH,
-    MULTICALL_ADDRESS,
-    CROSS_MARGIN_HANDLER_ADDRESS,
-    LIMIT_TRADE_HANDLER_ADDRESS,
-    VAULT_STORAGE_ADDRESS,
-    PERP_STORAGE_ADDRESS,
-    CONFIG_STORAGE_ADDRESS,
-    CROSS_MARGIN_HANDLER_ABI_PATH,
-    LIMIT_TRADE_HANDLER_ABI_PATH,
-    VAULT_STORAGE_ABI_PATH,
-    PERP_STORAGE_ABI_PATH,
-    CONFIG_STORAGE_ABI_PATH,
-    ERC20_ABI_PATH,
-    COLLATERALS,
-    COLLATERAL_ASSET_ID_MAP,
-    ADDRESS_ZERO,
-    MAX_UINT,
-    EXECUTION_FEE,
-    BPS,
+from time import sleep
+from hmx2.constants.contracts import (
+  CROSS_MARGIN_HANDLER_ABI_PATH,
+  LIMIT_TRADE_HANDLER_ABI_PATH,
+  VAULT_STORAGE_ABI_PATH,
+  PERP_STORAGE_ABI_PATH,
+  CONFIG_STORAGE_ABI_PATH,
+  ERC20_ABI_PATH,
+  CALCULATOR_ABI_PATH
+)
+from hmx2.constants.common import (
+  ADDRESS_ZERO,
+  MAX_UINT,
+  EXECUTION_FEE,
+  BPS,
 )
 from hmx2.enum import Cmd
 from hmx2.helpers.contract_loader import load_contract
-from simple_multicall import Multicall
+from simple_multicall_v6 import Multicall
+from hmx2.helpers.mapper import (
+  get_contract_address,
+  get_token_profile,
+  get_collateral_address_asset_map,
+  get_collateral_address_list
+)
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from eth_abi.abi import encode
 import decimal
@@ -44,17 +44,27 @@ class Private(object):
     self.oracle_middleware = oracle_middleware
     self.eth_provider.middleware_onion.add(
       construct_sign_and_send_raw_middleware(self.eth_signer))
+    self.contract_address = get_contract_address(chain_id)
+    self.collateral_address_asset_map = get_collateral_address_asset_map(
+      chain_id)
+    self.collateral_address_list = get_collateral_address_list(chain_id)
+    self.token_profile = get_token_profile(chain_id)
     # load contract
     self.limit_trade_handler_instance = load_contract(
-      self.eth_provider, LIMIT_TRADE_HANDLER_ADDRESS, LIMIT_TRADE_HANDLER_ABI_PATH)
+      self.eth_provider, self.contract_address["LIMIT_TRADE_HANDLER_ADDRESS"], LIMIT_TRADE_HANDLER_ABI_PATH)
     self.perp_storage_instance = load_contract(
-      self.eth_provider, PERP_STORAGE_ADDRESS, PERP_STORAGE_ABI_PATH)
+      self.eth_provider, self.contract_address["PERP_STORAGE_ADDRESS"], PERP_STORAGE_ABI_PATH)
     self.config_storage_instance = load_contract(
-      self.eth_provider, CONFIG_STORAGE_ADDRESS, CONFIG_STORAGE_ABI_PATH)
+      self.eth_provider, self.contract_address["CONFIG_STORAGE_ADDRESS"], CONFIG_STORAGE_ABI_PATH)
     self.vault_storage_instance = load_contract(
-      self.eth_provider, VAULT_STORAGE_ADDRESS, VAULT_STORAGE_ABI_PATH)
+      self.eth_provider, self.contract_address["VAULT_STORAGE_ADDRESS"], VAULT_STORAGE_ABI_PATH)
+    self.cross_margin_handler_instance = load_contract(
+      self.eth_provider, self.contract_address["CROSS_MARGIN_HANDLER_ADDRESS"], CROSS_MARGIN_HANDLER_ABI_PATH)
+    self.calculator_instance = load_contract(
+      self.eth_provider, self.contract_address["CALCULATOR_ADDRESS"], CALCULATOR_ABI_PATH
+    )
     self.multicall_instance = Multicall(w3=self.eth_provider,
-                                        chain='arbitrum', custom_address=MULTICALL_ADDRESS)
+                                        custom_address=self.contract_address["MULTICALL_ADDRESS"])
 
   def get_public_address(self):
     '''
@@ -71,20 +81,21 @@ class Private(object):
           "traderBalances",
           [self.eth_signer.address, collateral],
       )
-      for collateral in COLLATERALS
+      for collateral in self.collateral_address_list
     ]
     collateral_usd = [
-      self.oracle_middleware.get_price(COLLATERAL_ASSET_ID_MAP[collateral])
-      for collateral in COLLATERALS
+      self.oracle_middleware.get_price(
+        self.collateral_address_asset_map[collateral])
+      for collateral in self.collateral_address_list
     ]
 
     results = self.multicall_instance.call(calls)
 
     ret = {}
-    for index, collateral in enumerate(COLLATERALS):
+    for index, collateral in enumerate(self.collateral_address_list):
       amount = int(
-          results[1][index].hex(), 16) / 10 ** TOKEN_PROFILE[collateral]["decimals"]
-      ret[TOKEN_PROFILE[collateral]["symbol"]] = {
+          results[1][index].hex(), 16) / 10 ** self.token_profile[collateral]["decimals"]
+      ret[self.token_profile[collateral]["symbol"]] = {
         'amount': amount,
         'value_usd': amount * collateral_usd[index]
       }
@@ -104,13 +115,16 @@ class Private(object):
     :param amount: required
     :type amount: float
     '''
-    if token_address not in COLLATERALS:
+    if token_address not in self.collateral_address_list:
       raise Exception("Invalid collateral address")
     self.__check_sub_account_id_param(sub_account_id)
 
-    amount_wei = amount * 10 ** TOKEN_PROFILE[token_address]["decimals"]
+    amount_wei = int(
+      amount * 10 ** self.token_profile[token_address]["decimals"])
     token_instance = load_contract(
       self.eth_provider, token_address, ERC20_ABI_PATH)
+
+    CROSS_MARGIN_HANDLER_ADDRESS = self.contract_address["CROSS_MARGIN_HANDLER_ADDRESS"]
 
     allowance = token_instance.functions.allowance(
         self.eth_signer.address, CROSS_MARGIN_HANDLER_ADDRESS).call()
@@ -118,14 +132,44 @@ class Private(object):
       token_instance.functions.approve(
           CROSS_MARGIN_HANDLER_ADDRESS, amount_wei).transact({"from": self.eth_signer.address})
 
-    cross_margin_handler_instance = load_contract(
-      self.eth_provider, CROSS_MARGIN_HANDLER_ADDRESS, CROSS_MARGIN_HANDLER_ABI_PATH)
-    return cross_margin_handler_instance.functions.depositCollateral(
+    return self.cross_margin_handler_instance.functions.depositCollateral(
       sub_account_id,
       token_address,
       amount_wei,
       False
     ).transact({"from": self.eth_signer.address})
+
+  def withdraw_collateral(self, sub_account_id: int, token_address: str, amount: float, wrap: bool = False):
+    '''
+    Withdraw ERC20 token as collateral.
+
+    :param sub_account_id: required
+    :type sub_account_id: int between 0 and 255
+
+    :param token_address: required
+    :type token_address: str in list COLLATERALS
+
+    :param amount: required
+    :type amount: float
+    '''
+    if token_address not in self.collateral_address_list:
+      raise Exception("Invalid collateral address")
+    self.__check_sub_account_id_param(sub_account_id)
+    wrap = wrap if self.token_profile[token_address]['symbol'] == "WETH" else False
+
+    amount_wei = int(
+      amount * 10 ** self.token_profile[token_address]["decimals"])
+
+    transact_param = {"value": EXECUTION_FEE, "from": self.eth_signer.address,
+                      "gas": 10000000} if self.chain_id == 421614 else {"value": EXECUTION_FEE, "from": self.eth_signer.address}
+
+    return self.cross_margin_handler_instance.functions.createWithdrawCollateralOrder(
+      sub_account_id,
+      token_address,
+      amount_wei,
+      EXECUTION_FEE,
+      wrap
+    ).transact(transact_param)
 
   def deposit_eth_collateral(self, sub_account_id: int, amount: float):
     '''
@@ -139,13 +183,11 @@ class Private(object):
     '''
     self.__check_sub_account_id_param(sub_account_id)
 
-    amount_wei = amount * 10 ** 18
+    amount_wei = int(amount * 10 ** 18)
 
-    cross_margin_handler_instance = load_contract(
-      self.eth_provider, CROSS_MARGIN_HANDLER_ADDRESS, CROSS_MARGIN_HANDLER_ABI_PATH)
-    return cross_margin_handler_instance.functions.depositCollateral(
+    return self.cross_margin_handler_instance.functions.depositCollateral(
       sub_account_id,
-      COLLATERAL_WETH,
+      self.token_profile['WETH']['address'],
       amount_wei,
       True
     ).transact({"from": self.eth_signer.address, "value": amount_wei})
@@ -154,19 +196,19 @@ class Private(object):
     '''
     Post a market order
 
-    :param sub_account_id: requied
+    :param sub_account_id: required
     :type sub_account_id: int between 0 and 255
 
-    :param market_index: requied
+    :param market_index: required
     :type market_index: int in list MARKET
 
-    :param buy: requied
+    :param buy: required
     :type buy: bool
 
     :param size: required
     :type size: float
 
-    :param reduce_only: requied
+    :param reduce_only: required
     :type reduce_only: bool
 
     :param tp_token
@@ -189,6 +231,10 @@ class Private(object):
     tx = self.__create_order_batch(
       self.eth_signer.address, sub_account_id, [order]
     )
+
+    # wait for transaction to be complete
+    self.eth_provider.eth.wait_for_transaction_receipt(tx)
+
     events = self.__parse_log(tx, "LogCreateLimitOrder")
     args = {}
     args["tx"] = events[0]["transactionHash"]
@@ -199,13 +245,13 @@ class Private(object):
     '''
     Post a trigger order
 
-    :param sub_account_id: requied
+    :param sub_account_id: required
     :type sub_account_id: int between 0 and 255
 
-    :param market_index: requied
+    :param market_index: required
     :type market_index: int in list MARKET
 
-    :param buy: requied
+    :param buy: required
     :type buy: bool
 
     :param size: required
@@ -214,10 +260,10 @@ class Private(object):
     :param trigger_price: required
     :type trigger_price: float
 
-    :param trigger_above_threshold: requied
+    :param trigger_above_threshold: required
     :type trigger_above_threshold: bool
 
-    :param reduce_only: requied
+    :param reduce_only: required
     :type reduce_only: bool
 
     :param tp_token
@@ -242,6 +288,9 @@ class Private(object):
     tx = self.__create_order_batch(
       self.eth_signer.address, sub_account_id, [order]
     )
+
+    self.eth_provider.eth.wait_for_transaction_receipt(tx)
+
     events = self.__parse_log(tx, "LogCreateLimitOrder")
     args = {}
     args["tx"] = events[0]["transactionHash"]
@@ -252,13 +301,13 @@ class Private(object):
     '''
     Update a trigger order
 
-    :param sub_account_id: requied
+    :param sub_account_id: required
     :type sub_account_id: int between 0 and 255
 
-    :param order_index: requied
+    :param order_index: required
     :type order_index: int
 
-    :param buy: requied
+    :param buy: required
     :type buy: bool
 
     :param size: required
@@ -267,13 +316,13 @@ class Private(object):
     :param trigger_price: required
     :type trigger_price: float
 
-    :param trigger_above_threshold: requied
+    :param trigger_above_threshold: required
     :type trigger_above_threshold: bool
 
-    :param reduce_only: requied
+    :param reduce_only: required
     :type reduce_only: bool
 
-    :param tp_token: requied
+    :param tp_token: required
     :type tp_token: str in list COLLATERALS address
     '''
     size_delta = Web3.to_wei(size, "tether")
@@ -293,6 +342,9 @@ class Private(object):
     tx = self.__create_order_batch(
       self.eth_signer.address, sub_account_id, [order]
     )
+
+    self.eth_provider.eth.wait_for_transaction_receipt(tx)
+
     events = self.__parse_log(tx, "LogUpdateLimitOrder")
     args = {}
     args["tx"] = events[0]["transactionHash"]
@@ -303,10 +355,10 @@ class Private(object):
     '''
     Cancel a trigger order
 
-    :param sub_account_id: requied
+    :param sub_account_id: required
     :type sub_account_id: int between 0 and 255
 
-    :param order_index: requied
+    :param order_index: required
     :type order_index: int
     '''
     order = {
@@ -317,6 +369,9 @@ class Private(object):
     tx = self.__create_order_batch(
       self.eth_signer.address, sub_account_id, [order]
     )
+
+    self.eth_provider.eth.wait_for_transaction_receipt(tx)
+
     events = self.__parse_log(tx, "LogCancelLimitOrder")
     args = {}
     args["tx"] = events[0]["transactionHash"]

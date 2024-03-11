@@ -1,48 +1,52 @@
 from web3 import Web3
-from hmx2.constants import (
-  MULTICALL_ADDRESS,
-  VAULT_STORAGE_ADDRESS,
-  PERP_STORAGE_ADDRESS,
-  CONFIG_STORAGE_ADDRESS,
-  TRADE_HELPER_ADDRESS,
-  CALCULATOR_ADDRESS,
+from hmx2.constants.contracts import (
   VAULT_STORAGE_ABI_PATH,
   PERP_STORAGE_ABI_PATH,
   CONFIG_STORAGE_ABI_PATH,
   TRADE_HELPER_ABI_PATH,
-  CALCULATOR_ABI_PATH,
+  CALCULATOR_ABI_PATH
+)
+from hmx2.constants.markets import (
+    MARKET_PROFILE,
+    DELISTED_MARKET
+)
+from hmx2.constants.common import (
+  BYTE_ZERO,
   HOURS,
   DAYS,
-  YEARS,
-  MARKET_PROFILE,
-  DELISTED_MARKET,
+  YEARS
 )
 from hmx2.helpers.contract_loader import load_contract
+from hmx2.helpers.mapper import (
+  get_contract_address,
+)
+from hmx2.helpers.util import get_sub_account
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from hmx2.modules.calculator.calculator import Calculator
-from simple_multicall import Multicall
+from simple_multicall_v6 import Multicall
 from eth_abi.abi import decode
 from typing import List
 
 
 class Public(object):
-  def __init__(self, eth_provider: Web3, oracle_middleware: OracleMiddleware):
+  def __init__(self, chain_id: int, eth_provider: Web3, oracle_middleware: OracleMiddleware):
     self.eth_provider = eth_provider
     self.oracle_middleware = oracle_middleware
+    self.contract_address = get_contract_address(chain_id)
     self.perp_storage_instance = load_contract(
-      self.eth_provider, PERP_STORAGE_ADDRESS, PERP_STORAGE_ABI_PATH)
+      self.eth_provider, self.contract_address["PERP_STORAGE_ADDRESS"], PERP_STORAGE_ABI_PATH)
     self.config_storage_instance = load_contract(
-      self.eth_provider, CONFIG_STORAGE_ADDRESS, CONFIG_STORAGE_ABI_PATH)
+      self.eth_provider, self.contract_address["CONFIG_STORAGE_ADDRESS"], CONFIG_STORAGE_ABI_PATH)
     self.vault_storage_instance = load_contract(
-      self.eth_provider, VAULT_STORAGE_ADDRESS, VAULT_STORAGE_ABI_PATH)
+      self.eth_provider, self.contract_address["VAULT_STORAGE_ADDRESS"], VAULT_STORAGE_ABI_PATH)
     self.trade_helper_instance = load_contract(
-      self.eth_provider, TRADE_HELPER_ADDRESS, TRADE_HELPER_ABI_PATH
+      self.eth_provider, self.contract_address["TRADE_HELPER_ADDRESS"], TRADE_HELPER_ABI_PATH
     )
     self.calculator_instance = load_contract(
-      self.eth_provider, CALCULATOR_ADDRESS, CALCULATOR_ABI_PATH
+      self.eth_provider, self.contract_address["CALCULATOR_ADDRESS"], CALCULATOR_ABI_PATH
     )
     self.multicall_instance = Multicall(w3=self.eth_provider,
-                                        chain='arbitrum', custom_address=MULTICALL_ADDRESS)
+                                        custom_address=self.contract_address["MULTICALL_ADDRESS"])
 
   def __get_position(self, account: str, sub_account_id: int, market_index: int):
     position_id = self.get_position_id(account, sub_account_id, market_index)
@@ -75,10 +79,10 @@ class Public(object):
   def __get_all_position(self, account: str, sub_account_list: List[int]):
 
     if sub_account_list == []:
-      sub_account_list = list(map(lambda sub_account_id: self.get_sub_account(
+      sub_account_list = list(map(lambda sub_account_id: get_sub_account(
         account, sub_account_id), range(0, 256)))
     else:
-      sub_account_list = list(map(lambda sub_account_id: self.get_sub_account(
+      sub_account_list = list(map(lambda sub_account_id: get_sub_account(
        account, sub_account_id), sub_account_list))
 
     position_number_call = list(map(lambda sub_account_address: self.multicall_instance.create_call(
@@ -599,22 +603,10 @@ class Public(object):
 
     return market_info
 
-  def get_sub_account(self, account: str, sub_account_id: int):
-    '''Get address of sub_account
-
-      Args:
-        account: account address
-        sub_account_id: sub account number
-
-      Returns:
-        sub_account address
-    '''
-    return Web3.to_checksum_address(hex(int(account, 16) ^ sub_account_id))
-
   def get_position_id(self, account: str, sub_account_id: int, market_index: int):
     return Web3.solidity_keccak(
       ['address', 'uint256'],
-      [self.get_sub_account(account, sub_account_id), market_index]
+      [get_sub_account(account, sub_account_id), market_index]
     )
 
   def get_all_position_info(self, account: str, sub_account_id: List[int] = []):
@@ -752,3 +744,18 @@ class Public(object):
     fee = Web3.to_int(raw_fee)
 
     return fee
+
+  def get_equity(self, account: str, sub_account_id: int):
+    return self.calculator_instance.functions.getEquity(get_sub_account(account, sub_account_id), 0, BYTE_ZERO).call() / 10 ** 30
+
+  def get_leverage(self, account: str, sub_account_id: int):
+    equity = self.get_equity(account, sub_account_id)
+
+    if equity == 0:
+      return 0
+
+    positions = self.get_all_position_info(account, [sub_account_id])
+
+    sizes = sum(map(lambda position: abs(position["position_size"]), positions))
+
+    return sizes / equity

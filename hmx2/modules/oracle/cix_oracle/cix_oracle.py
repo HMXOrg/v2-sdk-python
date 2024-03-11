@@ -1,7 +1,7 @@
 from web3 import Web3
 from hmx2.helpers.contract_loader import load_contract
 from hmx2.modules.oracle.pyth_oracle import PythOracle
-from hmx2.constants import CIX_PRICE_ADAPTER_ABI_PATH
+from hmx2.constants.contracts import CIX_PRICE_ADAPTER_ABI_PATH
 
 
 class CixOracle(object):

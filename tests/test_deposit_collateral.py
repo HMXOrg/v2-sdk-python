@@ -1,12 +1,13 @@
 from hmx2 import Client
-from hmx2.constants import COLLATERAL_WETH
-from hmx2.constants import COLLATERAL_USDCe
-from hmx2.constants import ASSET_USDC
-from hmx2.constants import ASSET_USDT
-from hmx2.constants import ASSET_DAI
-from hmx2.constants import ASSET_ETH
-from hmx2.constants import ASSET_BTC
-from hmx2.constants import ASSET_ARB
+from hmx2.constants.assets import (
+  ASSET_USDC,
+  ASSET_USDT,
+  ASSET_DAI,
+  ASSET_ETH,
+  ASSET_BTC,
+  ASSET_ARB
+)
+from hmx2.helpers.mapper import get_collateral_address_asset_map
 from tests.constants import DEFAULT_PUBLIC_ADDRESS
 from tests.constants import DEFAULT_KEY
 from tests.constants import DEFAULT_CHAIN_ID
@@ -44,10 +45,13 @@ class TestDepositCollateral:
       eth_private_key=DEFAULT_KEY,
       rpc_url=setup_tenderly_helper.rpc_url
     )
+    asset_map = get_collateral_address_asset_map(DEFAULT_CHAIN_ID)
     with pytest.raises(Exception, match="Invalid sub account id"):
-      client.private.deposit_erc20_collateral(-1, COLLATERAL_USDCe, 1000)
+      client.private.deposit_erc20_collateral(-1,
+                                              asset_map['USDC.e']['address'], 1000)
     with pytest.raises(Exception, match="Invalid sub account id"):
-      client.private.deposit_erc20_collateral(256, COLLATERAL_USDCe, 1000)
+      client.private.deposit_erc20_collateral(
+        256, asset_map['USDC.e']['address'], 1000)
 
   @responses.activate
   def test_correctness_when_deposit_eth_collateral(self, setup_tenderly_helper: TenderlyHelper):
@@ -89,8 +93,9 @@ class TestDepositCollateral:
       rpc_url=setup_tenderly_helper.rpc_url,
       eth_private_key=DEFAULT_KEY
     )
+    asset_map = get_collateral_address_asset_map(DEFAULT_CHAIN_ID)
     action_helper.wrap_eth(10)
-    client.private.deposit_erc20_collateral(0, COLLATERAL_WETH, 10)
+    client.private.deposit_erc20_collateral(0, asset_map['WETH']['address'], 10)
     my_collaterals = client.private.get_collaterals(0)
     assert my_collaterals["WETH"]["amount"] == 10
     assert my_collaterals["WETH"]["value_usd"] == 18500
@@ -115,13 +120,16 @@ class TestDepositCollateral:
       rpc_url=setup_tenderly_helper.rpc_url,
       eth_private_key=DEFAULT_KEY
     )
+    asset_map = get_collateral_address_asset_map(DEFAULT_CHAIN_ID)
     # buy USDC.e
     action_helper.wrap_eth(10)
-    action_helper.approve(COLLATERAL_WETH, UNISWAP_SWAP_ROUTER_02_ADDRESS, 10)
+    action_helper.approve(
+      asset_map['WETH']['address'], UNISWAP_SWAP_ROUTER_02_ADDRESS, 10)
     action_helper.swapExactTokensForTokens(
-      COLLATERAL_WETH, COLLATERAL_USDCe, 500, 10)
+      asset_map['WETH']['address'], asset_map['USDC.e']['address'], 500, 10)
     # deposit USDC.e as collateral
-    client.private.deposit_erc20_collateral(0, COLLATERAL_USDCe, 1000)
+    client.private.deposit_erc20_collateral(
+      0, asset_map['USDC.e']['address'], 1000)
     my_collaterals = client.private.get_collaterals(0)
     assert my_collaterals["USDC.e"]["amount"] == 1000
     assert my_collaterals["USDC.e"]["value_usd"] == 1000

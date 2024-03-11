@@ -1,4 +1,4 @@
-from hmx2.constants import DAYS
+from hmx2.constants.common import DAYS
 
 
 class Calculator:

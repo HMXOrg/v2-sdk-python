@@ -4,18 +4,18 @@ LONG_DESCRIPTION = open('README.md').read()
 
 REQUIREMENTS = [
     'eth_keys',
-    'eth-account>=0.4.0,<0.6.0',
-    'eth-abi',
+    'eth-account==0.11.0',
+    'eth-abi>=4.0.0,<5.0.0',
     'uniswap-universal-router-decoder',
-    'web3>=5.0.0,<6.0.0',
-    'simple-multicall',
+    'web3>=6.0.0,<7.0.0',
+    'simple-multicall-v6',
     'responses',
     'python-dotenv>=1.0.0'
 ]
 
 setup(
     name='hmx-v2-python',
-    version='0.1.1',
+    version='1.0.0',
     packages=find_packages(),
     package_data={
       'hmx2': ['abis/*.json'],

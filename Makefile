@@ -9,4 +9,4 @@ build:
 	python3 setup.py sdist
 
 publish:
-	twine upload dist/*
+	python3 -m twine upload dist/*

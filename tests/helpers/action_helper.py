@@ -1,7 +1,7 @@
 from web3 import Web3, Account
 from web3.middleware import construct_sign_and_send_raw_middleware
-from hmx2.constants.tokens import TOKEN_PROFILE
 from hmx2.helpers.contract_loader import load_contract
+from hmx2.helpers.mapper import get_token_profile
 from tests.constants import UNISWAP_SWAP_ROUTER_02_ADDRESS
 
 
@@ -12,10 +12,11 @@ class ActionHelper(object):
     self.__w3.middleware_onion.add(
         construct_sign_and_send_raw_middleware(self.__eth_account)
     )
+    self.token_profile = get_token_profile(self.__w3.eth.chain_id)
 
   def wrap_eth(self, amount):
     weth_instance = load_contract(
-        self.__w3, TOKEN_PROFILE["WETH"]["address"], "../tests/abis/aeWETH.json"
+        self.__w3, self.token_profile["WETH"]["address"], "../tests/abis/aeWETH.json"
     )
     return weth_instance.functions.deposit().transact(
         {"from": self.__eth_account.address,

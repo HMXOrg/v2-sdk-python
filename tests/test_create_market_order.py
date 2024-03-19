@@ -19,7 +19,7 @@ from hmx2.constants.assets import (
   ASSET_ARB
 )
 from hmx2.constants.markets import MARKET_ETH_USD
-from hmx2.helpers.mapper import get_collateral_address_asset_map
+from hmx2.helpers.mapper import get_token_profile
 from hmx2.hmx_client import Client
 import responses
 import pytest
@@ -39,14 +39,14 @@ class TestCreateMarketOrder:
     yield tenderly_helper
     assert True
     # delete fork
-    # tenderly_helper.delete_fork()
+    tenderly_helper.delete_fork()
 
   def test_when_create_long_market_order(self, setup_tenderly_helper):
     client = Client(
       eth_private_key=DEFAULT_KEY,
       rpc_url=setup_tenderly_helper.rpc_url
     )
-    asset_map = get_collateral_address_asset_map(DEFAULT_CHAIN_ID)
+    asset_map = get_token_profile(DEFAULT_CHAIN_ID)
     # mock pyth prices
     mock_pyth_price(DEFAULT_CHAIN_ID, ASSET_USDC, 1)
     mock_pyth_price(DEFAULT_CHAIN_ID, ASSET_USDT, 1)

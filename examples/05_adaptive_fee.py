@@ -1,7 +1,7 @@
 import os
 import asyncio
 from hmx2.hmx_client import Client
-from hmx2.constants import MARKET_SOL_USD
+from hmx2.constants.markets import MARKET_SOL_USD
 from dotenv import load_dotenv
 
 load_dotenv()

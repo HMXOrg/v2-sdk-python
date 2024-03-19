@@ -1,7 +1,8 @@
 import os
 import asyncio
 from hmx2.hmx_client import Client
-from hmx2.constants import MARKET_ETH_USD, ADDRESS_ZERO
+from hmx2.constants.markets import MARKET_ETH_USD
+from hmx2.constants.common import ADDRESS_ZERO
 from hmx2.enum import Action
 from dotenv import load_dotenv
 

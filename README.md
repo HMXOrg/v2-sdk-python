@@ -18,7 +18,7 @@ The `Client` object contains two major attributes: Public and Private. As the na
 
 ```python
 from hmx2.hmx_client import Client
-from hmx2.constants import MARKET_ETH_USD
+from hmx2.constants.markets import MARKET_ETH_USD
 from hmx2.enum import Action
 
 #
@@ -43,8 +43,8 @@ client.public.get_position_info(some_account, some_sub_account_id, MARKET_ETH_US
 
 ```python
 from hmx2.hmx_client import Client
-from hmx2.constants import MARKET_ETH_USD
-from hmx2.constants import COLLATERAL_USDCe
+from hmx2.constants.markets import MARKET_ETH_USD
+from hmx2.constants.tokens import COLLATERAL_USDCe
 from hmx2.enum import Action
 
 #

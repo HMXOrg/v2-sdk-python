@@ -15,7 +15,7 @@ REQUIREMENTS = [
 
 setup(
     name='hmx-v2-python',
-    version='1.0.0',
+    version='1.0.1',
     packages=find_packages(),
     package_data={
       'hmx2': ['abis/*.json'],

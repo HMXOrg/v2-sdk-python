@@ -4,7 +4,7 @@ LONG_DESCRIPTION = open('README.md').read()
 
 REQUIREMENTS = [
     'eth_keys',
-    'eth-account==0.11.0',
+    'eth-account==0.10.0',
     'eth-abi>=4.0.0,<5.0.0',
     'uniswap-universal-router-decoder',
     'web3>=6.0.0,<7.0.0',

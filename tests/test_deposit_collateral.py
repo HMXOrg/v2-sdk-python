@@ -7,7 +7,7 @@ from hmx2.constants.assets import (
   ASSET_BTC,
   ASSET_ARB
 )
-from hmx2.helpers.mapper import get_collateral_address_asset_map
+from hmx2.helpers.mapper import get_token_profile
 from tests.constants import DEFAULT_PUBLIC_ADDRESS
 from tests.constants import DEFAULT_KEY
 from tests.constants import DEFAULT_CHAIN_ID
@@ -45,7 +45,7 @@ class TestDepositCollateral:
       eth_private_key=DEFAULT_KEY,
       rpc_url=setup_tenderly_helper.rpc_url
     )
-    asset_map = get_collateral_address_asset_map(DEFAULT_CHAIN_ID)
+    asset_map = get_token_profile(DEFAULT_CHAIN_ID)
     with pytest.raises(Exception, match="Invalid sub account id"):
       client.private.deposit_erc20_collateral(-1,
                                               asset_map['USDC.e']['address'], 1000)
@@ -93,7 +93,7 @@ class TestDepositCollateral:
       rpc_url=setup_tenderly_helper.rpc_url,
       eth_private_key=DEFAULT_KEY
     )
-    asset_map = get_collateral_address_asset_map(DEFAULT_CHAIN_ID)
+    asset_map = get_token_profile(DEFAULT_CHAIN_ID)
     action_helper.wrap_eth(10)
     client.private.deposit_erc20_collateral(0, asset_map['WETH']['address'], 10)
     my_collaterals = client.private.get_collaterals(0)
@@ -120,7 +120,7 @@ class TestDepositCollateral:
       rpc_url=setup_tenderly_helper.rpc_url,
       eth_private_key=DEFAULT_KEY
     )
-    asset_map = get_collateral_address_asset_map(DEFAULT_CHAIN_ID)
+    asset_map = get_token_profile(DEFAULT_CHAIN_ID)
     # buy USDC.e
     action_helper.wrap_eth(10)
     action_helper.approve(

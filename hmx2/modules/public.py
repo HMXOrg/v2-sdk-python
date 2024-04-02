@@ -117,28 +117,45 @@ class Public(object):
 
     for sub_account_id in sub_account_list:
       data_pop = data.pop(0)
-      (
-          raw_sub_account_position
-        ) = decode(
-            ['(address,uint256,uint256,uint256,uint256,uint256,int256,int256,int256,uint8)[]'],
-            data_pop
-        )
+      # backward compatibility on `getPositionBySubAccount`
+      raw_sub_account_position = {}
+      try:
+        (
+            raw_sub_account_position
+          ) = decode(
+              ['(address,uint256,uint256,uint256,uint256,uint256,int256,int256,int256,uint8)[]'],
+              data_pop
+          )
+      except:
+        (
+            raw_sub_account_position
+          ) = decode(
+              ['(address,uint256,uint256,uint256,uint256,uint256,int256,int256,int256,uint8,uint256)[]'],
+              data_pop
+          )
+
       raw_sub_account_position = [
         x for y in raw_sub_account_position for x in y]
 
       sub_account_position = []
-      for positon in raw_sub_account_position:
+      for position in raw_sub_account_position:
+        last_increase_size = None
+        try:
+          last_increase_size = position[10]
+        except:
+          pass
         _position = {
-          "primary_account": positon[0],
-          "market_index": positon[1],
-          "avg_entry_price_e30": positon[2],
-          "entry_borrowing_rate": positon[3],
-          "reserve_value_e30": positon[4],
-          "last_increase_timestamp": positon[5],
-          "position_size_e30": positon[6],
-          "realized_pnl": positon[7],
-          "last_funding_accrued": positon[8],
-          "sub_account_id": positon[9],
+          "primary_account": position[0],
+          "market_index": position[1],
+          "avg_entry_price_e30": position[2],
+          "entry_borrowing_rate": position[3],
+          "reserve_value_e30": position[4],
+          "last_increase_timestamp": position[5],
+          "position_size_e30": position[6],
+          "realized_pnl": position[7],
+          "last_funding_accrued": position[8],
+          "sub_account_id": position[9],
+          "last_increase_size": last_increase_size,
         }
         sub_account_position.append(_position)
 

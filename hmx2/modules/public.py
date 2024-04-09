@@ -18,7 +18,10 @@ from hmx2.constants.common import (
 )
 from hmx2.helpers.contract_loader import load_contract
 from hmx2.helpers.mapper import (
+  get_collateral_address_asset_map,
+  get_collateral_address_list,
   get_contract_address,
+  get_token_profile,
 )
 from hmx2.helpers.util import get_sub_account
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
@@ -30,6 +33,7 @@ from typing import List
 
 class Public(object):
   def __init__(self, chain_id: int, eth_provider: Web3, oracle_middleware: OracleMiddleware):
+    self.chain_id = chain_id
     self.eth_provider = eth_provider
     self.oracle_middleware = oracle_middleware
     self.contract_address = get_contract_address(chain_id)
@@ -776,3 +780,40 @@ class Public(object):
     sizes = sum(map(lambda position: abs(position["position_size"]), positions))
 
     return sizes / equity
+
+  def get_collaterals(self, account: str, sub_account_id: int):
+
+    sub_account_address = get_sub_account(account, sub_account_id)
+    collateral_address_list = get_collateral_address_list(self.chain_id)
+    collateral_address_asset_map = get_collateral_address_asset_map(
+      self.chain_id)
+    token_profile = get_token_profile(self.chain_id)
+
+    calls = [
+      self.multicall_instance.create_call(
+        self.vault_storage_instance,
+          "traderBalances",
+          [sub_account_address, collateral],
+      )
+      for collateral in collateral_address_list
+    ]
+
+    collateral_asset_ids_list = list(map(
+      lambda collateral: collateral_address_asset_map[collateral], collateral_address_list))
+
+    collateral_price_dict = self.oracle_middleware.get_multiple_price(
+        collateral_asset_ids_list
+      )
+
+    results = self.multicall_instance.call(calls)
+
+    ret = {}
+    for index, collateral in enumerate(collateral_address_list):
+      amount = int(
+          results[1][index].hex(), 16) / 10 ** token_profile[collateral]["decimals"]
+      ret[token_profile[collateral]["symbol"]] = {
+        'amount': amount,
+        'value_usd': amount * collateral_price_dict[token_profile[collateral]["asset"]]
+      }
+
+    return ret

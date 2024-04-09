@@ -66,42 +66,6 @@ class Private(object):
     self.multicall_instance = Multicall(w3=self.eth_provider,
                                         custom_address=self.contract_address["MULTICALL_ADDRESS"])
 
-  def get_public_address(self):
-    '''
-    Get the public address of the signer.
-    '''
-    return self.eth_signer.address
-
-  def get_collaterals(self, sub_account_id: int):
-    self.__check_sub_account_id_param(sub_account_id)
-
-    calls = [
-      self.multicall_instance.create_call(
-        self.vault_storage_instance,
-          "traderBalances",
-          [self.eth_signer.address, collateral],
-      )
-      for collateral in self.collateral_address_list
-    ]
-    collateral_usd = [
-      self.oracle_middleware.get_price(
-        self.collateral_address_asset_map[collateral])
-      for collateral in self.collateral_address_list
-    ]
-
-    results = self.multicall_instance.call(calls)
-
-    ret = {}
-    for index, collateral in enumerate(self.collateral_address_list):
-      amount = int(
-          results[1][index].hex(), 16) / 10 ** self.token_profile[collateral]["decimals"]
-      ret[self.token_profile[collateral]["symbol"]] = {
-        'amount': amount,
-        'value_usd': amount * collateral_usd[index]
-      }
-
-    return ret
-
   def deposit_erc20_collateral(self, sub_account_id: int, token_address: str, amount: float):
     '''
     Deposit ERC20 token as collateral.
@@ -442,10 +406,6 @@ class Private(object):
       ["uint256"],
       [order_index]
     )
-
-  def __check_sub_account_id_param(self, sub_account_id):
-    if sub_account_id not in range(0, 256):
-      raise Exception("Invalid sub account id")
 
   def __parse_log(self, tx, topic):
     receipt = self.eth_provider.eth.get_transaction_receipt(tx)

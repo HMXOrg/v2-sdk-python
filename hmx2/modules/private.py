@@ -411,3 +411,9 @@ class Private(object):
     receipt = self.eth_provider.eth.get_transaction_receipt(tx)
     return self.limit_trade_handler_instance.events[topic](
       ).process_receipt(receipt, DISCARD)
+
+  def get_public_address(self):
+    '''
+    Get the public address of the signer.
+    '''
+    return self.eth_signer.address

@@ -26,6 +26,7 @@ from hmx2.helpers.mapper import (
   get_collateral_address_asset_map,
   get_collateral_address_list
 )
+from hmx2.helpers.util import check_sub_account_id_param
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from eth_abi.abi import encode
 import decimal
@@ -81,7 +82,7 @@ class Private(object):
     '''
     if token_address not in self.collateral_address_list:
       raise Exception("Invalid collateral address")
-    self.__check_sub_account_id_param(sub_account_id)
+    check_sub_account_id_param(sub_account_id)
 
     amount_wei = int(
       amount * 10 ** self.token_profile[token_address]["decimals"])
@@ -118,7 +119,7 @@ class Private(object):
     '''
     if token_address not in self.collateral_address_list:
       raise Exception("Invalid collateral address")
-    self.__check_sub_account_id_param(sub_account_id)
+    check_sub_account_id_param(sub_account_id)
     wrap = wrap if self.token_profile[token_address]['symbol'] == "WETH" else False
 
     amount_wei = int(
@@ -145,7 +146,7 @@ class Private(object):
     :param amount: required
     :type amount: float
     '''
-    self.__check_sub_account_id_param(sub_account_id)
+    check_sub_account_id_param(sub_account_id)
 
     amount_wei = int(amount * 10 ** 18)
 
@@ -178,7 +179,7 @@ class Private(object):
     :param tp_token
     :type tp_token: str in list COLLATERALS address
     '''
-    self.__check_sub_account_id_param(sub_account_id)
+    check_sub_account_id_param(sub_account_id)
 
     order = {
       "cmd": Cmd.CREATE,

@@ -69,7 +69,8 @@ class TestDepositCollateral:
       rpc_url=setup_tenderly_helper.rpc_url
     )
     client.private.deposit_eth_collateral(0, 10)
-    my_collaterals = client.private.get_collaterals(0)
+    my_collaterals = client.public.get_collaterals(
+      client.private.get_public_address(), 0)
     assert my_collaterals["WETH"]["amount"] == 10
     assert my_collaterals["WETH"]["value_usd"] == 18500
 
@@ -96,7 +97,8 @@ class TestDepositCollateral:
     asset_map = get_token_profile(DEFAULT_CHAIN_ID)
     action_helper.wrap_eth(10)
     client.private.deposit_erc20_collateral(0, asset_map['WETH']['address'], 10)
-    my_collaterals = client.private.get_collaterals(0)
+    my_collaterals = client.public.get_collaterals(
+      client.private.get_public_address(), 0)
     assert my_collaterals["WETH"]["amount"] == 10
     assert my_collaterals["WETH"]["value_usd"] == 18500
 
@@ -130,6 +132,7 @@ class TestDepositCollateral:
     # deposit USDC.e as collateral
     client.private.deposit_erc20_collateral(
       0, asset_map['USDC.e']['address'], 1000)
-    my_collaterals = client.private.get_collaterals(0)
+    my_collaterals = client.public.get_collaterals(
+      client.private.get_public_address(), 0)
     assert my_collaterals["USDC.e"]["amount"] == 1000
     assert my_collaterals["USDC.e"]["value_usd"] == 1000

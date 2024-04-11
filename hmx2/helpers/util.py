@@ -17,4 +17,10 @@ def get_sub_account(account: str, sub_account_id: int):
     Returns:
       sub_account address
   '''
+  check_sub_account_id_param(sub_account_id)
   return Web3.to_checksum_address(hex(int(account, 16) ^ sub_account_id))
+
+
+def check_sub_account_id_param(sub_account_id: int):
+  if sub_account_id not in range(0, 256):
+    raise Exception("Invalid sub account id")

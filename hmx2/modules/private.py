@@ -26,6 +26,7 @@ from hmx2.helpers.mapper import (
   get_collateral_address_asset_map,
   get_collateral_address_list
 )
+from hmx2.helpers.util import check_sub_account_id_param
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from eth_abi.abi import encode
 import decimal
@@ -66,42 +67,6 @@ class Private(object):
     self.multicall_instance = Multicall(w3=self.eth_provider,
                                         custom_address=self.contract_address["MULTICALL_ADDRESS"])
 
-  def get_public_address(self):
-    '''
-    Get the public address of the signer.
-    '''
-    return self.eth_signer.address
-
-  def get_collaterals(self, sub_account_id: int):
-    self.__check_sub_account_id_param(sub_account_id)
-
-    calls = [
-      self.multicall_instance.create_call(
-        self.vault_storage_instance,
-          "traderBalances",
-          [self.eth_signer.address, collateral],
-      )
-      for collateral in self.collateral_address_list
-    ]
-    collateral_usd = [
-      self.oracle_middleware.get_price(
-        self.collateral_address_asset_map[collateral])
-      for collateral in self.collateral_address_list
-    ]
-
-    results = self.multicall_instance.call(calls)
-
-    ret = {}
-    for index, collateral in enumerate(self.collateral_address_list):
-      amount = int(
-          results[1][index].hex(), 16) / 10 ** self.token_profile[collateral]["decimals"]
-      ret[self.token_profile[collateral]["symbol"]] = {
-        'amount': amount,
-        'value_usd': amount * collateral_usd[index]
-      }
-
-    return ret
-
   def deposit_erc20_collateral(self, sub_account_id: int, token_address: str, amount: float):
     '''
     Deposit ERC20 token as collateral.
@@ -117,7 +82,7 @@ class Private(object):
     '''
     if token_address not in self.collateral_address_list:
       raise Exception("Invalid collateral address")
-    self.__check_sub_account_id_param(sub_account_id)
+    check_sub_account_id_param(sub_account_id)
 
     amount_wei = int(
       amount * 10 ** self.token_profile[token_address]["decimals"])
@@ -154,7 +119,7 @@ class Private(object):
     '''
     if token_address not in self.collateral_address_list:
       raise Exception("Invalid collateral address")
-    self.__check_sub_account_id_param(sub_account_id)
+    check_sub_account_id_param(sub_account_id)
     wrap = wrap if self.token_profile[token_address]['symbol'] == "WETH" else False
 
     amount_wei = int(
@@ -181,7 +146,7 @@ class Private(object):
     :param amount: required
     :type amount: float
     '''
-    self.__check_sub_account_id_param(sub_account_id)
+    check_sub_account_id_param(sub_account_id)
 
     amount_wei = int(amount * 10 ** 18)
 
@@ -214,7 +179,7 @@ class Private(object):
     :param tp_token
     :type tp_token: str in list COLLATERALS address
     '''
-    self.__check_sub_account_id_param(sub_account_id)
+    check_sub_account_id_param(sub_account_id)
 
     order = {
       "cmd": Cmd.CREATE,
@@ -443,11 +408,13 @@ class Private(object):
       [order_index]
     )
 
-  def __check_sub_account_id_param(self, sub_account_id):
-    if sub_account_id not in range(0, 256):
-      raise Exception("Invalid sub account id")
-
   def __parse_log(self, tx, topic):
     receipt = self.eth_provider.eth.get_transaction_receipt(tx)
     return self.limit_trade_handler_instance.events[topic](
       ).process_receipt(receipt, DISCARD)
+
+  def get_public_address(self):
+    '''
+    Get the public address of the signer.
+    '''
+    return self.eth_signer.address

@@ -5,6 +5,7 @@ from hmx2.modules.oracle.gm_oracle import GmOracle
 from hmx2.modules.oracle.onchain_pricelens_oracle import OnchainPricelensOracle
 from hmx2.constants.assets import (
   ASSETS,
+  ASSET_USDCe,
   ASSET_gmBTC,
   ASSET_gmETH,
   ASSET_DIX,
@@ -87,6 +88,9 @@ class OracleMiddleware(object):
       price_object[ASSET_wstETH] = self.onchain_pricelens_oracle.get_price(
         ASSET_wstETH)
       asset_ids.remove(ASSET_wstETH)
+    if ASSET_USDCe in asset_ids:
+      price_object[ASSET_USDCe] = self.get_price("USDC")
+      asset_ids.remove(ASSET_USDCe)
 
     raw_prices = self.pyth_oracle.get_multiple_price(asset_ids)
 

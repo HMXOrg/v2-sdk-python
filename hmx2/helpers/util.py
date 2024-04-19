@@ -1,4 +1,5 @@
 
+import math
 from web3 import Web3
 
 
@@ -24,3 +25,7 @@ def get_sub_account(account: str, sub_account_id: int):
 def check_sub_account_id_param(sub_account_id: int):
   if sub_account_id not in range(0, 256):
     raise Exception("Invalid sub account id")
+
+
+def from_number_to_e8(n: float | int) -> int:
+  return math.floor(n * 10 ** 8) * 10 ** 22

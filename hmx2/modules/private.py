@@ -17,6 +17,7 @@ from hmx2.constants.common import (
   MAX_UINT,
   EXECUTION_FEE,
   BPS,
+  MAX_UINT54,
   MINUTES
 )
 from hmx2.constants.intent import (
@@ -40,8 +41,7 @@ from hmx2.helpers.mapper import (
   get_collateral_address_asset_map,
   get_collateral_address_list
 )
-from hmx2.helpers.util import check_sub_account_id_param
-from hmx2.modules.calculator.calculator import Calculator
+from hmx2.helpers.util import check_sub_account_id_param, from_number_to_e8
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from eth_abi.abi import encode
 import decimal
@@ -454,12 +454,12 @@ class Private(object):
 
     acceptable_price = self.__add_slippage(
       trigger_price) if buy else self.__sub_slippage(trigger_price)
-    acceptable_price = math.floor(acceptable_price * 10 ** 8) * 10 ** 22
+    acceptable_price = from_number_to_e8(acceptable_price)
 
-    trigger_price = math.floor(trigger_price * 10 ** 8) * 10 ** 22
+    trigger_price = from_number_to_e8(trigger_price)
 
     # trunc to e8
-    size = math.floor(size * 10 ** 8) * 10 ** 22
+    size = from_number_to_e8(size)
 
     json_body = json_body = self.__encode_and_build_trade_order(
       market_index, size, buy, trigger_price, acceptable_price, trigger_above_threshold, reduce_only, tp_token, created_timestamp, expired_timestamp, sub_account_id)
@@ -470,11 +470,11 @@ class Private(object):
     created_timestamp = math.floor(time())
     expired_timestamp = created_timestamp + 240 * MINUTES
 
-    acceptable_price = (2 ** 53) * (10 ** 22) if buy else 0
+    acceptable_price = MAX_UINT54 if buy else 0
     trigger_price = 0
 
     # trunc to e8
-    size = math.floor(size * 10 ** 8) * 10 ** 22
+    size = from_number_to_e8(size)
 
     json_body = self.__encode_and_build_trade_order(
       market_index, size, buy, trigger_price, acceptable_price, True, reduce_only, tp_token, created_timestamp, expired_timestamp, sub_account_id)

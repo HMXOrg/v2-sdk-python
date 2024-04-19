@@ -41,7 +41,7 @@ from hmx2.helpers.mapper import (
   get_collateral_address_asset_map,
   get_collateral_address_list
 )
-from hmx2.helpers.util import check_sub_account_id_param, from_number_to_e8
+from hmx2.helpers.util import check_sub_account_id_param, from_number_to_e30
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from eth_abi.abi import encode
 import decimal
@@ -454,12 +454,12 @@ class Private(object):
 
     acceptable_price = self.__add_slippage(
       trigger_price) if buy else self.__sub_slippage(trigger_price)
-    acceptable_price = from_number_to_e8(acceptable_price)
+    acceptable_price = from_number_to_e30(acceptable_price)
 
-    trigger_price = from_number_to_e8(trigger_price)
+    trigger_price = from_number_to_e30(trigger_price)
 
     # trunc to e8
-    size = from_number_to_e8(size)
+    size = from_number_to_e30(size)
 
     json_body = json_body = self.__encode_and_build_trade_order(
       market_index, size, buy, trigger_price, acceptable_price, trigger_above_threshold, reduce_only, tp_token, created_timestamp, expired_timestamp, sub_account_id)
@@ -474,7 +474,7 @@ class Private(object):
     trigger_price = 0
 
     # trunc to e8
-    size = from_number_to_e8(size)
+    size = from_number_to_e30(size)
 
     json_body = self.__encode_and_build_trade_order(
       market_index, size, buy, trigger_price, acceptable_price, True, reduce_only, tp_token, created_timestamp, expired_timestamp, sub_account_id)

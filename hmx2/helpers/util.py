@@ -27,5 +27,5 @@ def check_sub_account_id_param(sub_account_id: int):
     raise Exception("Invalid sub account id")
 
 
-def from_number_to_e8(n: float | int) -> int:
+def from_number_to_e30(n: float | int) -> int:
   return math.floor(n * 10 ** 8) * 10 ** 22

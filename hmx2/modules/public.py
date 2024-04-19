@@ -17,6 +17,7 @@ from hmx2.constants.common import (
   DAYS,
   YEARS
 )
+from hmx2.enum import IntentOrderStatus
 from hmx2.helpers.contract_loader import load_contract
 from hmx2.helpers.mapper import (
   get_collateral_address_asset_map,
@@ -826,6 +827,6 @@ class Public(object):
   def __get_intent_trade_orders_api(self, address: str, sub_account_id: int):
     params = {
       "chainId": self.chain_id,
-      "status": "pending",
+      "status": IntentOrderStatus.Pending,
     }
     return r.get(f'{INTENT_TRADE_API}/v1/intent-handler/{address}/{sub_account_id}/trade-orders', headers={'Content-Type': 'application/json'}, params=params)

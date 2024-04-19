@@ -6,6 +6,7 @@ from hmx2.constants.contracts import (
   TRADE_HELPER_ABI_PATH,
   CALCULATOR_ABI_PATH
 )
+from hmx2.constants.intent import INTENT_TRADE_API
 from hmx2.constants.markets import (
     MARKET_PROFILE,
     DELISTED_MARKET
@@ -29,6 +30,7 @@ from hmx2.modules.calculator.calculator import Calculator
 from simple_multicall_v6 import Multicall
 from eth_abi.abi import decode
 from typing import List
+import requests as r
 
 
 class Public(object):
@@ -817,3 +819,13 @@ class Public(object):
       }
 
     return ret
+
+  def get_active_intent_orders(self, address: str, sub_account_id: int):
+    return self.__get_intent_trade_orders_api(address, sub_account_id)
+
+  def __get_intent_trade_orders_api(self, address: str, sub_account_id: int):
+    params = {
+      "chainId": self.chain_id,
+      "status": "pending",
+    }
+    return r.get(f'{INTENT_TRADE_API}/v1/intent-handler/{address}/{sub_account_id}/trade-orders', headers={'Content-Type': 'application/json'}, params=params)

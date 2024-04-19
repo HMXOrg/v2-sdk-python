@@ -10,3 +10,10 @@ class Cmd:
 class Action:
   BUY = True
   SELL = False
+
+
+class IntentOrderStatus:
+  Success = 'success'
+  Pending = 'pending'
+  Cancelled = 'cancelled'
+  Expired = 'expired'

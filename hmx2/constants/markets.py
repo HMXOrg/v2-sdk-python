@@ -49,7 +49,10 @@ from hmx2.constants.assets import (
   ASSET_ICP,
   ASSET_MANTA,
   ASSET_STRK,
-  ASSET_PYTH
+  ASSET_PYTH,
+  ASSET_PENDLE,
+  ASSET_W,
+  ASSET_ENA,
 )
 
 
@@ -105,6 +108,9 @@ MARKET_ICP_USD = 47
 MARKET_MANTA_USD = 48
 MARKET_STRK_USD = 49
 MARKET_PYTH_USD = 50
+MARKET_PENDLE_USD = 51
+MARKET_W_USD = 52
+MARKET_ENA_USD = 53
 
 
 DELISTED_MARKET = [
@@ -374,5 +380,20 @@ MARKET_PROFILE = {
     "name": "PYTHUSD",
     "asset": ASSET_PYTH,
     "display_decimal": 4,
+  },
+  MARKET_PENDLE_USD: {
+    "name": "PENDLEUSD",
+    "asset": ASSET_PENDLE,
+    "display_decimal": 4,
+  },
+  MARKET_W_USD: {
+    "name": "WUSD",
+    "asset": ASSET_W,
+    "display_decimal": 3,
+  },
+  MARKET_ENA_USD: {
+    "name": "ENAUSD",
+    "asset": ASSET_ENA,
+    "display_decimal": 3,
   },
 }

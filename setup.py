@@ -10,12 +10,13 @@ REQUIREMENTS = [
     'web3>=6.0.0,<7.0.0',
     'simple-multicall-v6',
     'responses',
-    'python-dotenv>=1.0.0'
+    'python-dotenv>=1.0.0',
+    'secp256k1==0.14.0'
 ]
 
 setup(
     name='hmx-v2-python',
-    version='1.0.3',
+    version='1.1.0',
     packages=find_packages(),
     package_data={
       'hmx2': ['abis/*.json'],

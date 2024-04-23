@@ -1,3 +1,4 @@
+from eth_abi.packed import encode_packed
 from web3 import Web3, Account
 from web3.middleware.signing import construct_sign_and_send_raw_middleware
 from web3.logs import DISCARD
@@ -16,8 +17,22 @@ from hmx2.constants.common import (
   MAX_UINT,
   EXECUTION_FEE,
   BPS,
+  MAX_UINT54,
+  MINUTES
 )
-from hmx2.enum import Cmd
+from hmx2.constants.intent import (
+  INTENT_TRADE_API,
+)
+from hmx2.constants.markets import MARKET_PROFILE
+from hmx2.enum import (
+  Action,
+  Cmd,
+)
+from eth_account import Account
+from secp256k1 import PrivateKey
+
+from eth_account.messages import encode_typed_data
+from time import time
 from hmx2.helpers.contract_loader import load_contract
 from simple_multicall_v6 import Multicall
 from hmx2.helpers.mapper import (
@@ -26,10 +41,13 @@ from hmx2.helpers.mapper import (
   get_collateral_address_asset_map,
   get_collateral_address_list
 )
-from hmx2.helpers.util import check_sub_account_id_param
+from hmx2.helpers.util import check_sub_account_id_param, from_number_to_e30
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from eth_abi.abi import encode
 import decimal
+import math
+import requests as r
+import json
 
 decimal.getcontext().prec = 15
 decimal.getcontext().rounding = "ROUND_HALF_DOWN"
@@ -157,7 +175,7 @@ class Private(object):
       True
     ).transact({"from": self.eth_signer.address, "value": amount_wei})
 
-  def create_market_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, reduce_only: bool, tp_token: str = ADDRESS_ZERO):
+  def create_market_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, reduce_only: bool, tp_token: str = ADDRESS_ZERO, intent=False):
     '''
     Post a market order
 
@@ -179,6 +197,14 @@ class Private(object):
     :param tp_token
     :type tp_token: str in list COLLATERALS address
     '''
+    if intent:
+      while True:
+        try:
+          return self.__create_intent_trade_order(sub_account_id, market_index, buy, size, reduce_only, tp_token)
+        except Exception as e:
+          # print(e)
+          sleep(0.5)
+
     check_sub_account_id_param(sub_account_id)
 
     order = {
@@ -206,7 +232,7 @@ class Private(object):
     args["order"] = events[0]["args"]
     return args
 
-  def create_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO):
+  def create_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO, intent: bool = False):
     '''
     Post a trigger order
 
@@ -234,6 +260,15 @@ class Private(object):
     :param tp_token
     :type tp_token: str in list COLLATERALS address
     '''
+
+    if intent:
+      while True:
+        try:
+          return self.__create_intent_trigger_order(sub_account_id, market_index, buy, size, trigger_price, trigger_above_threshold, reduce_only, tp_token)
+        except Exception as e:
+          # print(e)
+          sleep(0.5)
+
     order = {
       "cmd": Cmd.CREATE,
       "market_index": market_index,
@@ -262,7 +297,7 @@ class Private(object):
     args["order"] = events[0]["args"]
     return args
 
-  def update_trigger_order(self, sub_account_id: int, order_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO):
+  def update_trigger_order(self, sub_account_id: int, order_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO, intent: bool = False):
     '''
     Update a trigger order
 
@@ -412,6 +447,117 @@ class Private(object):
     receipt = self.eth_provider.eth.get_transaction_receipt(tx)
     return self.limit_trade_handler_instance.events[topic](
       ).process_receipt(receipt, DISCARD)
+
+  def __create_intent_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO):
+    created_timestamp = math.floor(time())
+    expired_timestamp = created_timestamp + 240 * MINUTES
+
+    acceptable_price = self.__add_slippage(
+      trigger_price) if buy else self.__sub_slippage(trigger_price)
+    acceptable_price = from_number_to_e30(acceptable_price)
+
+    trigger_price = from_number_to_e30(trigger_price)
+
+    # trunc to e8
+    size = from_number_to_e30(size)
+
+    json_body = json_body = self.__encode_and_build_trade_order(
+      market_index, size, buy, trigger_price, acceptable_price, trigger_above_threshold, reduce_only, tp_token, created_timestamp, expired_timestamp, sub_account_id)
+
+    return self.__upsert_intent_trade_orders_api(json_body)
+
+  def __create_intent_trade_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, reduce_only: bool, tp_token: str = ADDRESS_ZERO):
+    created_timestamp = math.floor(time())
+    expired_timestamp = created_timestamp + 240 * MINUTES
+
+    acceptable_price = MAX_UINT54 if buy else 0
+    trigger_price = 0
+
+    # trunc to e8
+    size = from_number_to_e30(size)
+
+    json_body = self.__encode_and_build_trade_order(
+      market_index, size, buy, trigger_price, acceptable_price, True, reduce_only, tp_token, created_timestamp, expired_timestamp, sub_account_id)
+
+    return self.__upsert_intent_trade_orders_api(json_body)
+
+  def __upsert_intent_trade_orders_api(self, req):
+    return r.post(f'{INTENT_TRADE_API}/v1/intent-handler/orders.upsert', headers={'Content-Type': 'application/json'}, data=req)
+
+  def __encode_and_build_trade_order(self, market_index: int, size: int, buy: bool, trigger_price: int, acceptable_price: int, trigger_above_threshold: bool, reduce_only: bool, tp_token: str, created_timestamp: int, expired_timestamp: int, sub_account_id: int):
+    full_message = {
+      "domain": {
+        "name": "IntentHander",
+        "version": "1.0.0",
+        "chainId": self.chain_id,
+        "verifyingContract": get_contract_address(self.chain_id)['INTENT_ADDRESS']
+      },
+      "types": {
+        "TradeOrder": [
+          {"name": "marketIndex", "type": "uint256"},
+          {"name": "sizeDelta", "type": "int256"},
+          {"name": "triggerPrice", "type": "uint256"},
+          {"name": "acceptablePrice", "type": "uint256"},
+          {"name": "triggerAboveThreshold", "type": "bool"},
+          {"name": "reduceOnly", "type": "bool"},
+          {"name": "tpToken", "type": "address"},
+          {"name": "createdTimestamp", "type": "uint256"},
+          {"name": "expiryTimestamp", "type": "uint256"},
+          {"name": "account", "type": "address"},
+          {"name": "subAccountId", "type": "uint8"}
+        ]
+      },
+      "primaryType": "TradeOrder",
+      "message": {
+        "marketIndex": market_index,
+        "sizeDelta": str(size if buy else size * -1),
+        "triggerPrice": str(trigger_price),
+        "acceptablePrice": str(acceptable_price),
+        "triggerAboveThreshold": trigger_above_threshold,
+        "reduceOnly": reduce_only,
+        "tpToken": tp_token,
+        "createdTimestamp": created_timestamp,
+        "expiryTimestamp": expired_timestamp,
+        "account": self.eth_signer.address,
+        "subAccountId": sub_account_id
+      }
+    }
+
+    encoded_data = encode_typed_data(full_message=full_message)
+
+    sign_data = Account.sign_message(encoded_data, self.eth_signer.key)
+
+    signature = encode_packed(['bytes32', 'bytes32', 'uint8'], [
+        bytes.fromhex(hex(sign_data.r)[2:]), bytes.fromhex(hex(sign_data.s)[2:]), sign_data.v])
+
+    private_key = PrivateKey(
+      bytes(bytearray.fromhex(self.eth_signer.key.hex()[2:])))
+    pubkey_ser = private_key.pubkey.serialize(compressed=False).hex()
+
+    req_body = {
+      "chainId": self.chain_id,
+      "intentTradeOrders": [
+        {
+          "marketIndex": market_index,
+          "sizeDeltaE30": str(size if buy else size * -1),
+          "triggerPriceE30": str(trigger_price),
+          "acceptablePriceE30": str(acceptable_price),
+          "triggerAboveThreshold": trigger_above_threshold,
+          "reduceOnly": reduce_only,
+          "tpToken": tp_token,
+          "createdTimestamp": created_timestamp,
+          "expiryTimestamp": expired_timestamp,
+          "account": self.eth_signer.address,
+          "subAccountId": sub_account_id,
+          "signature": "0x" + signature.hex(),
+          "digest": sign_data.messageHash.hex(),
+          "publicKey": "0x" + pubkey_ser,
+        }
+      ]
+    }
+    json_body = json.dumps(req_body)
+
+    return json_body
 
   def get_public_address(self):
     '''

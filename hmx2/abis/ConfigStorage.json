@@ -1,3548 +1,3051 @@
 [
+  { "stateMutability": "nonpayable", "type": "constructor", "inputs": [] },
+  { "type": "error", "inputs": [], "name": "IConfigStorage_BadArgs" },
+  { "type": "error", "inputs": [], "name": "IConfigStorage_BadLen" },
   {
+    "type": "error",
     "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    "name": "IConfigStorage_ExceedLimitSetting"
+  },
+  { "type": "error", "inputs": [], "name": "IConfigStorage_InvalidAddress" },
+  { "type": "error", "inputs": [], "name": "IConfigStorage_InvalidAssetClass" },
+  { "type": "error", "inputs": [], "name": "IConfigStorage_InvalidValue" },
+  {
+    "type": "error",
+    "inputs": [],
+    "name": "IConfigStorage_MaxDurationForMinProfit"
+  },
+  { "type": "error", "inputs": [], "name": "IConfigStorage_MaxFeeBps" },
+  {
+    "type": "error",
+    "inputs": [],
+    "name": "IConfigStorage_NotAcceptedCollateral"
   },
   {
+    "type": "error",
     "inputs": [],
-    "name": "IConfigStorage_BadArgs",
-    "type": "error"
+    "name": "IConfigStorage_NotAcceptedLiquidity"
   },
+  { "type": "error", "inputs": [], "name": "IConfigStorage_NotWhiteListed" },
   {
-    "inputs": [],
-    "name": "IConfigStorage_BadLen",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "IConfigStorage_ExceedLimitSetting",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "IConfigStorage_InvalidAddress",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "IConfigStorage_InvalidAssetClass",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "IConfigStorage_InvalidValue",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "IConfigStorage_MaxDurationForMinProfit",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "IConfigStorage_MaxFeeBps",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "IConfigStorage_NotAcceptedCollateral",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "IConfigStorage_NotAcceptedLiquidity",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "IConfigStorage_NotWhiteListed",
-    "type": "error"
-  },
-  {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "uint8",
         "name": "version",
-        "type": "uint8"
+        "internalType": "uint8",
+        "type": "uint8",
+        "indexed": false
       }
     ],
-    "name": "Initialized",
-    "type": "event"
+    "name": "Initialized"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "uint256",
         "name": "index",
-        "type": "uint256"
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
       },
       {
+        "name": "newConfig",
+        "internalType": "struct IConfigStorage.AssetClassConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "baseBorrowingRate",
+            "internalType": "uint256",
             "type": "uint256"
           }
         ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.AssetClassConfig",
-        "name": "newConfig",
-        "type": "tuple"
+        "indexed": false
       }
     ],
-    "name": "LogAddAssetClassConfig",
-    "type": "event"
+    "name": "LogAddAssetClassConfig"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "uint256",
         "name": "index",
-        "type": "uint256"
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
       },
       {
+        "name": "newConfig",
+        "internalType": "struct IConfigStorage.MarketConfig",
+        "type": "tuple",
         "components": [
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
           {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
             "name": "maxLongPositionSize",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "maxShortPositionSize",
             "type": "uint256"
           },
           {
-            "internalType": "uint32",
+            "name": "maxShortPositionSize",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
             "name": "increasePositionFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "decreasePositionFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "initialMarginFractionBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "maintenanceMarginFractionBPS",
-            "type": "uint32"
-          },
-          {
             "internalType": "uint32",
-            "name": "maxProfitRateBPS",
             "type": "uint32"
           },
           {
-            "internalType": "uint8",
-            "name": "assetClass",
-            "type": "uint8"
+            "name": "maxProfitRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
           },
+          { "name": "assetClass", "internalType": "uint8", "type": "uint8" },
           {
-            "internalType": "bool",
             "name": "allowIncreasePosition",
-            "type": "bool"
-          },
-          {
             "internalType": "bool",
-            "name": "active",
             "type": "bool"
           },
+          { "name": "active", "internalType": "bool", "type": "bool" },
           {
+            "name": "fundingRate",
+            "internalType": "struct IConfigStorage.FundingRate",
+            "type": "tuple",
             "components": [
               {
-                "internalType": "uint256",
                 "name": "maxSkewScaleUSD",
+                "internalType": "uint256",
                 "type": "uint256"
               },
               {
-                "internalType": "uint256",
                 "name": "maxFundingRate",
+                "internalType": "uint256",
                 "type": "uint256"
               }
-            ],
-            "internalType": "struct IConfigStorage.FundingRate",
-            "name": "fundingRate",
-            "type": "tuple"
+            ]
           }
         ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.MarketConfig",
-        "name": "newConfig",
-        "type": "tuple"
+        "indexed": false
       }
     ],
-    "name": "LogAddMarketConfig",
-    "type": "event"
+    "name": "LogAddMarketConfig"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "address",
         "name": "_token",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
       },
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "targetWeight",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "bufferLiquidity",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "maxWeightDiff",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.HLPTokenConfig",
         "name": "_config",
-        "type": "tuple"
-      },
-      {
+        "internalType": "struct IConfigStorage.HLPTokenConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "targetWeight",
+            "internalType": "uint256",
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
             "name": "bufferLiquidity",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "maxWeightDiff",
             "type": "uint256"
           },
           {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
+            "name": "maxWeightDiff",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
         ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.HLPTokenConfig",
+        "indexed": false
+      },
+      {
         "name": "_newConfig",
-        "type": "tuple"
+        "internalType": "struct IConfigStorage.HLPTokenConfig",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "targetWeight",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "bufferLiquidity",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "maxWeightDiff",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
+        ],
+        "indexed": false
       }
     ],
-    "name": "LogAddOrUpdateHLPTokenConfigs",
-    "type": "event"
+    "name": "LogAddOrUpdateHLPTokenConfigs"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "uint256",
         "name": "marketIndex",
-        "type": "uint256"
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
       }
     ],
-    "name": "LogDelistMarket",
-    "type": "event"
+    "name": "LogDelistMarket"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "uint256",
         "name": "marketIndex",
-        "type": "uint256"
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": true
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
         "name": "minProfitDuration",
-        "type": "uint256"
-      }
-    ],
-    "name": "LogMinProfitDuration",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      }
-    ],
-    "name": "LogRemoveUnderlying",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
         "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "LogMinProfitDuration"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "token",
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
+      }
+    ],
+    "name": "LogRemoveUnderlying"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
         "name": "index",
-        "type": "uint256"
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
       },
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "baseBorrowingRate",
-            "type": "uint256"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.AssetClassConfig",
         "name": "oldConfig",
-        "type": "tuple"
-      },
-      {
+        "internalType": "struct IConfigStorage.AssetClassConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "baseBorrowingRate",
+            "internalType": "uint256",
             "type": "uint256"
           }
         ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.AssetClassConfig",
+        "indexed": false
+      },
+      {
         "name": "newConfig",
-        "type": "tuple"
+        "internalType": "struct IConfigStorage.AssetClassConfig",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "baseBorrowingRate",
+            "internalType": "uint256",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false
       }
     ],
-    "name": "LogSetAssetClassConfigByIndex",
-    "type": "event"
+    "name": "LogSetAssetClassConfigByIndex"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "bytes32",
         "name": "assetId",
-        "type": "bytes32"
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
       },
       {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "tokenAddress",
-            "type": "address"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint8",
-            "name": "decimals",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "isStableCoin",
-            "type": "bool"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.AssetConfig",
         "name": "oldConfig",
-        "type": "tuple"
-      },
-      {
+        "internalType": "struct IConfigStorage.AssetConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "address",
             "name": "tokenAddress",
+            "internalType": "address",
             "type": "address"
           },
-          {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint8",
-            "name": "decimals",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "isStableCoin",
-            "type": "bool"
-          }
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
+          { "name": "decimals", "internalType": "uint8", "type": "uint8" },
+          { "name": "isStableCoin", "internalType": "bool", "type": "bool" }
         ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.AssetConfig",
+        "indexed": false
+      },
+      {
         "name": "newConfig",
-        "type": "tuple"
+        "internalType": "struct IConfigStorage.AssetConfig",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "tokenAddress",
+            "internalType": "address",
+            "type": "address"
+          },
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
+          { "name": "decimals", "internalType": "uint8", "type": "uint8" },
+          { "name": "isStableCoin", "internalType": "bool", "type": "bool" }
+        ],
+        "indexed": false
       }
     ],
-    "name": "LogSetAssetConfig",
-    "type": "event"
+    "name": "LogSetAssetConfig"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
         "name": "oldCalculator",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
       },
       {
-        "indexed": false,
-        "internalType": "address",
         "name": "newCalculator",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
       }
     ],
-    "name": "LogSetCalculator",
-    "type": "event"
+    "name": "LogSetCalculator"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "bytes32",
         "name": "assetId",
-        "type": "bytes32"
+        "internalType": "bytes32",
+        "type": "bytes32",
+        "indexed": false
       },
       {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "settleStrategy",
-            "type": "address"
-          },
-          {
-            "internalType": "uint32",
-            "name": "collateralFactorBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.CollateralTokenConfig",
         "name": "oldConfig",
-        "type": "tuple"
-      },
-      {
+        "internalType": "struct IConfigStorage.CollateralTokenConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "address",
             "name": "settleStrategy",
+            "internalType": "address",
             "type": "address"
           },
           {
-            "internalType": "uint32",
             "name": "collateralFactorBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
-          {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
         ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.CollateralTokenConfig",
-        "name": "newConfig",
-        "type": "tuple"
-      }
-    ],
-    "name": "LogSetCollateralTokenConfig",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "executorAddress",
-        "type": "address"
+        "indexed": false
       },
       {
-        "indexed": false,
-        "internalType": "bool",
-        "name": "isServiceExecutor",
-        "type": "bool"
+        "name": "newConfig",
+        "internalType": "struct IConfigStorage.CollateralTokenConfig",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "settleStrategy",
+            "internalType": "address",
+            "type": "address"
+          },
+          {
+            "name": "collateralFactorBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
+        ],
+        "indexed": false
       }
     ],
-    "name": "LogSetConfigExecutor",
-    "type": "event"
+    "name": "LogSetCollateralTokenConfig"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "name": "executorAddress",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "isServiceExecutor",
         "internalType": "bool",
+        "type": "bool",
+        "indexed": false
+      }
+    ],
+    "name": "LogSetConfigExecutor"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
         "name": "enabled",
-        "type": "bool"
+        "internalType": "bool",
+        "type": "bool",
+        "indexed": false
       }
     ],
-    "name": "LogSetDynamicEnabled",
-    "type": "event"
+    "name": "LogSetDynamicEnabled"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
         "name": "oldHlp",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
       },
       {
-        "indexed": false,
-        "internalType": "address",
         "name": "newHlp",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
       }
     ],
-    "name": "LogSetHLP",
-    "type": "event"
+    "name": "LogSetHLP"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "address",
         "name": "token",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
       },
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "targetWeight",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "bufferLiquidity",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "maxWeightDiff",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.HLPTokenConfig",
         "name": "oldConfig",
-        "type": "tuple"
-      },
-      {
+        "internalType": "struct IConfigStorage.HLPTokenConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "targetWeight",
+            "internalType": "uint256",
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
             "name": "bufferLiquidity",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "maxWeightDiff",
             "type": "uint256"
           },
           {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
+            "name": "maxWeightDiff",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
         ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.HLPTokenConfig",
+        "indexed": false
+      },
+      {
         "name": "newConfig",
-        "type": "tuple"
+        "internalType": "struct IConfigStorage.HLPTokenConfig",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "targetWeight",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "bufferLiquidity",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "maxWeightDiff",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
+        ],
+        "indexed": false
       }
     ],
-    "name": "LogSetHlpTokenConfig",
-    "type": "event"
+    "name": "LogSetHlpTokenConfig"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
+        "name": "oldConfig",
+        "internalType": "struct IConfigStorage.LiquidationConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "liquidationFeeUSDE30",
+            "internalType": "uint256",
             "type": "uint256"
           }
         ],
-        "indexed": true,
-        "internalType": "struct IConfigStorage.LiquidationConfig",
-        "name": "oldConfig",
-        "type": "tuple"
+        "indexed": true
       },
       {
+        "name": "newConfig",
+        "internalType": "struct IConfigStorage.LiquidationConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "liquidationFeeUSDE30",
+            "internalType": "uint256",
             "type": "uint256"
           }
         ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.LiquidationConfig",
-        "name": "newConfig",
-        "type": "tuple"
+        "indexed": false
       }
     ],
-    "name": "LogSetLiquidationConfig",
-    "type": "event"
+    "name": "LogSetLiquidationConfig"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "hlpTotalTokenWeight",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "hlpSafetyBufferBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "taxFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "flashLoanFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "maxHLPUtilizationBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "depositFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "withdrawFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bool",
-            "name": "dynamicFeeEnabled",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "enabled",
-            "type": "bool"
-          }
-        ],
-        "indexed": true,
-        "internalType": "struct IConfigStorage.LiquidityConfig",
         "name": "oldLiquidityConfig",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "hlpTotalTokenWeight",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "hlpSafetyBufferBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "taxFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "flashLoanFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "maxHLPUtilizationBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "depositFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "withdrawFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bool",
-            "name": "dynamicFeeEnabled",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "enabled",
-            "type": "bool"
-          }
-        ],
-        "indexed": false,
         "internalType": "struct IConfigStorage.LiquidityConfig",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "hlpTotalTokenWeight",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "hlpSafetyBufferBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "taxFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "flashLoanFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "maxHLPUtilizationBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "depositFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "withdrawFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "dynamicFeeEnabled",
+            "internalType": "bool",
+            "type": "bool"
+          },
+          { "name": "enabled", "internalType": "bool", "type": "bool" }
+        ],
+        "indexed": true
+      },
+      {
         "name": "newLiquidityConfig",
-        "type": "tuple"
+        "internalType": "struct IConfigStorage.LiquidityConfig",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "hlpTotalTokenWeight",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "hlpSafetyBufferBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "taxFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "flashLoanFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "maxHLPUtilizationBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "depositFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "withdrawFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "dynamicFeeEnabled",
+            "internalType": "bool",
+            "type": "bool"
+          },
+          { "name": "enabled", "internalType": "bool", "type": "bool" }
+        ],
+        "indexed": false
       }
     ],
-    "name": "LogSetLiquidityConfig",
-    "type": "event"
+    "name": "LogSetLiquidityConfig"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "bool",
         "name": "oldValue",
-        "type": "bool"
+        "internalType": "bool",
+        "type": "bool",
+        "indexed": false
       },
       {
-        "indexed": false,
-        "internalType": "bool",
         "name": "newValue",
-        "type": "bool"
+        "internalType": "bool",
+        "type": "bool",
+        "indexed": false
       }
     ],
-    "name": "LogSetLiquidityEnabled",
-    "type": "event"
+    "name": "LogSetLiquidityEnabled"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "uint256",
         "name": "marketIndex",
-        "type": "uint256"
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
       },
       {
-        "components": [
-          {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "maxLongPositionSize",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "maxShortPositionSize",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "increasePositionFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "decreasePositionFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "initialMarginFractionBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "maintenanceMarginFractionBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "maxProfitRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint8",
-            "name": "assetClass",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "allowIncreasePosition",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "active",
-            "type": "bool"
-          },
-          {
-            "components": [
-              {
-                "internalType": "uint256",
-                "name": "maxSkewScaleUSD",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "maxFundingRate",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IConfigStorage.FundingRate",
-            "name": "fundingRate",
-            "type": "tuple"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.MarketConfig",
-        "name": "oldConfig",
-        "type": "tuple"
+        "name": "makerFee",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
       },
       {
-        "components": [
-          {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "maxLongPositionSize",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "maxShortPositionSize",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "increasePositionFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "decreasePositionFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "initialMarginFractionBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "maintenanceMarginFractionBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "maxProfitRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint8",
-            "name": "assetClass",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "allowIncreasePosition",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "active",
-            "type": "bool"
-          },
-          {
-            "components": [
-              {
-                "internalType": "uint256",
-                "name": "maxSkewScaleUSD",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "maxFundingRate",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IConfigStorage.FundingRate",
-            "name": "fundingRate",
-            "type": "tuple"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.MarketConfig",
-        "name": "newConfig",
-        "type": "tuple"
+        "name": "takerFee",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
       }
     ],
-    "name": "LogSetMarketConfig",
-    "type": "event"
+    "name": "LogSetMakerTakerFee"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "name": "marketIndex",
         "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "oldConfig",
+        "internalType": "struct IConfigStorage.MarketConfig",
+        "type": "tuple",
+        "components": [
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
+          {
+            "name": "maxLongPositionSize",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "maxShortPositionSize",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "increasePositionFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "decreasePositionFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "initialMarginFractionBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "maintenanceMarginFractionBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "maxProfitRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          { "name": "assetClass", "internalType": "uint8", "type": "uint8" },
+          {
+            "name": "allowIncreasePosition",
+            "internalType": "bool",
+            "type": "bool"
+          },
+          { "name": "active", "internalType": "bool", "type": "bool" },
+          {
+            "name": "fundingRate",
+            "internalType": "struct IConfigStorage.FundingRate",
+            "type": "tuple",
+            "components": [
+              {
+                "name": "maxSkewScaleUSD",
+                "internalType": "uint256",
+                "type": "uint256"
+              },
+              {
+                "name": "maxFundingRate",
+                "internalType": "uint256",
+                "type": "uint256"
+              }
+            ]
+          }
+        ],
+        "indexed": false
+      },
+      {
+        "name": "newConfig",
+        "internalType": "struct IConfigStorage.MarketConfig",
+        "type": "tuple",
+        "components": [
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
+          {
+            "name": "maxLongPositionSize",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "maxShortPositionSize",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "increasePositionFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "decreasePositionFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "initialMarginFractionBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "maintenanceMarginFractionBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "maxProfitRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          { "name": "assetClass", "internalType": "uint8", "type": "uint8" },
+          {
+            "name": "allowIncreasePosition",
+            "internalType": "bool",
+            "type": "bool"
+          },
+          { "name": "active", "internalType": "bool", "type": "bool" },
+          {
+            "name": "fundingRate",
+            "internalType": "struct IConfigStorage.FundingRate",
+            "type": "tuple",
+            "components": [
+              {
+                "name": "maxSkewScaleUSD",
+                "internalType": "uint256",
+                "type": "uint256"
+              },
+              {
+                "name": "maxFundingRate",
+                "internalType": "uint256",
+                "type": "uint256"
+              }
+            ]
+          }
+        ],
+        "indexed": false
+      }
+    ],
+    "name": "LogSetMarketConfig"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
         "name": "oldValue",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
         "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
         "name": "newValue",
-        "type": "uint256"
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
       }
     ],
-    "name": "LogSetMinimumPositionSize",
-    "type": "event"
+    "name": "LogSetMinimumPositionSize"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
         "name": "oldOracle",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
       },
       {
-        "indexed": false,
-        "internalType": "address",
         "name": "newOracle",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
       }
     ],
-    "name": "LogSetOracle",
-    "type": "event"
+    "name": "LogSetOracle"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "uint32",
         "name": "oldPnlFactorBPS",
-        "type": "uint32"
-      },
-      {
-        "indexed": false,
         "internalType": "uint32",
+        "type": "uint32",
+        "indexed": false
+      },
+      {
         "name": "newPnlFactorBPS",
-        "type": "uint32"
+        "internalType": "uint32",
+        "type": "uint32",
+        "indexed": false
       }
     ],
-    "name": "LogSetPnlFactor",
-    "type": "event"
+    "name": "LogSetPnlFactor"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
         "name": "contractAddress",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
       },
       {
-        "indexed": false,
-        "internalType": "address",
         "name": "executorAddress",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
       },
       {
-        "indexed": false,
-        "internalType": "bool",
         "name": "isServiceExecutor",
-        "type": "bool"
+        "internalType": "bool",
+        "type": "bool",
+        "indexed": false
       }
     ],
-    "name": "LogSetServiceExecutor",
-    "type": "event"
+    "name": "LogSetServiceExecutor"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "components": [
-          {
-            "internalType": "uint32",
-            "name": "stablecoinSwapFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "swapFeeRateBPS",
-            "type": "uint32"
-          }
-        ],
-        "indexed": true,
-        "internalType": "struct IConfigStorage.SwapConfig",
-        "name": "oldConfig",
-        "type": "tuple"
+        "name": "index",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
       },
       {
+        "name": "_stepMinProfitDuration",
+        "internalType": "struct IConfigStorage.StepMinProfitDuration",
+        "type": "tuple",
         "components": [
+          { "name": "fromSize", "internalType": "uint256", "type": "uint256" },
+          { "name": "toSize", "internalType": "uint256", "type": "uint256" },
           {
-            "internalType": "uint32",
-            "name": "stablecoinSwapFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "swapFeeRateBPS",
-            "type": "uint32"
+            "name": "minProfitDuration",
+            "internalType": "uint256",
+            "type": "uint256"
           }
         ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.SwapConfig",
-        "name": "newConfig",
-        "type": "tuple"
+        "indexed": false
       }
     ],
-    "name": "LogSetSwapConfig",
-    "type": "event"
+    "name": "LogSetStepMinProfitDuration"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "address",
+        "name": "oldConfig",
+        "internalType": "struct IConfigStorage.SwapConfig",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "stablecoinSwapFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "swapFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          }
+        ],
+        "indexed": true
+      },
+      {
+        "name": "newConfig",
+        "internalType": "struct IConfigStorage.SwapConfig",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "stablecoinSwapFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          {
+            "name": "swapFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          }
+        ],
+        "indexed": false
+      }
+    ],
+    "name": "LogSetSwapConfig"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
         "name": "prevRouter",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
       },
       {
-        "indexed": false,
-        "internalType": "address",
         "name": "newRouter",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
       }
     ],
-    "name": "LogSetSwitchCollateralRouter",
-    "type": "event"
+    "name": "LogSetSwitchCollateralRouter"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
         "name": "oldToken",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
       },
       {
-        "indexed": false,
-        "internalType": "address",
         "name": "newToken",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": false
       }
     ],
-    "name": "LogSetToken",
-    "type": "event"
+    "name": "LogSetToken"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "address[]",
         "name": "oldHooks",
-        "type": "address[]"
-      },
-      {
-        "indexed": false,
         "internalType": "address[]",
+        "type": "address[]",
+        "indexed": false
+      },
+      {
         "name": "newHooks",
-        "type": "address[]"
+        "internalType": "address[]",
+        "type": "address[]",
+        "indexed": false
       }
     ],
-    "name": "LogSetTradeServiceHooks",
-    "type": "event"
+    "name": "LogSetTradeServiceHooks"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "fundingInterval",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minProfitDuration",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "devFeeRateBPS",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint8",
-            "name": "maxPosition",
-            "type": "uint8"
-          }
-        ],
-        "indexed": true,
-        "internalType": "struct IConfigStorage.TradingConfig",
         "name": "oldConfig",
-        "type": "tuple"
-      },
-      {
+        "internalType": "struct IConfigStorage.TradingConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "fundingInterval",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "minProfitDuration",
             "type": "uint256"
           },
           {
-            "internalType": "uint32",
+            "name": "minProfitDuration",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
             "name": "devFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
-          {
-            "internalType": "uint8",
-            "name": "maxPosition",
-            "type": "uint8"
-          }
+          { "name": "maxPosition", "internalType": "uint8", "type": "uint8" }
         ],
-        "indexed": false,
-        "internalType": "struct IConfigStorage.TradingConfig",
+        "indexed": true
+      },
+      {
         "name": "newConfig",
-        "type": "tuple"
+        "internalType": "struct IConfigStorage.TradingConfig",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "fundingInterval",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "minProfitDuration",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
+            "name": "devFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
+          },
+          { "name": "maxPosition", "internalType": "uint8", "type": "uint8" }
+        ],
+        "indexed": false
       }
     ],
-    "name": "LogSetTradingConfig",
-    "type": "event"
+    "name": "LogSetTradingConfig"
   },
   {
+    "type": "event",
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
         "name": "previousOwner",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
       },
       {
-        "indexed": true,
-        "internalType": "address",
         "name": "newOwner",
-        "type": "address"
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
       }
     ],
-    "name": "OwnershipTransferred",
-    "type": "event"
+    "name": "OwnershipTransferred"
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "BPS",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "MAX_FEE_BPS",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
       {
+        "name": "_newConfig",
+        "internalType": "struct IConfigStorage.AssetClassConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "baseBorrowingRate",
+            "internalType": "uint256",
             "type": "uint256"
           }
-        ],
-        "internalType": "struct IConfigStorage.AssetClassConfig",
-        "name": "_newConfig",
-        "type": "tuple"
+        ]
       }
     ],
     "name": "addAssetClassConfig",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "_index",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+      { "name": "_index", "internalType": "uint256", "type": "uint256" }
+    ]
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
       {
+        "name": "_newConfig",
+        "internalType": "struct IConfigStorage.MarketConfig",
+        "type": "tuple",
         "components": [
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
           {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
             "name": "maxLongPositionSize",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "maxShortPositionSize",
             "type": "uint256"
           },
           {
-            "internalType": "uint32",
+            "name": "maxShortPositionSize",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
             "name": "increasePositionFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "decreasePositionFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "initialMarginFractionBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "maintenanceMarginFractionBPS",
-            "type": "uint32"
-          },
-          {
             "internalType": "uint32",
-            "name": "maxProfitRateBPS",
             "type": "uint32"
           },
           {
-            "internalType": "uint8",
-            "name": "assetClass",
-            "type": "uint8"
+            "name": "maxProfitRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
           },
+          { "name": "assetClass", "internalType": "uint8", "type": "uint8" },
           {
-            "internalType": "bool",
             "name": "allowIncreasePosition",
-            "type": "bool"
-          },
-          {
             "internalType": "bool",
-            "name": "active",
             "type": "bool"
           },
+          { "name": "active", "internalType": "bool", "type": "bool" },
           {
+            "name": "fundingRate",
+            "internalType": "struct IConfigStorage.FundingRate",
+            "type": "tuple",
             "components": [
               {
-                "internalType": "uint256",
                 "name": "maxSkewScaleUSD",
+                "internalType": "uint256",
                 "type": "uint256"
               },
               {
-                "internalType": "uint256",
                 "name": "maxFundingRate",
+                "internalType": "uint256",
                 "type": "uint256"
               }
-            ],
-            "internalType": "struct IConfigStorage.FundingRate",
-            "name": "fundingRate",
-            "type": "tuple"
+            ]
           }
-        ],
-        "internalType": "struct IConfigStorage.MarketConfig",
-        "name": "_newConfig",
-        "type": "tuple"
+        ]
+      },
+      {
+        "name": "_isAdaptiveFeeEnabled",
+        "internalType": "bool",
+        "type": "bool"
       }
     ],
     "name": "addMarketConfig",
     "outputs": [
       {
-        "internalType": "uint256",
         "name": "_newMarketIndex",
+        "internalType": "uint256",
         "type": "uint256"
       }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
+      { "name": "_tokens", "internalType": "address[]", "type": "address[]" },
       {
-        "internalType": "address[]",
-        "name": "_tokens",
-        "type": "address[]"
-      },
-      {
+        "name": "_configs",
+        "internalType": "struct IConfigStorage.HLPTokenConfig[]",
+        "type": "tuple[]",
         "components": [
           {
-            "internalType": "uint256",
             "name": "targetWeight",
+            "internalType": "uint256",
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
             "name": "bufferLiquidity",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "maxWeightDiff",
             "type": "uint256"
           },
           {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.HLPTokenConfig[]",
-        "name": "_configs",
-        "type": "tuple[]"
+            "name": "maxWeightDiff",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
+        ]
       }
     ],
     "name": "addOrUpdateAcceptedToken",
-    "outputs": [],
+    "outputs": []
+  },
+  {
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
+    "type": "function",
     "inputs": [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "name": "_stepMinProfitDurations",
+        "internalType": "struct IConfigStorage.StepMinProfitDuration[]",
+        "type": "tuple[]",
+        "components": [
+          { "name": "fromSize", "internalType": "uint256", "type": "uint256" },
+          { "name": "toSize", "internalType": "uint256", "type": "uint256" },
+          {
+            "name": "minProfitDuration",
+            "internalType": "uint256",
+            "type": "uint256"
+          }
+        ]
       }
     ],
-    "name": "allowedLiquidators",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "name": "addStepMinProfitDuration",
+    "outputs": []
+  },
+  {
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "address", "type": "address" }],
+    "name": "allowedLiquidators",
+    "outputs": [{ "name": "", "internalType": "bool", "type": "bool" }]
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }],
     "name": "assetClassConfigs",
     "outputs": [
       {
-        "internalType": "uint256",
         "name": "baseBorrowingRate",
+        "internalType": "uint256",
         "type": "uint256"
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "bytes32", "type": "bytes32" }],
     "name": "assetCollateralTokenConfigs",
     "outputs": [
       {
-        "internalType": "address",
         "name": "settleStrategy",
+        "internalType": "address",
         "type": "address"
       },
       {
-        "internalType": "uint32",
         "name": "collateralFactorBPS",
+        "internalType": "uint32",
         "type": "uint32"
       },
-      {
-        "internalType": "bool",
-        "name": "accepted",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+      { "name": "accepted", "internalType": "bool", "type": "bool" }
+    ]
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "bytes32", "type": "bytes32" }],
     "name": "assetConfigs",
     "outputs": [
-      {
-        "internalType": "address",
-        "name": "tokenAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "assetId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint8",
-        "name": "decimals",
-        "type": "uint8"
-      },
-      {
-        "internalType": "bool",
-        "name": "isStableCoin",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+      { "name": "tokenAddress", "internalType": "address", "type": "address" },
+      { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
+      { "name": "decimals", "internalType": "uint8", "type": "uint8" },
+      { "name": "isStableCoin", "internalType": "bool", "type": "bool" }
+    ]
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "bytes32", "type": "bytes32" }],
     "name": "assetHlpTokenConfigs",
     "outputs": [
+      { "name": "targetWeight", "internalType": "uint256", "type": "uint256" },
       {
-        "internalType": "uint256",
-        "name": "targetWeight",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
         "name": "bufferLiquidity",
-        "type": "uint256"
-      },
-      {
         "internalType": "uint256",
-        "name": "maxWeightDiff",
         "type": "uint256"
       },
-      {
-        "internalType": "bool",
-        "name": "accepted",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+      { "name": "maxWeightDiff", "internalType": "uint256", "type": "uint256" },
+      { "name": "accepted", "internalType": "bool", "type": "bool" }
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "calculator",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }],
     "name": "collateralAssetIds",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "bytes32", "type": "bytes32" }]
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "address", "type": "address" }],
     "name": "configExecutors",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "bool", "type": "bool" }]
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_marketIndex",
-        "type": "uint256"
-      }
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" }
     ],
     "name": "delistMarket",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_index",
-        "type": "uint256"
-      }
+      { "name": "_index", "internalType": "uint256", "type": "uint256" }
     ],
     "name": "getAssetClassConfigByIndex",
     "outputs": [
       {
+        "name": "_assetClassConfig",
+        "internalType": "struct IConfigStorage.AssetClassConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "baseBorrowingRate",
+            "internalType": "uint256",
             "type": "uint256"
           }
-        ],
-        "internalType": "struct IConfigStorage.AssetClassConfig",
-        "name": "_assetClassConfig",
-        "type": "tuple"
+        ]
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "getAssetClassConfigsLength",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_assetId",
-        "type": "bytes32"
-      }
+      { "name": "_assetId", "internalType": "bytes32", "type": "bytes32" }
     ],
     "name": "getAssetConfig",
     "outputs": [
       {
+        "name": "",
+        "internalType": "struct IConfigStorage.AssetConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "address",
             "name": "tokenAddress",
+            "internalType": "address",
             "type": "address"
           },
-          {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint8",
-            "name": "decimals",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "isStableCoin",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.AssetConfig",
-        "name": "",
-        "type": "tuple"
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
+          { "name": "decimals", "internalType": "uint8", "type": "uint8" },
+          { "name": "isStableCoin", "internalType": "bool", "type": "bool" }
+        ]
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      }
+      { "name": "_token", "internalType": "address", "type": "address" }
     ],
     "name": "getAssetConfigByToken",
     "outputs": [
       {
+        "name": "",
+        "internalType": "struct IConfigStorage.AssetConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "address",
             "name": "tokenAddress",
+            "internalType": "address",
             "type": "address"
           },
-          {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint8",
-            "name": "decimals",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "isStableCoin",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.AssetConfig",
-        "name": "",
-        "type": "tuple"
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
+          { "name": "decimals", "internalType": "uint8", "type": "uint8" },
+          { "name": "isStableCoin", "internalType": "bool", "type": "bool" }
+        ]
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_assetId",
-        "type": "bytes32"
-      }
+      { "name": "_assetId", "internalType": "bytes32", "type": "bytes32" }
     ],
     "name": "getAssetHlpTokenConfig",
     "outputs": [
       {
+        "name": "",
+        "internalType": "struct IConfigStorage.HLPTokenConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "targetWeight",
+            "internalType": "uint256",
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
             "name": "bufferLiquidity",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "maxWeightDiff",
             "type": "uint256"
           },
           {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.HLPTokenConfig",
-        "name": "",
-        "type": "tuple"
+            "name": "maxWeightDiff",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
+        ]
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      }
+      { "name": "_token", "internalType": "address", "type": "address" }
     ],
     "name": "getAssetHlpTokenConfigByToken",
     "outputs": [
       {
+        "name": "",
+        "internalType": "struct IConfigStorage.HLPTokenConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "targetWeight",
+            "internalType": "uint256",
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
             "name": "bufferLiquidity",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "maxWeightDiff",
             "type": "uint256"
           },
           {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.HLPTokenConfig",
-        "name": "",
-        "type": "tuple"
+            "name": "maxWeightDiff",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
+        ]
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      }
+      { "name": "_token", "internalType": "address", "type": "address" }
     ],
     "name": "getAssetTokenDecimal",
-    "outputs": [
-      {
-        "internalType": "uint8",
-        "name": "",
-        "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "uint8", "type": "uint8" }]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      }
+      { "name": "_token", "internalType": "address", "type": "address" }
     ],
     "name": "getCollateralTokenConfigs",
     "outputs": [
       {
+        "name": "_collateralTokenConfig",
+        "internalType": "struct IConfigStorage.CollateralTokenConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "address",
             "name": "settleStrategy",
+            "internalType": "address",
             "type": "address"
           },
           {
-            "internalType": "uint32",
             "name": "collateralFactorBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
-          {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.CollateralTokenConfig",
-        "name": "_collateralTokenConfig",
-        "type": "tuple"
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
+        ]
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "getCollateralTokens",
     "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+      { "name": "", "internalType": "address[]", "type": "address[]" }
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "getHlpAssetIds",
     "outputs": [
-      {
-        "internalType": "bytes32[]",
-        "name": "",
-        "type": "bytes32[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+      { "name": "", "internalType": "bytes32[]", "type": "bytes32[]" }
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "getHlpTokens",
     "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+      { "name": "", "internalType": "address[]", "type": "address[]" }
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "getLiquidationConfig",
     "outputs": [
       {
+        "name": "",
+        "internalType": "struct IConfigStorage.LiquidationConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "liquidationFeeUSDE30",
+            "internalType": "uint256",
             "type": "uint256"
           }
-        ],
-        "internalType": "struct IConfigStorage.LiquidationConfig",
-        "name": "",
-        "type": "tuple"
+        ]
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "getLiquidityConfig",
     "outputs": [
       {
+        "name": "",
+        "internalType": "struct IConfigStorage.LiquidityConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "hlpTotalTokenWeight",
+            "internalType": "uint256",
             "type": "uint256"
           },
           {
-            "internalType": "uint32",
             "name": "hlpSafetyBufferBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "taxFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "flashLoanFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "maxHLPUtilizationBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "depositFeeRateBPS",
-            "type": "uint32"
-          },
-          {
             "internalType": "uint32",
-            "name": "withdrawFeeRateBPS",
             "type": "uint32"
           },
           {
-            "internalType": "bool",
-            "name": "dynamicFeeEnabled",
-            "type": "bool"
+            "name": "withdrawFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
           },
           {
+            "name": "dynamicFeeEnabled",
             "internalType": "bool",
-            "name": "enabled",
             "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.LiquidityConfig",
-        "name": "",
-        "type": "tuple"
+          },
+          { "name": "enabled", "internalType": "bool", "type": "bool" }
+        ]
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_index",
-        "type": "uint256"
-      }
+      { "name": "_index", "internalType": "uint256", "type": "uint256" }
     ],
     "name": "getMarketConfigByIndex",
     "outputs": [
       {
+        "name": "_marketConfig",
+        "internalType": "struct IConfigStorage.MarketConfig",
+        "type": "tuple",
         "components": [
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
           {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
             "name": "maxLongPositionSize",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "maxShortPositionSize",
             "type": "uint256"
           },
           {
-            "internalType": "uint32",
+            "name": "maxShortPositionSize",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
             "name": "increasePositionFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "decreasePositionFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "initialMarginFractionBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "maintenanceMarginFractionBPS",
-            "type": "uint32"
-          },
-          {
             "internalType": "uint32",
-            "name": "maxProfitRateBPS",
             "type": "uint32"
           },
           {
-            "internalType": "uint8",
-            "name": "assetClass",
-            "type": "uint8"
+            "name": "maxProfitRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
           },
+          { "name": "assetClass", "internalType": "uint8", "type": "uint8" },
           {
-            "internalType": "bool",
             "name": "allowIncreasePosition",
-            "type": "bool"
-          },
-          {
             "internalType": "bool",
-            "name": "active",
             "type": "bool"
           },
+          { "name": "active", "internalType": "bool", "type": "bool" },
           {
+            "name": "fundingRate",
+            "internalType": "struct IConfigStorage.FundingRate",
+            "type": "tuple",
             "components": [
               {
-                "internalType": "uint256",
                 "name": "maxSkewScaleUSD",
+                "internalType": "uint256",
                 "type": "uint256"
               },
               {
-                "internalType": "uint256",
                 "name": "maxFundingRate",
+                "internalType": "uint256",
                 "type": "uint256"
               }
-            ],
-            "internalType": "struct IConfigStorage.FundingRate",
-            "name": "fundingRate",
-            "type": "tuple"
+            ]
           }
-        ],
-        "internalType": "struct IConfigStorage.MarketConfig",
-        "name": "_marketConfig",
-        "type": "tuple"
+        ]
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "getMarketConfigs",
     "outputs": [
       {
+        "name": "",
+        "internalType": "struct IConfigStorage.MarketConfig[]",
+        "type": "tuple[]",
         "components": [
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
           {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
             "name": "maxLongPositionSize",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "maxShortPositionSize",
             "type": "uint256"
           },
           {
-            "internalType": "uint32",
+            "name": "maxShortPositionSize",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
             "name": "increasePositionFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "decreasePositionFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "initialMarginFractionBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "maintenanceMarginFractionBPS",
-            "type": "uint32"
-          },
-          {
             "internalType": "uint32",
-            "name": "maxProfitRateBPS",
             "type": "uint32"
           },
           {
-            "internalType": "uint8",
-            "name": "assetClass",
-            "type": "uint8"
+            "name": "maxProfitRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
           },
+          { "name": "assetClass", "internalType": "uint8", "type": "uint8" },
           {
-            "internalType": "bool",
             "name": "allowIncreasePosition",
-            "type": "bool"
-          },
-          {
             "internalType": "bool",
-            "name": "active",
             "type": "bool"
           },
+          { "name": "active", "internalType": "bool", "type": "bool" },
           {
+            "name": "fundingRate",
+            "internalType": "struct IConfigStorage.FundingRate",
+            "type": "tuple",
             "components": [
               {
-                "internalType": "uint256",
                 "name": "maxSkewScaleUSD",
+                "internalType": "uint256",
                 "type": "uint256"
               },
               {
-                "internalType": "uint256",
                 "name": "maxFundingRate",
+                "internalType": "uint256",
                 "type": "uint256"
               }
-            ],
-            "internalType": "struct IConfigStorage.FundingRate",
-            "name": "fundingRate",
-            "type": "tuple"
+            ]
           }
-        ],
-        "internalType": "struct IConfigStorage.MarketConfig[]",
-        "name": "",
-        "type": "tuple[]"
+        ]
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "getMarketConfigsLength",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "marketIndex", "internalType": "uint256", "type": "uint256" },
+      { "name": "sizeDelta", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "getStepMinProfitDuration",
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "getStepMinProfitDurations",
+    "outputs": [
+      {
+        "name": "",
+        "internalType": "struct IConfigStorage.StepMinProfitDuration[]",
+        "type": "tuple[]",
+        "components": [
+          { "name": "fromSize", "internalType": "uint256", "type": "uint256" },
+          { "name": "toSize", "internalType": "uint256", "type": "uint256" },
+          {
+            "name": "minProfitDuration",
+            "internalType": "uint256",
+            "type": "uint256"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "getTradeServiceHooks",
     "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+      { "name": "", "internalType": "address[]", "type": "address[]" }
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "getTradingConfig",
     "outputs": [
       {
+        "name": "",
+        "internalType": "struct IConfigStorage.TradingConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "fundingInterval",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "minProfitDuration",
             "type": "uint256"
           },
           {
-            "internalType": "uint32",
+            "name": "minProfitDuration",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
             "name": "devFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
-          {
-            "internalType": "uint8",
-            "name": "maxPosition",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct IConfigStorage.TradingConfig",
-        "name": "",
-        "type": "tuple"
+          { "name": "maxPosition", "internalType": "uint8", "type": "uint8" }
+        ]
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "hlp",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }],
     "name": "hlpAssetIds",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "bytes32", "type": "bytes32" }]
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [],
     "name": "initialize",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "marketIndex", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "isAdaptiveFeeEnabledByMarketIndex",
+    "outputs": [{ "name": "isEnabled", "internalType": "bool", "type": "bool" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "marketIndex", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "isStepMinProfitEnabledByMarketIndex",
+    "outputs": [
+      {
+        "name": "isStepMinProfitEnabled",
+        "internalType": "bool",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "liquidationConfig",
     "outputs": [
       {
-        "internalType": "uint256",
         "name": "liquidationFeeUSDE30",
+        "internalType": "uint256",
         "type": "uint256"
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "liquidityConfig",
     "outputs": [
       {
-        "internalType": "uint256",
         "name": "hlpTotalTokenWeight",
+        "internalType": "uint256",
         "type": "uint256"
       },
       {
-        "internalType": "uint32",
         "name": "hlpSafetyBufferBPS",
+        "internalType": "uint32",
         "type": "uint32"
       },
+      { "name": "taxFeeRateBPS", "internalType": "uint32", "type": "uint32" },
       {
-        "internalType": "uint32",
-        "name": "taxFeeRateBPS",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint32",
         "name": "flashLoanFeeRateBPS",
+        "internalType": "uint32",
         "type": "uint32"
       },
       {
-        "internalType": "uint32",
         "name": "maxHLPUtilizationBPS",
+        "internalType": "uint32",
         "type": "uint32"
       },
       {
-        "internalType": "uint32",
         "name": "depositFeeRateBPS",
-        "type": "uint32"
-      },
-      {
         "internalType": "uint32",
-        "name": "withdrawFeeRateBPS",
         "type": "uint32"
       },
       {
-        "internalType": "bool",
-        "name": "dynamicFeeEnabled",
-        "type": "bool"
+        "name": "withdrawFeeRateBPS",
+        "internalType": "uint32",
+        "type": "uint32"
       },
-      {
-        "internalType": "bool",
-        "name": "enabled",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+      { "name": "dynamicFeeEnabled", "internalType": "bool", "type": "bool" },
+      { "name": "enabled", "internalType": "bool", "type": "bool" }
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+      { "name": "marketIndex", "internalType": "uint256", "type": "uint256" }
     ],
+    "name": "makerFeeE8ByMarketIndex",
+    "outputs": [
+      { "name": "makerFeeE8", "internalType": "uint256", "type": "uint256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }],
     "name": "marketConfigs",
     "outputs": [
+      { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
       {
-        "internalType": "bytes32",
-        "name": "assetId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
         "name": "maxLongPositionSize",
-        "type": "uint256"
-      },
-      {
         "internalType": "uint256",
-        "name": "maxShortPositionSize",
         "type": "uint256"
       },
       {
-        "internalType": "uint32",
+        "name": "maxShortPositionSize",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      {
         "name": "increasePositionFeeRateBPS",
+        "internalType": "uint32",
         "type": "uint32"
       },
       {
-        "internalType": "uint32",
         "name": "decreasePositionFeeRateBPS",
+        "internalType": "uint32",
         "type": "uint32"
       },
       {
-        "internalType": "uint32",
         "name": "initialMarginFractionBPS",
+        "internalType": "uint32",
         "type": "uint32"
       },
       {
-        "internalType": "uint32",
         "name": "maintenanceMarginFractionBPS",
-        "type": "uint32"
-      },
-      {
         "internalType": "uint32",
-        "name": "maxProfitRateBPS",
         "type": "uint32"
       },
       {
-        "internalType": "uint8",
-        "name": "assetClass",
-        "type": "uint8"
+        "name": "maxProfitRateBPS",
+        "internalType": "uint32",
+        "type": "uint32"
       },
+      { "name": "assetClass", "internalType": "uint8", "type": "uint8" },
       {
-        "internalType": "bool",
         "name": "allowIncreasePosition",
-        "type": "bool"
-      },
-      {
         "internalType": "bool",
-        "name": "active",
         "type": "bool"
       },
+      { "name": "active", "internalType": "bool", "type": "bool" },
       {
+        "name": "fundingRate",
+        "internalType": "struct IConfigStorage.FundingRate",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "maxSkewScaleUSD",
+            "internalType": "uint256",
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
             "name": "maxFundingRate",
+            "internalType": "uint256",
             "type": "uint256"
           }
-        ],
-        "internalType": "struct IConfigStorage.FundingRate",
-        "name": "fundingRate",
-        "type": "tuple"
+        ]
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "marketIndex",
-        "type": "uint256"
-      }
+      { "name": "marketIndex", "internalType": "uint256", "type": "uint256" }
     ],
     "name": "minProfitDurations",
     "outputs": [
       {
-        "internalType": "uint256",
         "name": "minProfitDuration",
+        "internalType": "uint256",
         "type": "uint256"
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "minimumPositionSize",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "oracle",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "pnlFactorBPS",
-    "outputs": [
-      {
-        "internalType": "uint32",
-        "name": "",
-        "type": "uint32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "uint32", "type": "uint32" }]
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      }
+      { "name": "_token", "internalType": "address", "type": "address" }
     ],
     "name": "removeAcceptedToken",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [],
+    "name": "removeLastStepMinProfitDuration",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [],
     "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+      { "name": "", "internalType": "address", "type": "address" },
+      { "name": "", "internalType": "address", "type": "address" }
     ],
     "name": "serviceExecutors",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "bool", "type": "bool" }]
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
+      { "name": "_index", "internalType": "uint256", "type": "uint256" },
       {
-        "internalType": "uint256",
-        "name": "_index",
-        "type": "uint256"
-      },
-      {
+        "name": "_newConfig",
+        "internalType": "struct IConfigStorage.AssetClassConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "baseBorrowingRate",
+            "internalType": "uint256",
             "type": "uint256"
           }
-        ],
-        "internalType": "struct IConfigStorage.AssetClassConfig",
-        "name": "_newConfig",
-        "type": "tuple"
+        ]
       }
     ],
     "name": "setAssetClassConfigByIndex",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
+      { "name": "_assetId", "internalType": "bytes32", "type": "bytes32" },
       {
-        "internalType": "bytes32",
-        "name": "_assetId",
-        "type": "bytes32"
-      },
-      {
+        "name": "_newConfig",
+        "internalType": "struct IConfigStorage.AssetConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "address",
             "name": "tokenAddress",
+            "internalType": "address",
             "type": "address"
           },
-          {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint8",
-            "name": "decimals",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "isStableCoin",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.AssetConfig",
-        "name": "_newConfig",
-        "type": "tuple"
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
+          { "name": "decimals", "internalType": "uint8", "type": "uint8" },
+          { "name": "isStableCoin", "internalType": "bool", "type": "bool" }
+        ]
       }
     ],
     "name": "setAssetConfig",
     "outputs": [
       {
+        "name": "_assetConfig",
+        "internalType": "struct IConfigStorage.AssetConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "address",
             "name": "tokenAddress",
+            "internalType": "address",
             "type": "address"
           },
-          {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint8",
-            "name": "decimals",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "isStableCoin",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.AssetConfig",
-        "name": "_assetConfig",
-        "type": "tuple"
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
+          { "name": "decimals", "internalType": "uint8", "type": "uint8" },
+          { "name": "isStableCoin", "internalType": "bool", "type": "bool" }
+        ]
       }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
+      { "name": "_assetIds", "internalType": "bytes32[]", "type": "bytes32[]" },
       {
-        "internalType": "bytes32[]",
-        "name": "_assetIds",
-        "type": "bytes32[]"
-      },
-      {
+        "name": "_newConfigs",
+        "internalType": "struct IConfigStorage.AssetConfig[]",
+        "type": "tuple[]",
         "components": [
           {
-            "internalType": "address",
             "name": "tokenAddress",
+            "internalType": "address",
             "type": "address"
           },
-          {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint8",
-            "name": "decimals",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "isStableCoin",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.AssetConfig[]",
-        "name": "_newConfigs",
-        "type": "tuple[]"
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
+          { "name": "decimals", "internalType": "uint8", "type": "uint8" },
+          { "name": "isStableCoin", "internalType": "bool", "type": "bool" }
+        ]
       }
     ],
     "name": "setAssetConfigs",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_calculator",
-        "type": "address"
-      }
+      { "name": "_calculator", "internalType": "address", "type": "address" }
     ],
     "name": "setCalculator",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
+      { "name": "_assetId", "internalType": "bytes32", "type": "bytes32" },
       {
-        "internalType": "bytes32",
-        "name": "_assetId",
-        "type": "bytes32"
-      },
-      {
+        "name": "_newConfig",
+        "internalType": "struct IConfigStorage.CollateralTokenConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "address",
             "name": "settleStrategy",
+            "internalType": "address",
             "type": "address"
           },
           {
-            "internalType": "uint32",
             "name": "collateralFactorBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
-          {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.CollateralTokenConfig",
-        "name": "_newConfig",
-        "type": "tuple"
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
+        ]
       }
     ],
     "name": "setCollateralTokenConfig",
     "outputs": [
       {
+        "name": "_collateralTokenConfig",
+        "internalType": "struct IConfigStorage.CollateralTokenConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "address",
             "name": "settleStrategy",
+            "internalType": "address",
             "type": "address"
           },
           {
-            "internalType": "uint32",
             "name": "collateralFactorBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
-          {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.CollateralTokenConfig",
-        "name": "_collateralTokenConfig",
-        "type": "tuple"
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
+        ]
       }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
+      { "name": "_assetIds", "internalType": "bytes32[]", "type": "bytes32[]" },
       {
-        "internalType": "bytes32[]",
-        "name": "_assetIds",
-        "type": "bytes32[]"
-      },
-      {
+        "name": "_newConfigs",
+        "internalType": "struct IConfigStorage.CollateralTokenConfig[]",
+        "type": "tuple[]",
         "components": [
           {
-            "internalType": "address",
             "name": "settleStrategy",
+            "internalType": "address",
             "type": "address"
           },
           {
-            "internalType": "uint32",
             "name": "collateralFactorBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
-          {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.CollateralTokenConfig[]",
-        "name": "_newConfigs",
-        "type": "tuple[]"
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
+        ]
       }
     ],
     "name": "setCollateralTokenConfigs",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
       {
-        "internalType": "address",
         "name": "_executorAddress",
+        "internalType": "address",
         "type": "address"
       },
-      {
-        "internalType": "bool",
-        "name": "_isServiceExecutor",
-        "type": "bool"
-      }
+      { "name": "_isServiceExecutor", "internalType": "bool", "type": "bool" }
     ],
     "name": "setConfigExecutor",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
-    "inputs": [
-      {
-        "internalType": "bool",
-        "name": "_enabled",
-        "type": "bool"
-      }
-    ],
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [{ "name": "_enabled", "internalType": "bool", "type": "bool" }],
     "name": "setDynamicEnabled",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_hlp",
-        "type": "address"
-      }
+      { "name": "_hlp", "internalType": "address", "type": "address" }
     ],
     "name": "setHLP",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
+      { "name": "_token", "internalType": "address", "type": "address" },
       {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      },
-      {
+        "name": "_newConfig",
+        "internalType": "struct IConfigStorage.HLPTokenConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "targetWeight",
+            "internalType": "uint256",
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
             "name": "bufferLiquidity",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "maxWeightDiff",
             "type": "uint256"
           },
           {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.HLPTokenConfig",
-        "name": "_newConfig",
-        "type": "tuple"
+            "name": "maxWeightDiff",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
+        ]
       }
     ],
     "name": "setHlpTokenConfig",
     "outputs": [
       {
+        "name": "_hlpTokenConfig",
+        "internalType": "struct IConfigStorage.HLPTokenConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "targetWeight",
+            "internalType": "uint256",
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
             "name": "bufferLiquidity",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "maxWeightDiff",
             "type": "uint256"
           },
           {
-            "internalType": "bool",
-            "name": "accepted",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.HLPTokenConfig",
-        "name": "_hlpTokenConfig",
-        "type": "tuple"
+            "name": "maxWeightDiff",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          { "name": "accepted", "internalType": "bool", "type": "bool" }
+        ]
       }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
       {
+        "name": "marketIndexes",
+        "internalType": "uint256[]",
+        "type": "uint256[]"
+      },
+      { "name": "isEnableds", "internalType": "bool[]", "type": "bool[]" }
+    ],
+    "name": "setIsStepMinProfitEnabledByMarketIndex",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "_newConfig",
+        "internalType": "struct IConfigStorage.LiquidationConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "liquidationFeeUSDE30",
+            "internalType": "uint256",
             "type": "uint256"
           }
-        ],
-        "internalType": "struct IConfigStorage.LiquidationConfig",
-        "name": "_newConfig",
-        "type": "tuple"
+        ]
       }
     ],
     "name": "setLiquidationConfig",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
       {
+        "name": "_liquidityConfig",
+        "internalType": "struct IConfigStorage.LiquidityConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "hlpTotalTokenWeight",
+            "internalType": "uint256",
             "type": "uint256"
           },
           {
-            "internalType": "uint32",
             "name": "hlpSafetyBufferBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "taxFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "flashLoanFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "maxHLPUtilizationBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "depositFeeRateBPS",
-            "type": "uint32"
-          },
-          {
             "internalType": "uint32",
-            "name": "withdrawFeeRateBPS",
             "type": "uint32"
           },
           {
-            "internalType": "bool",
-            "name": "dynamicFeeEnabled",
-            "type": "bool"
+            "name": "withdrawFeeRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
           },
           {
+            "name": "dynamicFeeEnabled",
             "internalType": "bool",
-            "name": "enabled",
             "type": "bool"
-          }
-        ],
-        "internalType": "struct IConfigStorage.LiquidityConfig",
-        "name": "_liquidityConfig",
-        "type": "tuple"
+          },
+          { "name": "enabled", "internalType": "bool", "type": "bool" }
+        ]
       }
     ],
     "name": "setLiquidityConfig",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
-    "inputs": [
-      {
-        "internalType": "bool",
-        "name": "_enabled",
-        "type": "bool"
-      }
-    ],
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [{ "name": "_enabled", "internalType": "bool", "type": "bool" }],
     "name": "setLiquidityEnabled",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_marketIndex",
-        "type": "uint256"
+        "name": "marketIndexes",
+        "internalType": "uint256[]",
+        "type": "uint256[]"
       },
+      { "name": "makerFees", "internalType": "uint256[]", "type": "uint256[]" },
+      { "name": "takerFees", "internalType": "uint256[]", "type": "uint256[]" }
+    ],
+    "name": "setMakerTakerFeeByMarketIndexes",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" },
       {
+        "name": "_newConfig",
+        "internalType": "struct IConfigStorage.MarketConfig",
+        "type": "tuple",
         "components": [
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
           {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
             "name": "maxLongPositionSize",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "maxShortPositionSize",
             "type": "uint256"
           },
           {
-            "internalType": "uint32",
+            "name": "maxShortPositionSize",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
             "name": "increasePositionFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "decreasePositionFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "initialMarginFractionBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "maintenanceMarginFractionBPS",
-            "type": "uint32"
-          },
-          {
             "internalType": "uint32",
-            "name": "maxProfitRateBPS",
             "type": "uint32"
           },
           {
-            "internalType": "uint8",
-            "name": "assetClass",
-            "type": "uint8"
+            "name": "maxProfitRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
           },
+          { "name": "assetClass", "internalType": "uint8", "type": "uint8" },
           {
-            "internalType": "bool",
             "name": "allowIncreasePosition",
-            "type": "bool"
-          },
-          {
             "internalType": "bool",
-            "name": "active",
             "type": "bool"
           },
+          { "name": "active", "internalType": "bool", "type": "bool" },
           {
+            "name": "fundingRate",
+            "internalType": "struct IConfigStorage.FundingRate",
+            "type": "tuple",
             "components": [
               {
-                "internalType": "uint256",
                 "name": "maxSkewScaleUSD",
+                "internalType": "uint256",
                 "type": "uint256"
               },
               {
-                "internalType": "uint256",
                 "name": "maxFundingRate",
+                "internalType": "uint256",
                 "type": "uint256"
               }
-            ],
-            "internalType": "struct IConfigStorage.FundingRate",
-            "name": "fundingRate",
-            "type": "tuple"
+            ]
           }
-        ],
-        "internalType": "struct IConfigStorage.MarketConfig",
-        "name": "_newConfig",
-        "type": "tuple"
+        ]
+      },
+      {
+        "name": "_isAdaptiveFeeEnabled",
+        "internalType": "bool",
+        "type": "bool"
       }
     ],
     "name": "setMarketConfig",
     "outputs": [
       {
+        "name": "_marketConfig",
+        "internalType": "struct IConfigStorage.MarketConfig",
+        "type": "tuple",
         "components": [
+          { "name": "assetId", "internalType": "bytes32", "type": "bytes32" },
           {
-            "internalType": "bytes32",
-            "name": "assetId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
             "name": "maxLongPositionSize",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "maxShortPositionSize",
             "type": "uint256"
           },
           {
-            "internalType": "uint32",
+            "name": "maxShortPositionSize",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
             "name": "increasePositionFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "decreasePositionFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "initialMarginFractionBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "maintenanceMarginFractionBPS",
-            "type": "uint32"
-          },
-          {
             "internalType": "uint32",
-            "name": "maxProfitRateBPS",
             "type": "uint32"
           },
           {
-            "internalType": "uint8",
-            "name": "assetClass",
-            "type": "uint8"
+            "name": "maxProfitRateBPS",
+            "internalType": "uint32",
+            "type": "uint32"
           },
+          { "name": "assetClass", "internalType": "uint8", "type": "uint8" },
           {
-            "internalType": "bool",
             "name": "allowIncreasePosition",
-            "type": "bool"
-          },
-          {
             "internalType": "bool",
-            "name": "active",
             "type": "bool"
           },
+          { "name": "active", "internalType": "bool", "type": "bool" },
           {
+            "name": "fundingRate",
+            "internalType": "struct IConfigStorage.FundingRate",
+            "type": "tuple",
             "components": [
               {
-                "internalType": "uint256",
                 "name": "maxSkewScaleUSD",
+                "internalType": "uint256",
                 "type": "uint256"
               },
               {
-                "internalType": "uint256",
                 "name": "maxFundingRate",
+                "internalType": "uint256",
                 "type": "uint256"
               }
-            ],
-            "internalType": "struct IConfigStorage.FundingRate",
-            "name": "fundingRate",
-            "type": "tuple"
+            ]
           }
-        ],
-        "internalType": "struct IConfigStorage.MarketConfig",
-        "name": "_marketConfig",
-        "type": "tuple"
+        ]
       }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    ]
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
       {
-        "internalType": "uint256[]",
         "name": "_marketIndexs",
+        "internalType": "uint256[]",
         "type": "uint256[]"
       },
       {
-        "internalType": "uint256[]",
         "name": "_minProfitDurations",
+        "internalType": "uint256[]",
         "type": "uint256[]"
       }
     ],
     "name": "setMinProfitDurations",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
       {
-        "internalType": "uint256",
         "name": "_minimumPositionSize",
+        "internalType": "uint256",
         "type": "uint256"
       }
     ],
     "name": "setMinimumPositionSize",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_oracle",
-        "type": "address"
-      }
+      { "name": "_oracle", "internalType": "address", "type": "address" }
     ],
     "name": "setOracle",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "uint32",
-        "name": "_pnlFactorBPS",
-        "type": "uint32"
-      }
+      { "name": "_pnlFactorBPS", "internalType": "uint32", "type": "uint32" }
     ],
     "name": "setPnlFactor",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_sglp",
-        "type": "address"
-      }
+      { "name": "_sglp", "internalType": "address", "type": "address" }
     ],
     "name": "setSGlp",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
       {
-        "internalType": "address",
         "name": "_contractAddress",
-        "type": "address"
-      },
-      {
         "internalType": "address",
-        "name": "_executorAddress",
         "type": "address"
       },
       {
-        "internalType": "bool",
-        "name": "_isServiceExecutor",
-        "type": "bool"
-      }
+        "name": "_executorAddress",
+        "internalType": "address",
+        "type": "address"
+      },
+      { "name": "_isServiceExecutor", "internalType": "bool", "type": "bool" }
     ],
     "name": "setServiceExecutor",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
       {
-        "internalType": "address[]",
         "name": "_contractAddresses",
-        "type": "address[]"
-      },
-      {
         "internalType": "address[]",
-        "name": "_executorAddresses",
         "type": "address[]"
       },
       {
-        "internalType": "bool[]",
+        "name": "_executorAddresses",
+        "internalType": "address[]",
+        "type": "address[]"
+      },
+      {
         "name": "_isServiceExecutors",
+        "internalType": "bool[]",
         "type": "bool[]"
       }
     ],
     "name": "setServiceExecutors",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "indexes", "internalType": "uint256[]", "type": "uint256[]" },
+      {
+        "name": "_stepMinProfitDurations",
+        "internalType": "struct IConfigStorage.StepMinProfitDuration[]",
+        "type": "tuple[]",
+        "components": [
+          { "name": "fromSize", "internalType": "uint256", "type": "uint256" },
+          { "name": "toSize", "internalType": "uint256", "type": "uint256" },
+          {
+            "name": "minProfitDuration",
+            "internalType": "uint256",
+            "type": "uint256"
+          }
+        ]
+      }
+    ],
+    "name": "setStepMinProfitDuration",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
       {
+        "name": "_newConfig",
+        "internalType": "struct IConfigStorage.SwapConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint32",
             "name": "stablecoinSwapFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
           {
-            "internalType": "uint32",
             "name": "swapFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           }
-        ],
-        "internalType": "struct IConfigStorage.SwapConfig",
-        "name": "_newConfig",
-        "type": "tuple"
+        ]
       }
     ],
     "name": "setSwapConfig",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
       {
-        "internalType": "address",
         "name": "_newSwitchCollateralRouter",
+        "internalType": "address",
         "type": "address"
       }
     ],
     "name": "setSwitchCollateralRouter",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address[]",
-        "name": "_newHooks",
-        "type": "address[]"
-      }
+      { "name": "_newHooks", "internalType": "address[]", "type": "address[]" }
     ],
     "name": "setTradeServiceHooks",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
       {
+        "name": "_newConfig",
+        "internalType": "struct IConfigStorage.TradingConfig",
+        "type": "tuple",
         "components": [
           {
-            "internalType": "uint256",
             "name": "fundingInterval",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
-            "name": "minProfitDuration",
             "type": "uint256"
           },
           {
-            "internalType": "uint32",
+            "name": "minProfitDuration",
+            "internalType": "uint256",
+            "type": "uint256"
+          },
+          {
             "name": "devFeeRateBPS",
+            "internalType": "uint32",
             "type": "uint32"
           },
-          {
-            "internalType": "uint8",
-            "name": "maxPosition",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct IConfigStorage.TradingConfig",
-        "name": "_newConfig",
-        "type": "tuple"
+          { "name": "maxPosition", "internalType": "uint8", "type": "uint8" }
+        ]
       }
     ],
     "name": "setTradingConfig",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_weth",
-        "type": "address"
-      }
+      { "name": "_weth", "internalType": "address", "type": "address" }
     ],
     "name": "setWeth",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "sglp",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }],
+    "name": "stepMinProfitDurations",
+    "outputs": [
+      { "name": "fromSize", "internalType": "uint256", "type": "uint256" },
+      { "name": "toSize", "internalType": "uint256", "type": "uint256" },
+      {
+        "name": "minProfitDuration",
+        "internalType": "uint256",
+        "type": "uint256"
+      }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "swapConfig",
     "outputs": [
       {
-        "internalType": "uint32",
         "name": "stablecoinSwapFeeRateBPS",
+        "internalType": "uint32",
         "type": "uint32"
       },
-      {
-        "internalType": "uint32",
-        "name": "swapFeeRateBPS",
-        "type": "uint32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+      { "name": "swapFeeRateBPS", "internalType": "uint32", "type": "uint32" }
+    ]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "switchCollateralRouter",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+      { "name": "marketIndex", "internalType": "uint256", "type": "uint256" }
     ],
+    "name": "takerFeeE8ByMarketIndex",
+    "outputs": [
+      { "name": "takerFeeE8", "internalType": "uint256", "type": "uint256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "address", "type": "address" }],
     "name": "tokenAssetIds",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "bytes32", "type": "bytes32" }]
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }],
     "name": "tradeServiceHooks",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "tradingConfig",
     "outputs": [
       {
-        "internalType": "uint256",
         "name": "fundingInterval",
-        "type": "uint256"
-      },
-      {
         "internalType": "uint256",
-        "name": "minProfitDuration",
         "type": "uint256"
       },
       {
-        "internalType": "uint32",
-        "name": "devFeeRateBPS",
-        "type": "uint32"
+        "name": "minProfitDuration",
+        "internalType": "uint256",
+        "type": "uint256"
       },
-      {
-        "internalType": "uint8",
-        "name": "maxPosition",
-        "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+      { "name": "devFeeRateBPS", "internalType": "uint32", "type": "uint32" },
+      { "name": "maxPosition", "internalType": "uint8", "type": "uint8" }
+    ]
   },
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+      { "name": "newOwner", "internalType": "address", "type": "address" }
     ],
     "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "treasury",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      }
+      { "name": "_token", "internalType": "address", "type": "address" }
     ],
     "name": "validateAcceptedCollateral",
-    "outputs": [],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      }
+      { "name": "_token", "internalType": "address", "type": "address" }
     ],
     "name": "validateAcceptedLiquidityToken",
-    "outputs": [],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [
       {
-        "internalType": "address",
         "name": "_contractAddress",
+        "internalType": "address",
         "type": "address"
       },
       {
-        "internalType": "address",
         "name": "_executorAddress",
+        "internalType": "address",
         "type": "address"
       }
     ],
     "name": "validateServiceExecutor",
-    "outputs": [],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": []
   },
   {
+    "stateMutability": "view",
+    "type": "function",
     "inputs": [],
     "name": "weth",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
   }
 ]

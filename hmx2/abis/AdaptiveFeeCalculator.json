@@ -1,0 +1,109 @@
+[
+  {
+    "stateMutability": "nonpayable",
+    "type": "constructor",
+    "inputs": [
+      { "name": "_k1", "internalType": "uint256", "type": "uint256" },
+      { "name": "_k2", "internalType": "uint256", "type": "uint256" }
+    ]
+  },
+  { "type": "error", "inputs": [], "name": "AdaptiveFeeCalculator_BadBase" },
+  {
+    "type": "error",
+    "inputs": [],
+    "name": "AdaptiveFeeCalculator_ZeroPowZero"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "previousOwner",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "newOwner",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      }
+    ],
+    "name": "OwnershipTransferred"
+  },
+  {
+    "stateMutability": "pure",
+    "type": "function",
+    "inputs": [{ "name": "c", "internalType": "int128", "type": "int128" }],
+    "name": "findG",
+    "outputs": [{ "name": "g", "internalType": "int128", "type": "int128" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "sizeDelta", "internalType": "uint256", "type": "uint256" },
+      { "name": "epochVolume", "internalType": "uint256", "type": "uint256" },
+      {
+        "name": "orderbookDepth",
+        "internalType": "uint256",
+        "type": "uint256"
+      },
+      { "name": "coeffVariant", "internalType": "uint256", "type": "uint256" },
+      { "name": "baseFeeBps", "internalType": "uint256", "type": "uint256" },
+      { "name": "maxFeeBps", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "getAdaptiveFeeBps",
+    "outputs": [
+      { "name": "feeBps", "internalType": "uint32", "type": "uint32" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "k1",
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "k2",
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_k1", "internalType": "uint256", "type": "uint256" },
+      { "name": "_k2", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "setParams",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "newOwner", "internalType": "address", "type": "address" }
+    ],
+    "name": "transferOwnership",
+    "outputs": []
+  }
+]

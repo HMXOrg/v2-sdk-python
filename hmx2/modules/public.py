@@ -900,25 +900,30 @@ class Public(object):
 
     return total_value_usd
 
-  def get_total_pnl(self, account: str, sub_account_id: int):
+  def get_total_pnl_and_fee(self, account: str, sub_account_id: int):
     positions = self.get_all_position_info(account, sub_account_id)
-    total_pnl_usd = sum(e["pnl"] for e in positions)
-
-    return total_pnl_usd
+    total_pnl_usd = sum(position["pnl"]
+                        for position in positions)
+    total_fee_usd = sum(position["funding_fee"] +
+                        position["borrowing_fee"] + position["trading_fee"]
+                        for position in positions)
+    return {
+      "total_pnl_usd": total_pnl_usd,
+      "total_fee_usd": total_fee_usd
+    }
 
   def get_portfolio_value(self, account: str, sub_account_id: int):
-    positions = self.get_all_position_info(account, sub_account_id)
-
     vault_storage_state = self.__get_trader_vault_state(account, sub_account_id)
     collateral_without_factor = self.get_collateral_without_factor_usd(
       account, sub_account_id)
 
-    sum_position = sum(position["pnl"] - position["funding_fee"] -
-                       position["borrowing_fee"] - position["trading_fee"]
-                       for position in positions)
+    pnl_and_fee = self.get_total_pnl_and_fee(account, sub_account_id)
+
+    total_pnl_and_fee = pnl_and_fee["total_pnl_usd"] - \
+        pnl_and_fee["total_fee_usd"]
 
     portfolio_value = collateral_without_factor \
-        + sum_position \
+        + total_pnl_and_fee \
         - vault_storage_state["trading_fee"] \
         - vault_storage_state["borrowing_fee"] \
         - vault_storage_state["funding_fee"] \

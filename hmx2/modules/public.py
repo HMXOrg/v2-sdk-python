@@ -721,6 +721,11 @@ class Public(object):
     tvl = self.__get_hlp_tvl()
 
     position = self.__get_position(account, sub_account_id, market_index)
+
+    adaptive_fee_infos = self.__get_adaptive_fee_infos([market_index])
+
+    maker_taker_fee_infos = self.__get_maker_taker_fee_e8([market_index])
+
     position_reserved_value = position['reserve_value_e30']
     asset_class_reserved_value = market_data["asset_class"]["reserve_value_e30"]
 
@@ -749,6 +754,13 @@ class Public(object):
 
     borrowing_fee = Calculator.get_borrowing_fee(reserved_value=position_reserved_value, sum_borrowing_rate=(
       sum_borrowing_rate + next_borrowing_rate), entry_borrowing_rate=entry_borrowing_rate)
+    base_fee_bps = market_data["market_config"]["decrease_position_fee_rate_bps"]
+
+    skew = market_data["market"]["long_position_size"] - \
+        market_data["market"]["short_position_size"]
+
+    trading_fee = Calculator.get_trading_fee(
+        position["position_size_e30"] * -1, base_fee_bps, skew, adaptive_fee_infos[market_index], maker_taker_fee_infos[market_index])
 
     return {
       "primary_account": position["primary_account"],
@@ -759,6 +771,7 @@ class Public(object):
       "pnl": pnl / 10**30,
       "funding_fee": funding_fee / 10**30,
       "borrowing_fee": borrowing_fee / 10**30,
+      "trading_fee": trading_fee / 10**30
     }
 
   def get_adaptive_fee(self, size_delta: int, market_index: int, is_increase: bool):

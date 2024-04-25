@@ -151,7 +151,7 @@ class Calculator:
         else:
           maker_trading_fee_bps = Calculator.get_adaptive_fee_e8(
               size, maker_fee_e8, adaptive_fee_info) if adaptive_fee_info is not None else maker_fee_e8
-          return abs(size) * trading_fee_bps / BIE8
+          return abs(size) * maker_trading_fee_bps / BIE8
 
     if adaptive_fee_info is None:
       return abs(size) * base_fee_rate_bps / BPS

@@ -1055,29 +1055,11 @@ class Public(object):
 
   def __get_maker_taker_fee_e8(self, market_indices: List[int]):
 
-    maker_taker_fee_infos = {k: None for k in market_indices}
-
-    is_adaptive_fee_enabled_calls = [self.multicall_instance.create_call(
-      self.config_storage_instance,
-      "isAdaptiveFeeEnabledByMarketIndex",
-      [market_index]
-    ) for market_index in market_indices
-    ]
-
-    is_adaptive_fee_enabled_data_raw = self.multicall_instance.call(
-      is_adaptive_fee_enabled_calls)[1]
-
-    is_adaptive_fee_enabled_data = {}
-
-    for index, market_index in enumerate(market_indices):
-      is_adaptive_fee_enabled_data[market_index] = decode(
-        ['bool'], is_adaptive_fee_enabled_data_raw[index])[0]
-
-    adaptive_fee_market_indices = [
-      k for k, v in is_adaptive_fee_enabled_data.items() if v]
-
-    if len(adaptive_fee_market_indices) == 0:
-      return maker_taker_fee_infos
+    maker_taker_fee_infos = {
+      k: {
+          "maker_fee_e8": 0,
+          "taker_fee_e8": 0
+      } for k in market_indices}
 
     contract_calls = [
       self.multicall_instance.create_call(

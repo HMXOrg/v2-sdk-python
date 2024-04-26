@@ -13,6 +13,7 @@ from hmx2.constants.assets import (
   ASSET_PYTH,
   ASSET_ybUSDB,
   ASSET_ybETH,
+  ASSET_USDB
 )
 
 # Arbitrum Sepolia
@@ -33,12 +34,12 @@ COLLATERAL_gmETH = "0x70d95587d40A2caf56bd97485aB3Eec10Bee6336"
 COLLATERAL_PYTH = "0xE4D5c6aE46ADFAF04313081e8C0052A30b6Dd724"
 
 # Blast Sepolia
-# BLAST_COLLATERAL_USDB = "0x073315910A2B432F2f9482bCEAFe34420718c7Cc"
+# BLAST_COLLATERAL_USDB = "0x4200000000000000000000000000000000000022"
 # BLAST_COLLATERAL_ETH = "0x4200000000000000000000000000000000000023"
 
 # Blast Mainnet
 BLAST_COLLATERAL_ETH = "0x4300000000000000000000000000000000000004"
-BLAST_COLLATERAL_USDB = "0xCD732d21c1B23A3f84Bb386E9759b5b6A1BcBe39"
+BLAST_COLLATERAL_USDB = "0x4300000000000000000000000000000000000003"
 
 CHAIN_COLLATERAL = {
   42161: [
@@ -369,6 +370,18 @@ TOKEN_PROFILE = {
           "asset": ASSET_ybETH,
           "decimals": 18
       },
+      "USDB": {
+          "symbol": "USDB",
+          "address": "0x4300000000000000000000000000000000000003",
+          "asset": ASSET_USDB,
+          "decimals": 18,
+      },
+      "0x4300000000000000000000000000000000000003": {
+          "symbol": "USDB",
+          "address": "0x4300000000000000000000000000000000000003",
+          "asset": ASSET_USDB,
+          "decimals": 18,
+      },
       "WETH": {
           "symbol": "WETH",
           "address": "0x4300000000000000000000000000000000000004",
@@ -406,6 +419,18 @@ TOKEN_PROFILE = {
           "address": "0x628eF5ADFf7da4980CeA33E05568d22772E87EB8",
           "asset": ASSET_ybETH,
           "decimals": 18
+      },
+      "USDB": {
+          "symbol": "USDB",
+          "address": "0x4200000000000000000000000000000000000022",
+          "asset": ASSET_USDB,
+          "decimals": 18,
+      },
+      "0x4200000000000000000000000000000000000022": {
+          "symbol": "USDB",
+          "address": "0x4200000000000000000000000000000000000022",
+          "asset": ASSET_USDB,
+          "decimals": 18,
       },
       "WETH": {
           "symbol": "WETH",

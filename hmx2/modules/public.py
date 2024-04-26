@@ -180,7 +180,7 @@ class Public(object):
 
   def __multicall_all_market_data(self):
     ACTIVE_MARKET = [
-      x for x in self.market_profile.keys() if x not in DELISTED_MARKET]
+      x for x in self.market_profile.keys()]
     market_config_calls = list(map(lambda market_index: self.multicall_instance.create_call(
         self.config_storage_instance, "marketConfigs", [market_index]
       ), ACTIVE_MARKET))
@@ -832,9 +832,11 @@ class Public(object):
     if is_blast_chain(self.chain_id):
       token_profile = get_token_profile(self.chain_id)
       weth_address = token_profile["WETH"]["address"]
+      usdb_address = token_profile["USDB"]["address"]
       collateral_address_list.remove(weth_address)
-      weth_address = token_profile["WETH"]["address"]
       collateral_address_asset_map.pop(weth_address)
+      collateral_address_list.remove(usdb_address)
+      collateral_address_asset_map.pop(usdb_address)
 
     token_profile = get_token_profile(self.chain_id)
 

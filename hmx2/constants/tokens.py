@@ -349,25 +349,25 @@ TOKEN_PROFILE = {
           "symbol": "USDB",
           "address": "0xCD732d21c1B23A3f84Bb386E9759b5b6A1BcBe39",
           "asset": ASSET_ybUSDB,
-          "decimals": 6
+          "decimals": 18
       },
       "0xCD732d21c1B23A3f84Bb386E9759b5b6A1BcBe39": {
           "symbol": "USDB",
           "address": "0xCD732d21c1B23A3f84Bb386E9759b5b6A1BcBe39",
           "asset": ASSET_ybUSDB,
-          "decimals": 6
+          "decimals": 18
       },
       "ybETH": {
           "symbol": "ETH",
           "address": "0xb9d94A3490bA2482E2D4F21F0E76b92E5661Ded8",
           "asset": ASSET_ybETH,
-          "decimals": 6
+          "decimals": 18
       },
       "0xb9d94A3490bA2482E2D4F21F0E76b92E5661Ded8": {
           "symbol": "ETH",
           "address": "0xb9d94A3490bA2482E2D4F21F0E76b92E5661Ded8",
           "asset": ASSET_ybETH,
-          "decimals": 6
+          "decimals": 18
       },
       "WETH": {
           "symbol": "WETH",

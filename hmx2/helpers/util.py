@@ -29,3 +29,11 @@ def check_sub_account_id_param(sub_account_id: int):
 
 def from_number_to_e30(n: float | int) -> int:
   return math.floor(n * 10 ** 8) * 10 ** 22
+
+
+def from_e30_to_e8(n: float | int) -> int:
+  return math.floor(n / 10 ** 22)
+
+
+def is_blast_chain(chain_id: int) -> bool:
+  return chain_id == 81457 or chain_id == 168587773

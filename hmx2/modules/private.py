@@ -23,7 +23,6 @@ from hmx2.constants.common import (
 from hmx2.constants.intent import (
   INTENT_TRADE_API,
 )
-from hmx2.constants.markets import MARKET_PROFILE
 from hmx2.enum import (
   Action,
   Cmd,
@@ -41,7 +40,7 @@ from hmx2.helpers.mapper import (
   get_collateral_address_asset_map,
   get_collateral_address_list
 )
-from hmx2.helpers.util import check_sub_account_id_param, from_number_to_e30
+from hmx2.helpers.util import check_sub_account_id_param, from_number_to_e30, is_blast_chain
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from eth_abi.abi import encode
 import decimal
@@ -168,9 +167,11 @@ class Private(object):
 
     amount_wei = int(amount * 10 ** 18)
 
+    eth_token = self.token_profile['WETH']['address']
+
     return self.cross_margin_handler_instance.functions.depositCollateral(
       sub_account_id,
-      self.token_profile['WETH']['address'],
+      eth_token,
       amount_wei,
       True
     ).transact({"from": self.eth_signer.address, "value": amount_wei})

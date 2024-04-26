@@ -10,7 +10,6 @@ from hmx2.constants.contracts import (
 )
 from hmx2.constants.intent import INTENT_TRADE_API
 from hmx2.constants.markets import (
-    MARKET_PROFILE,
     DELISTED_MARKET
 )
 from hmx2.constants.common import (
@@ -27,8 +26,9 @@ from hmx2.helpers.mapper import (
   get_collateral_address_list,
   get_contract_address,
   get_token_profile,
+  get_market_profile,
 )
-from hmx2.helpers.util import get_sub_account
+from hmx2.helpers.util import get_sub_account, is_blast_chain
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from hmx2.modules.calculator.calculator import Calculator
 from simple_multicall_v6 import Multicall
@@ -61,6 +61,7 @@ class Public(object):
       self.eth_provider, self.contract_address["ADAPTIVE_FEE_CALCULATOR_ADDRESS"], ADAPTIVE_FEE_CALCULATOR_ABI)
     self.multicall_instance = Multicall(w3=self.eth_provider,
                                         custom_address=self.contract_address["MULTICALL_ADDRESS"])
+    self.market_profile = get_market_profile(chain_id)
 
   def __get_position(self, account: str, sub_account_id: int, market_index: int):
     position_id = self.get_position_id(account, sub_account_id, market_index)
@@ -179,7 +180,7 @@ class Public(object):
 
   def __multicall_all_market_data(self):
     ACTIVE_MARKET = [
-      x for x in MARKET_PROFILE.keys() if x not in DELISTED_MARKET]
+      x for x in self.market_profile.keys() if x not in DELISTED_MARKET]
     market_config_calls = list(map(lambda market_index: self.multicall_instance.create_call(
         self.config_storage_instance, "marketConfigs", [market_index]
       ), ACTIVE_MARKET))
@@ -492,11 +493,11 @@ class Public(object):
     '''
 
     price = self.oracle_middleware.get_price(
-      MARKET_PROFILE[market_index]["asset"])
-    asset_decimal = MARKET_PROFILE[market_index]["display_decimal"]
+      self.market_profile[market_index]["asset"])
+    asset_decimal = self.market_profile[market_index]["display_decimal"]
     if buy is None and size is None:
       return {
-        "market": MARKET_PROFILE[market_index]["name"],
+        "market": self.market_profile[market_index]["name"],
         "price": round(price, asset_decimal),
         "adaptive_price": None,
         "price_impact": None,
@@ -513,7 +514,7 @@ class Public(object):
     price_impact = (adaptive_price * 10**30 // oracle_price) - 10**30
 
     return {
-      "market": MARKET_PROFILE[market_index]["name"],
+      "market": self.market_profile[market_index]["name"],
       "price": round(oracle_price / 10**30, asset_decimal),
       "adaptive_price": round(adaptive_price / 10**30, asset_decimal),
       "price_impact": price_impact * 100 / 10**30,
@@ -521,10 +522,11 @@ class Public(object):
 
   def get_multiple_price(self, market_indices: List[int] = []):
     if not market_indices:
-      market_indices = list(set(MARKET_PROFILE.keys()) - set(DELISTED_MARKET))
+      market_indices = list(
+        set(self.market_profile.keys()) - set(DELISTED_MARKET))
 
     asset_ids = list(
-      map(lambda market_index: MARKET_PROFILE[market_index]["asset"], market_indices))
+      map(lambda market_index: self.market_profile[market_index]["asset"], market_indices))
 
     price_object = self.oracle_middleware.get_multiple_price(
         asset_ids
@@ -533,8 +535,8 @@ class Public(object):
     market_prices = {}
 
     for market_index in market_indices:
-      asset_id = MARKET_PROFILE[market_index]["asset"]
-      asset_decimal = MARKET_PROFILE[market_index]["display_decimal"]
+      asset_id = self.market_profile[market_index]["asset"]
+      asset_decimal = self.market_profile[market_index]["display_decimal"]
       price = round(
         price_object[asset_id], asset_decimal)
       market_prices[market_index] = price
@@ -567,7 +569,7 @@ class Public(object):
       data["asset_class_config"], data["asset_class"], tvl)
 
     return {
-      "market": MARKET_PROFILE[market_index]["name"],
+      "market": self.market_profile[market_index]["name"],
       "price": price,
       "long_size": data["market"]["long_position_size"] / 10**30,
       "short_size": data["market"]["short_position_size"] / 10**30,
@@ -599,7 +601,7 @@ class Public(object):
 
     market_prices = self.get_multiple_price()
 
-    for market_index in MARKET_PROFILE.keys():
+    for market_index in self.market_profile.keys():
       if market_index not in DELISTED_MARKET:
         current_raw_market_data = raw_market_data[market_index]
         price = market_prices[market_index]
@@ -614,7 +616,7 @@ class Public(object):
           current_raw_market_data["asset_class_config"], current_raw_market_data["asset_class"], tvl)
 
         market_info[market_index] = {
-          "market": MARKET_PROFILE[market_index]["name"],
+          "market": self.market_profile[market_index]["name"],
           "price": price,
           "long_size": current_raw_market_data["market"]["long_position_size"] / 10**30,
           "short_size": current_raw_market_data["market"]["short_position_size"] / 10**30,
@@ -704,7 +706,7 @@ class Public(object):
       position_info = {
         "primary_account": position["primary_account"],
         "sub_account_id": position["sub_account_id"],
-        "market": MARKET_PROFILE[market_index]["name"],
+        "market": self.market_profile[market_index]["name"],
         "position_size": position["position_size_e30"] / 10**30,
         "avg_entry_price": position["avg_entry_price_e30"] / 10**30,
         "pnl": pnl / 10**30,
@@ -733,7 +735,7 @@ class Public(object):
     entry_borrowing_rate = position['entry_borrowing_rate']
     block = self.__get_block()
     price = int(self.oracle_middleware.get_price(
-        MARKET_PROFILE[market_index]["asset"]) * 10 ** 30)
+        self.market_profile[market_index]["asset"]) * 10 ** 30)
 
     pnl = Calculator.get_pnl(
       position, market_data["market"], market_data["market_config"], market_data["trading_config"], price, block["timestamp"])
@@ -765,7 +767,7 @@ class Public(object):
     return {
       "primary_account": position["primary_account"],
       "sub_account_id": position["sub_account_id"],
-      "market": MARKET_PROFILE[market_index]["name"],
+      "market": self.market_profile[market_index]["name"],
       "position_size": position["position_size_e30"] / 10**30,
       "avg_entry_price": position["avg_entry_price_e30"] / 10**30,
       "pnl": pnl / 10**30,
@@ -825,6 +827,15 @@ class Public(object):
     collateral_address_list = get_collateral_address_list(self.chain_id)
     collateral_address_asset_map = get_collateral_address_asset_map(
       self.chain_id)
+
+    # filter for blast
+    if is_blast_chain(self.chain_id):
+      token_profile = get_token_profile(self.chain_id)
+      weth_address = token_profile["WETH"]["address"]
+      collateral_address_list.remove(weth_address)
+      weth_address = token_profile["WETH"]["address"]
+      collateral_address_asset_map.pop(weth_address)
+
     token_profile = get_token_profile(self.chain_id)
 
     token_config_calls = [self.multicall_instance.create_call(

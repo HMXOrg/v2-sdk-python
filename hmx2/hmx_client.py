@@ -13,6 +13,7 @@ from hmx2.modules.oracle.glp_oracle import GlpOracle
 from hmx2.modules.oracle.cix_oracle import CixOracle
 from hmx2.modules.oracle.gm_oracle import GmOracle
 from hmx2.modules.oracle.onchain_pricelens_oracle import OnchainPricelensOracle
+from hmx2.modules.oracle.calc_pricelens_oracle import CalcPricelensOracle
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 
 
@@ -37,8 +38,11 @@ class Client(object):
     onchain_pricelens_oracle = OnchainPricelensOracle(
       contract_address["ONCHAIN_PRICELENS_ADDRESS"], pyth_oracle, self.__eth_provider)
 
+    calc_pricelens_oracle = CalcPricelensOracle(
+      contract_address["CALC_PRICELENS_ADDRESS"], pyth_oracle, self.__eth_provider)
+
     self.__oracle_middleware = OracleMiddleware(
-      pyth_oracle, glp_oracle, dix_oracle, gm_btc_oracle, gm_eth_oracle, onchain_pricelens_oracle)
+      pyth_oracle, glp_oracle, dix_oracle, gm_btc_oracle, gm_eth_oracle, onchain_pricelens_oracle, calc_pricelens_oracle)
 
     self.__private = None
     self.__public = Public(

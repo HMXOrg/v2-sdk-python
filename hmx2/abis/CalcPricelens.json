@@ -1,0 +1,132 @@
+[
+  { "inputs": [], "name": "CalcPriceLens_BadLength", "type": "error" },
+  { "inputs": [], "name": "CalcPriceLens_BadPriceId", "type": "error" },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "priceId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "priceAdapter",
+        "type": "address"
+      }
+    ],
+    "name": "LogSetPriceAdapter",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "priceId", "type": "bytes32" },
+      {
+        "components": [
+          { "internalType": "bytes32", "name": "assetId", "type": "bytes32" },
+          { "internalType": "int64", "name": "priceE8", "type": "int64" },
+          {
+            "internalType": "uint160",
+            "name": "publishTime",
+            "type": "uint160"
+          },
+          { "internalType": "uint32", "name": "maxDiffBps", "type": "uint32" }
+        ],
+        "internalType": "struct IEcoPythCalldataBuilder3.BuildData[]",
+        "name": "_buildDatas",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "getPrice",
+    "outputs": [
+      { "internalType": "uint256", "name": "price", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "priceId", "type": "bytes32" },
+      { "internalType": "uint256[]", "name": "priceE8s", "type": "uint256[]" }
+    ],
+    "name": "getPrice",
+    "outputs": [
+      { "internalType": "uint256", "name": "price", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "priceId", "type": "bytes32" }
+    ],
+    "name": "priceAdapterById",
+    "outputs": [
+      {
+        "internalType": "contract ICalcPriceAdapter",
+        "name": "calcPriceAdapters",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32[]", "name": "priceIds", "type": "bytes32[]" },
+      {
+        "internalType": "contract ICalcPriceAdapter[]",
+        "name": "calcPriceAdapters",
+        "type": "address[]"
+      }
+    ],
+    "name": "setPriceAdapters",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "newOwner", "type": "address" }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

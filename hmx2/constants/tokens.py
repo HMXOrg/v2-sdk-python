@@ -10,7 +10,9 @@ from hmx2.constants.assets import (
   ASSET_gmBTC,
   ASSET_gmETH,
   ASSET_wstETH,
-  ASSET_PYTH
+  ASSET_PYTH,
+  ASSET_ybUSDB,
+  ASSET_ybETH,
 )
 
 # Arbitrum Sepolia
@@ -30,9 +32,33 @@ COLLATERAL_gmBTC = "0x47c031236e19d024b42f8AE6780E44A573170703"
 COLLATERAL_gmETH = "0x70d95587d40A2caf56bd97485aB3Eec10Bee6336"
 COLLATERAL_PYTH = "0xE4D5c6aE46ADFAF04313081e8C0052A30b6Dd724"
 
+# Blast Sepolia
+# BLAST_COLLATERAL_USDB = "0x073315910A2B432F2f9482bCEAFe34420718c7Cc"
+# BLAST_COLLATERAL_ETH = "0x4200000000000000000000000000000000000023"
+
 # Blast Mainnet
-COLLATERAL_ybETH = "0xb9d94A3490bA2482E2D4F21F0E76b92E5661Ded8"
-COLLATERAL_ybUSDB = "0xCD732d21c1B23A3f84Bb386E9759b5b6A1BcBe39"
+BLAST_COLLATERAL_ETH = "0x4300000000000000000000000000000000000004"
+BLAST_COLLATERAL_USDB = "0xCD732d21c1B23A3f84Bb386E9759b5b6A1BcBe39"
+
+CHAIN_COLLATERAL = {
+  42161: [
+      COLLATERAL_USDCe,
+      COLLATERAL_USDT,
+      COLLATERAL_DAI,
+      COLLATERAL_WETH,
+      COLLATERAL_WBTC,
+      COLLATERAL_sGLP,
+      COLLATERAL_ARB,
+      COLLATERAL_wstETH,
+      COLLATERAL_USDC,
+      COLLATERAL_gmBTC,
+      COLLATERAL_gmETH,
+      COLLATERAL_PYTH,
+  ],
+  81457: [
+      BLAST_COLLATERAL_ETH,
+      BLAST_COLLATERAL_USDB,
+  ]}
 
 # ------ Token Profiles ------
 TOKEN_PROFILE = {
@@ -318,4 +344,80 @@ TOKEN_PROFILE = {
           "decimals": 18
       },
   },
+  81457: {
+      "ybUSDB": {
+          "symbol": "USDB",
+          "address": "0xCD732d21c1B23A3f84Bb386E9759b5b6A1BcBe39",
+          "asset": ASSET_ybUSDB,
+          "decimals": 6
+      },
+      "0xCD732d21c1B23A3f84Bb386E9759b5b6A1BcBe39": {
+          "symbol": "USDB",
+          "address": "0xCD732d21c1B23A3f84Bb386E9759b5b6A1BcBe39",
+          "asset": ASSET_ybUSDB,
+          "decimals": 6
+      },
+      "ybETH": {
+          "symbol": "ETH",
+          "address": "0xb9d94A3490bA2482E2D4F21F0E76b92E5661Ded8",
+          "asset": ASSET_ybETH,
+          "decimals": 6
+      },
+      "0xb9d94A3490bA2482E2D4F21F0E76b92E5661Ded8": {
+          "symbol": "ETH",
+          "address": "0xb9d94A3490bA2482E2D4F21F0E76b92E5661Ded8",
+          "asset": ASSET_ybETH,
+          "decimals": 6
+      },
+      "WETH": {
+          "symbol": "WETH",
+          "address": "0x4300000000000000000000000000000000000004",
+          "asset": ASSET_ETH,
+          "decimals": 18
+      },
+      "0x4300000000000000000000000000000000000004": {
+          "symbol": "WETH",
+          "address": "0x4300000000000000000000000000000000000004",
+          "asset": ASSET_ETH,
+          "decimals": 18
+      },
+  },
+  168587773: {
+      "ybUSDB": {
+          "symbol": "USDB",
+          "address": "0x073315910A2B432F2f9482bCEAFe34420718c7Cc",
+          "asset": ASSET_ybUSDB,
+          "decimals": 18
+      },
+      "0x073315910A2B432F2f9482bCEAFe34420718c7Cc": {
+          "symbol": "USDB",
+          "address": "0x073315910A2B432F2f9482bCEAFe34420718c7Cc",
+          "asset": ASSET_ybUSDB,
+          "decimals": 18
+      },
+      "ybETH": {
+          "symbol": "ETH",
+          "address": "0x628eF5ADFf7da4980CeA33E05568d22772E87EB8",
+          "asset": ASSET_ybETH,
+          "decimals": 18
+      },
+      "0x628eF5ADFf7da4980CeA33E05568d22772E87EB8": {
+          "symbol": "ETH",
+          "address": "0x628eF5ADFf7da4980CeA33E05568d22772E87EB8",
+          "asset": ASSET_ybETH,
+          "decimals": 18
+      },
+      "WETH": {
+          "symbol": "WETH",
+          "address": "0x4200000000000000000000000000000000000023",
+          "asset": ASSET_ETH,
+          "decimals": 18,
+      },
+      "0x4200000000000000000000000000000000000023": {
+          "symbol": "WETH",
+          "address": "0x4200000000000000000000000000000000000023",
+          "asset": ASSET_ETH,
+          "decimals": 18,
+      },
+  }
 }

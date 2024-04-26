@@ -40,7 +40,7 @@ from hmx2.helpers.mapper import (
   get_collateral_address_asset_map,
   get_collateral_address_list
 )
-from hmx2.helpers.util import check_sub_account_id_param, from_number_to_e30, is_blast_chain
+from hmx2.helpers.util import check_sub_account_id_param, from_number_to_e30
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from eth_abi.abi import encode
 import decimal

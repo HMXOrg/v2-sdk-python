@@ -1,4 +1,5 @@
 from eth_abi.packed import encode_packed
+from eth_keys import keys
 from web3 import Web3, Account
 from web3.middleware.signing import construct_sign_and_send_raw_middleware
 from web3.logs import DISCARD
@@ -29,7 +30,6 @@ from hmx2.enum import (
   Cmd,
 )
 from eth_account import Account
-from secp256k1 import PrivateKey
 
 from eth_account.messages import encode_typed_data
 from time import time
@@ -530,9 +530,14 @@ class Private(object):
     signature = encode_packed(['bytes32', 'bytes32', 'uint8'], [
         bytes.fromhex(hex(sign_data.r)[2:]), bytes.fromhex(hex(sign_data.s)[2:]), sign_data.v])
 
-    private_key = PrivateKey(
-      bytes(bytearray.fromhex(self.eth_signer.key.hex()[2:])))
-    pubkey_ser = private_key.pubkey.serialize(compressed=False).hex()
+    pk = keys.PrivateKey(self.eth_signer.key)
+
+    pubkey = pk.public_key
+
+    str_pubkey = str(pubkey)
+
+    # convert to secp256k1 format
+    pubkey_ser = str_pubkey[:2] + "04" + str_pubkey[2:]
 
     req_body = {
       "chainId": self.chain_id,
@@ -551,7 +556,7 @@ class Private(object):
           "subAccountId": sub_account_id,
           "signature": "0x" + signature.hex(),
           "digest": sign_data.messageHash.hex(),
-          "publicKey": "0x" + pubkey_ser,
+          "publicKey": pubkey_ser,
         }
       ]
     }

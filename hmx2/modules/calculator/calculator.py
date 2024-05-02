@@ -1,4 +1,5 @@
-from hmx2.constants.common import DAYS
+from hmx2.constants.common import BIE8, BPS, DAYS
+import math
 
 
 class Calculator:
@@ -128,3 +129,54 @@ class Calculator:
   def get_borrowing_fee(reserved_value: int, sum_borrowing_rate: int, entry_borrowing_rate: int):
     borrowing_rate = sum_borrowing_rate - entry_borrowing_rate
     return (reserved_value * borrowing_rate) // 10**18
+
+  @staticmethod
+  def get_trading_fee(size: int, base_fee_rate_bps: int, skew: int, adaptive_fee_info, maker_taker_fee_info):
+
+    maker_fee_e8 = maker_taker_fee_info["maker_fee_e8"]
+    taker_fee_e8 = maker_taker_fee_info["taker_fee_e8"]
+
+    if maker_fee_e8 > 0 or taker_fee_e8 > 0:
+      if size * skew > 0:
+        trading_fee_bps = Calculator.get_adaptive_fee_e8(
+          size, taker_fee_e8, adaptive_fee_info) if adaptive_fee_info is not None else taker_fee_e8
+        return abs(size) * trading_fee_bps / BIE8
+      else:
+        if abs(size) > abs(skew):
+          taker_trading_fee_bps = Calculator.get_adaptive_fee_e8(
+              size, taker_fee_e8, adaptive_fee_info) if adaptive_fee_info is not None else taker_fee_e8
+          maker_trading_fee_bps = Calculator.get_adaptive_fee_e8(
+              size, maker_fee_e8, adaptive_fee_info) if adaptive_fee_info is not None else maker_fee_e8
+          return (abs(size + skew) * taker_trading_fee_bps / BIE8) + (abs(skew) * maker_trading_fee_bps / BIE8)
+        else:
+          maker_trading_fee_bps = Calculator.get_adaptive_fee_e8(
+              size, maker_fee_e8, adaptive_fee_info) if adaptive_fee_info is not None else maker_fee_e8
+          return abs(size) * maker_trading_fee_bps / BIE8
+
+    if adaptive_fee_info is None:
+      return abs(size) * base_fee_rate_bps / BPS
+
+    trading_fee_bps = Calculator.get_adaptive_fee_e8(
+      size, base_fee_rate_bps, adaptive_fee_info)
+
+    return abs(size) * trading_fee_bps / BPS
+
+  @staticmethod
+  def get_adaptive_fee_e8(size_e30: int, base_fee_bps: int, adaptive_fee_info):
+    size = size_e30 / 10 ** 30
+    epoch_volume = adaptive_fee_info["epoch_volume"]["buy"] if size > 0 else adaptive_fee_info["epoch_volume"]["sell"]
+    epoch_volume = epoch_volume / 10 ** 30
+    orderbook_depth = adaptive_fee_info["ask"] if size > 0 else adaptive_fee_info["bid"]
+    orderbook_depth = orderbook_depth / 10 ** 8
+
+    x = abs(size) + (epoch_volume *
+                     adaptive_fee_info["adaptive_fee_calculator"]["k1"] / BPS)
+
+    a = x / orderbook_depth
+
+    coeff = adaptive_fee_info["coeff"] / 10 ** 8
+    max_coeff = min(coeff, 1)
+    g = 2 ** (2 - max_coeff)
+    b = a ** g
+    y = base_fee_bps + (b * adaptive_fee_info["adaptive_fee_calculator"]["k2"])
+    return min(math.floor(y), adaptive_fee_info["max_adaptive_fee_bps"] * 10000)

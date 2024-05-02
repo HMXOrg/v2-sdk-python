@@ -1,0 +1,272 @@
+[
+  { "stateMutability": "nonpayable", "type": "constructor", "inputs": [] },
+  { "type": "error", "inputs": [], "name": "OrderbookOracle_InvalidArgs" },
+  {
+    "type": "error",
+    "inputs": [],
+    "name": "OrderbookOracle_MarketIndexHasAlreadyBeenDefined"
+  },
+  { "type": "error", "inputs": [], "name": "OrderbookOracle_OnlyUpdater" },
+  {
+    "type": "error",
+    "inputs": [],
+    "name": "OrderbookOracle_PriceFeedNotFound"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "_account",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "_isActive",
+        "internalType": "bool",
+        "type": "bool",
+        "indexed": false
+      }
+    ],
+    "name": "LogSetUpdater"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "previousOwner",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "newOwner",
+        "internalType": "address",
+        "type": "address",
+        "indexed": true
+      }
+    ],
+    "name": "OwnershipTransferred"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "index",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": true
+      },
+      {
+        "name": "marketIndex",
+        "internalType": "uint256",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "name": "SetMarketIndex"
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "inputs": [
+      {
+        "name": "marketIndexes",
+        "internalType": "uint256[]",
+        "type": "uint256[]",
+        "indexed": false
+      }
+    ],
+    "name": "SetMarketIndexes"
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "MAX_DEPTH_PER_WORD",
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }],
+    "name": "askDepths",
+    "outputs": [{ "name": "", "internalType": "bytes32", "type": "bytes32" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }],
+    "name": "bidDepths",
+    "outputs": [{ "name": "", "internalType": "bytes32", "type": "bytes32" }]
+  },
+  {
+    "stateMutability": "pure",
+    "type": "function",
+    "inputs": [
+      { "name": "_depths", "internalType": "int24[]", "type": "int24[]" }
+    ],
+    "name": "buildUpdateData",
+    "outputs": [
+      {
+        "name": "_updateData",
+        "internalType": "bytes32[]",
+        "type": "bytes32[]"
+      }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }],
+    "name": "coeffVariants",
+    "outputs": [{ "name": "", "internalType": "bytes32", "type": "bytes32" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [
+      { "name": "marketIndex", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "getData",
+    "outputs": [
+      { "name": "askDepth", "internalType": "uint256", "type": "uint256" },
+      { "name": "bidDepth", "internalType": "uint256", "type": "uint256" },
+      { "name": "coeffVariant", "internalType": "uint256", "type": "uint256" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "getMarketIndexes",
+    "outputs": [
+      { "name": "", "internalType": "uint256[]", "type": "uint256[]" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "indexCount",
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_marketIndex", "internalType": "uint256", "type": "uint256" }
+    ],
+    "name": "insertMarketIndex",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "_marketIndexes",
+        "internalType": "uint256[]",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "insertMarketIndexes",
+    "outputs": []
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "address", "type": "address" }],
+    "name": "isUpdaters",
+    "outputs": [{ "name": "", "internalType": "bool", "type": "bool" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }],
+    "name": "mapMarketIndexToIndex",
+    "outputs": [{ "name": "", "internalType": "uint256", "type": "uint256" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{ "name": "", "internalType": "address", "type": "address" }]
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "_marketIndexes",
+        "internalType": "uint256[]",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "setMarketIndexes",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_account", "internalType": "address", "type": "address" },
+      { "name": "_isActive", "internalType": "bool", "type": "bool" }
+    ],
+    "name": "setUpdater",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "_accounts", "internalType": "address[]", "type": "address[]" },
+      { "name": "_isActives", "internalType": "bool[]", "type": "bool[]" }
+    ],
+    "name": "setUpdaters",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      { "name": "newOwner", "internalType": "address", "type": "address" }
+    ],
+    "name": "transferOwnership",
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "_askDepths",
+        "internalType": "bytes32[]",
+        "type": "bytes32[]"
+      },
+      {
+        "name": "_bidDepths",
+        "internalType": "bytes32[]",
+        "type": "bytes32[]"
+      },
+      {
+        "name": "_coeffVariants",
+        "internalType": "bytes32[]",
+        "type": "bytes32[]"
+      }
+    ],
+    "name": "updateData",
+    "outputs": []
+  }
+]

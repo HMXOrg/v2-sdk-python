@@ -1,10 +1,12 @@
 from web3 import Web3
 from hmx2.constants.contracts import (
+  ADAPTIVE_FEE_CALCULATOR_ABI,
   VAULT_STORAGE_ABI_PATH,
   PERP_STORAGE_ABI_PATH,
   CONFIG_STORAGE_ABI_PATH,
   TRADE_HELPER_ABI_PATH,
-  CALCULATOR_ABI_PATH
+  CALCULATOR_ABI_PATH,
+  ORDERBOOK_ORACLE_ABI
 )
 from hmx2.constants.intent import INTENT_TRADE_API
 from hmx2.constants.markets import (
@@ -12,6 +14,7 @@ from hmx2.constants.markets import (
     DELISTED_MARKET
 )
 from hmx2.constants.common import (
+  BPS,
   BYTE_ZERO,
   HOURS,
   DAYS,
@@ -52,6 +55,10 @@ class Public(object):
     self.calculator_instance = load_contract(
       self.eth_provider, self.contract_address["CALCULATOR_ADDRESS"], CALCULATOR_ABI_PATH
     )
+    self.orderbook_oracle_instance = load_contract(
+      self.eth_provider, self.contract_address["ORDERBOOK_ORACLE_ADDRESS"], ORDERBOOK_ORACLE_ABI)
+    self.adaptive_fee_calculator_instance = load_contract(
+      self.eth_provider, self.contract_address["ADAPTIVE_FEE_CALCULATOR_ADDRESS"], ADAPTIVE_FEE_CALCULATOR_ABI)
     self.multicall_instance = Multicall(w3=self.eth_provider,
                                         custom_address=self.contract_address["MULTICALL_ADDRESS"])
 
@@ -633,7 +640,9 @@ class Public(object):
       [get_sub_account(account, sub_account_id), market_index]
     )
 
-  def get_all_position_info(self, account: str, sub_account_id: List[int] = []):
+  def get_all_position_info(self, account: str, sub_account_id: int | List[int] = []):
+    if type(sub_account_id) == int:
+      sub_account_id = [sub_account_id]
     market_datas = self.__multicall_all_market_data()
     tvl = self.__get_hlp_tvl()
     block = self.__get_block()
@@ -643,8 +652,12 @@ class Public(object):
     positions_flat = [
         x for y in list(positions.values()) for x in y]
 
-    active_market_list = set(
-      map(lambda position: position['market_index'], positions_flat))
+    active_market_list = list(set(
+      map(lambda position: position['market_index'], positions_flat)))
+
+    adaptive_fee_infos = self.__get_adaptive_fee_infos(active_market_list)
+
+    maker_taker_fee_infos = self.__get_maker_taker_fee_e8(active_market_list)
 
     price_map = self.get_multiple_price(active_market_list)
 
@@ -680,6 +693,14 @@ class Public(object):
       borrowing_fee = Calculator.get_borrowing_fee(reserved_value=position_reserved_value, sum_borrowing_rate=(
         sum_borrowing_rate + next_borrowing_rate), entry_borrowing_rate=entry_borrowing_rate)
 
+      base_fee_bps = market_data["market_config"]["decrease_position_fee_rate_bps"]
+
+      skew = market_data["market"]["long_position_size"] - \
+          market_data["market"]["short_position_size"]
+
+      trading_fee = Calculator.get_trading_fee(
+        position["position_size_e30"] * -1, base_fee_bps, skew, adaptive_fee_infos[market_index], maker_taker_fee_infos[market_index])
+
       position_info = {
         "primary_account": position["primary_account"],
         "sub_account_id": position["sub_account_id"],
@@ -689,6 +710,7 @@ class Public(object):
         "pnl": pnl / 10**30,
         "funding_fee": funding_fee / 10**30,
         "borrowing_fee": borrowing_fee / 10**30,
+        "trading_fee": trading_fee / 10**30
       }
       position_infos.append(position_info)
 
@@ -699,6 +721,11 @@ class Public(object):
     tvl = self.__get_hlp_tvl()
 
     position = self.__get_position(account, sub_account_id, market_index)
+
+    adaptive_fee_infos = self.__get_adaptive_fee_infos([market_index])
+
+    maker_taker_fee_infos = self.__get_maker_taker_fee_e8([market_index])
+
     position_reserved_value = position['reserve_value_e30']
     asset_class_reserved_value = market_data["asset_class"]["reserve_value_e30"]
 
@@ -727,6 +754,13 @@ class Public(object):
 
     borrowing_fee = Calculator.get_borrowing_fee(reserved_value=position_reserved_value, sum_borrowing_rate=(
       sum_borrowing_rate + next_borrowing_rate), entry_borrowing_rate=entry_borrowing_rate)
+    base_fee_bps = market_data["market_config"]["decrease_position_fee_rate_bps"]
+
+    skew = market_data["market"]["long_position_size"] - \
+        market_data["market"]["short_position_size"]
+
+    trading_fee = Calculator.get_trading_fee(
+        position["position_size_e30"] * -1, base_fee_bps, skew, adaptive_fee_infos[market_index], maker_taker_fee_infos[market_index])
 
     return {
       "primary_account": position["primary_account"],
@@ -737,6 +771,7 @@ class Public(object):
       "pnl": pnl / 10**30,
       "funding_fee": funding_fee / 10**30,
       "borrowing_fee": borrowing_fee / 10**30,
+      "trading_fee": trading_fee / 10**30
     }
 
   def get_adaptive_fee(self, size_delta: int, market_index: int, is_increase: bool):
@@ -792,6 +827,25 @@ class Public(object):
       self.chain_id)
     token_profile = get_token_profile(self.chain_id)
 
+    token_config_calls = [self.multicall_instance.create_call(
+      self.config_storage_instance,
+      "getCollateralTokenConfigs",
+      [token_address]
+    ) for token_address in collateral_address_list]
+
+    token_configs_raw = self.multicall_instance.call(token_config_calls)[1]
+
+    token_configs = {}
+
+    for index, token_config in enumerate(token_configs_raw):
+      collateral_address = collateral_address_list[index]
+      data = decode(['address', 'uint32', 'bool'], token_config)
+      token_configs[collateral_address] = {
+        "settle_strategy": data[0],
+        "collateral_factor_bps": data[1],
+        "accepted": data[2],
+      }
+
     calls = [
       self.multicall_instance.create_call(
         self.vault_storage_instance,
@@ -814,9 +868,11 @@ class Public(object):
     for index, collateral in enumerate(collateral_address_list):
       amount = int(
           results[1][index].hex(), 16) / 10 ** token_profile[collateral]["decimals"]
+      collatral_factor = token_configs[collateral]["collateral_factor_bps"] / BPS
       ret[token_profile[collateral]["symbol"]] = {
         'amount': amount,
-        'value_usd': amount * collateral_price_dict[token_profile[collateral]["asset"]]
+        'value_usd': amount * collateral_price_dict[token_profile[collateral]["asset"]] * collatral_factor,
+        'value_without_factor_usd': amount * collateral_price_dict[token_profile[collateral]["asset"]]
       }
 
     return ret
@@ -830,3 +886,236 @@ class Public(object):
       "status": IntentOrderStatus.Pending,
     }
     return r.get(f'{INTENT_TRADE_API}/v1/intent-handler/{address}/{sub_account_id}/trade-orders', headers={'Content-Type': 'application/json'}, params=params)
+
+  def get_collateral_without_factor_usd(self, account: str, sub_account_id: int):
+    collaterals = self.get_collaterals(account, sub_account_id)
+    total_value_without_factor_usd = sum(v["value_without_factor_usd"]
+                                         for v in collaterals.values())
+
+    return total_value_without_factor_usd
+
+  def get_collateral_usd(self, account: str, sub_account_id: int):
+    collaterals = self.get_collaterals(account, sub_account_id)
+    total_value_usd = sum(v["value_usd"] for v in collaterals.values())
+
+    return total_value_usd
+
+  def get_total_pnl_and_fee(self, account: str, sub_account_id: int):
+    positions = self.get_all_position_info(account, sub_account_id)
+    total_pnl_usd = sum(position["pnl"]
+                        for position in positions)
+    total_fee_usd = sum(position["funding_fee"] +
+                        position["borrowing_fee"] + position["trading_fee"]
+                        for position in positions)
+    return {
+      "total_pnl_usd": total_pnl_usd,
+      "total_fee_usd": total_fee_usd
+    }
+
+  def get_portfolio_value(self, account: str, sub_account_id: int):
+    vault_storage_state = self.__get_trader_vault_state(account, sub_account_id)
+    collateral_without_factor = self.get_collateral_without_factor_usd(
+      account, sub_account_id)
+
+    pnl_and_fee = self.get_total_pnl_and_fee(account, sub_account_id)
+
+    total_pnl_and_fee = pnl_and_fee["total_pnl_usd"] - \
+        pnl_and_fee["total_fee_usd"]
+
+    portfolio_value = collateral_without_factor \
+        + total_pnl_and_fee \
+        - vault_storage_state["trading_fee"] \
+        - vault_storage_state["borrowing_fee"] \
+        - vault_storage_state["funding_fee"] \
+        - vault_storage_state["loss_fee"]
+
+    return max(portfolio_value, 0)
+
+  def __get_adaptive_fee_infos(self, market_indices: List[int]):
+
+    adaptive_fee_info = {k: None for k in market_indices}
+
+    is_adaptive_fee_enabled_calls = [self.multicall_instance.create_call(
+      self.config_storage_instance,
+      "isAdaptiveFeeEnabledByMarketIndex",
+      [market_index]
+    ) for market_index in market_indices
+    ]
+
+    is_adaptive_fee_enabled_data_raw = self.multicall_instance.call(
+      is_adaptive_fee_enabled_calls)[1]
+
+    is_adaptive_fee_enabled_data = {}
+
+    for index, market_index in enumerate(market_indices):
+      is_adaptive_fee_enabled_data[market_index] = decode(
+        ['bool'], is_adaptive_fee_enabled_data_raw[index])[0]
+
+    adaptive_fee_market_indices = [
+      k for k, v in is_adaptive_fee_enabled_data.items() if v]
+
+    if len(adaptive_fee_market_indices) == 0:
+      return adaptive_fee_info
+
+    orderbook_calls = [self.multicall_instance.create_call(
+        self.orderbook_oracle_instance,
+        "getData",
+        [market_index]
+    ) for market_index in adaptive_fee_market_indices]
+
+    epoch_volume_buy_calls = [self.multicall_instance.create_call(
+      self.perp_storage_instance,
+      "getEpochVolume",
+      [True, market_index]
+    ) for market_index in adaptive_fee_market_indices]
+
+    epoch_volume_sell_calls = [self.multicall_instance.create_call(
+      self.perp_storage_instance,
+      "getEpochVolume",
+      [False, market_index]
+    ) for market_index in adaptive_fee_market_indices]
+
+    max_adaptive_fee_bps_call = self.multicall_instance.create_call(
+      self.trade_helper_instance,
+      "maxAdaptiveFeeBps",
+      []
+    )
+
+    k1_call = self.multicall_instance.create_call(
+      self.adaptive_fee_calculator_instance,
+      "k1",
+      []
+    )
+
+    k2_call = self.multicall_instance.create_call(
+      self.adaptive_fee_calculator_instance,
+      "k2",
+      []
+    )
+
+    adaptive_fee_calculator_calls = orderbook_calls + epoch_volume_buy_calls + \
+        epoch_volume_sell_calls + \
+        [max_adaptive_fee_bps_call] + [k1_call] + [k2_call]
+
+    contract_data = self.multicall_instance.call(
+      adaptive_fee_calculator_calls)
+    adaptive_fee_calculator_data_raw = contract_data[1]
+
+    orderbook_data_raw = adaptive_fee_calculator_data_raw[0: len(
+      adaptive_fee_market_indices)]
+    del adaptive_fee_calculator_data_raw[0: len(adaptive_fee_market_indices)]
+
+    epoch_volume_buy_data_raw = adaptive_fee_calculator_data_raw[0: len(
+      adaptive_fee_market_indices)]
+    del adaptive_fee_calculator_data_raw[0: len(adaptive_fee_market_indices)]
+
+    epoch_volume_sell_data_raw = adaptive_fee_calculator_data_raw[0: len(
+      adaptive_fee_market_indices)]
+    del adaptive_fee_calculator_data_raw[0: len(adaptive_fee_market_indices)]
+
+    orderbook_data = {}
+    epoch_volume_buy_data = {}
+    epoch_volume_sell_data = {}
+
+    for index, market_index in enumerate(adaptive_fee_market_indices):
+      orderbook_data[market_index] = decode(
+        ['uint256', 'uint256', 'uint256'], orderbook_data_raw[index])
+      epoch_volume_buy_data[market_index] = decode(
+        ['uint256'], epoch_volume_buy_data_raw[index])
+      epoch_volume_sell_data[market_index] = decode(
+        ['uint256'], epoch_volume_sell_data_raw[index])
+
+      max_adaptive_fee_bps, k1, k2 = (decode(
+        ['uint32'], adaptive_fee_calculator_data_raw[
+            0]),
+          decode(
+        ['uint256'], adaptive_fee_calculator_data_raw[
+            1]),
+          decode(
+        ['uint256'], adaptive_fee_calculator_data_raw[
+            2]))
+
+    for index, market_index in enumerate(adaptive_fee_market_indices):
+      adaptive_fee_info[market_index] = {
+        "ask": orderbook_data[market_index][0],
+        "bid": orderbook_data[market_index][1],
+        "coeff": orderbook_data[market_index][2],
+        "epoch_volume": {
+          "buy": epoch_volume_buy_data[market_index][0],
+          "sell": epoch_volume_sell_data[market_index][0],
+        },
+        "max_adaptive_fee_bps": max_adaptive_fee_bps[0],
+        "adaptive_fee_calculator": {
+          "k1": k1[0],
+          "k2": k2[0]
+        }
+      }
+
+    return adaptive_fee_info
+
+  def __get_maker_taker_fee_e8(self, market_indices: List[int]):
+
+    maker_taker_fee_infos = {
+      k: {
+          "maker_fee_e8": 0,
+          "taker_fee_e8": 0
+      } for k in market_indices}
+
+    contract_calls = [
+      self.multicall_instance.create_call(
+          self.config_storage_instance,
+          "makerFeeE8ByMarketIndex", [market_index]
+      ) for market_index in market_indices] + [
+      self.multicall_instance.create_call(
+          self.config_storage_instance,
+          "takerFeeE8ByMarketIndex", [market_index]
+      ) for market_index in market_indices]
+
+    contract_data = self.multicall_instance.call(contract_calls)[1]
+
+    maker_fee_raw = contract_data[0: len(
+      market_indices)]
+    del contract_data[0: len(market_indices)]
+
+    taker_fee_raw = contract_data[0: len(
+      market_indices)]
+    del contract_data[0: len(market_indices)]
+
+    for index, market_index in enumerate(market_indices):
+      maker_taker_fee_infos[market_index] = {
+        "maker_fee_e8": decode(['uint256'], maker_fee_raw[index])[0],
+        "taker_fee_e8": decode(['uint256'], taker_fee_raw[index])[0]
+      }
+
+    return maker_taker_fee_infos
+
+  def __get_trader_vault_state(self, account: str, sub_account_id: int):
+    sub_account = get_sub_account(account, sub_account_id)
+
+    trading_fee_call = self.multicall_instance.create_call(
+      self.vault_storage_instance, "tradingFeeDebt", [sub_account])
+    borrowing_fee_call = self.multicall_instance.create_call(
+      self.vault_storage_instance, "borrowingFeeDebt", [sub_account])
+    funding_fee_call = self.multicall_instance.create_call(
+      self.vault_storage_instance, "fundingFeeDebt", [sub_account])
+    loss_fee_call = self.multicall_instance.create_call(
+      self.vault_storage_instance, "lossDebt", [sub_account])
+
+    contract_calls = [trading_fee_call,
+                      borrowing_fee_call,
+                      funding_fee_call,
+                      loss_fee_call]
+
+    contract_raw_data = self.multicall_instance.call(contract_calls)[1]
+
+    trading_fee = decode(['uint256'], contract_raw_data[0])[0]
+    borrowing_fee = decode(['uint256'], contract_raw_data[1])[0]
+    funding_fee = decode(['uint256'], contract_raw_data[2])[0]
+    loss_fee = decode(['uint256'], contract_raw_data[3])[0]
+
+    return {
+      "trading_fee": trading_fee,
+      "borrowing_fee": borrowing_fee,
+      "funding_fee": funding_fee,
+      "loss_fee": loss_fee
+    }

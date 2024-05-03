@@ -3,6 +3,7 @@ from hmx2.modules.oracle.glp_oracle import GlpOracle
 from hmx2.modules.oracle.cix_oracle import CixOracle
 from hmx2.modules.oracle.gm_oracle import GmOracle
 from hmx2.modules.oracle.onchain_pricelens_oracle import OnchainPricelensOracle
+from hmx2.modules.oracle.calc_pricelens_oracle import CalcPricelensOracle
 from hmx2.constants.assets import (
   ASSETS,
   ASSET_USDCe,
@@ -13,20 +14,24 @@ from hmx2.constants.assets import (
   ASSET_wstETH,
   ASSET_1000PEPE,
   ASSET_1000SHIB,
-  ASSET_JPY
+  ASSET_JPY,
+  ASSET_ybETH,
+  ASSET_ybUSDB,
 )
 from typing import List
 
 
 class OracleMiddleware(object):
   def __init__(self, pyth_oracle: PythOracle, glp_oracle: GlpOracle, dix_oracle: CixOracle,
-               gm_btc_oracle: GmOracle, gm_eth_oracle: GmOracle, onchain_pricelens_oracle: OnchainPricelensOracle):
+               gm_btc_oracle: GmOracle, gm_eth_oracle: GmOracle, onchain_pricelens_oracle: OnchainPricelensOracle,
+               calc_pricelens_oracle: CalcPricelensOracle):
     self.glp_oracle = glp_oracle
     self.pyth_oracle = pyth_oracle
     self.dix_oracle = dix_oracle
     self.gm_btc_oracle = gm_btc_oracle
     self.gm_eth_oracle = gm_eth_oracle
     self.onchain_pricelens_oracle = onchain_pricelens_oracle
+    self.calc_pricelens_oracle = calc_pricelens_oracle
 
   def get_price(self, asset_id: str):
     '''
@@ -58,6 +63,9 @@ class OracleMiddleware(object):
 
     if asset_id in [ASSET_JPY]:
       return 1 / self.pyth_oracle.get_price(asset_id)
+
+    if asset_id in [ASSET_ybETH, ASSET_ybUSDB]:
+      return self.calc_pricelens_oracle.get_price(asset_id)
 
     return self.pyth_oracle.get_price(asset_id)
 
@@ -91,6 +99,16 @@ class OracleMiddleware(object):
     if ASSET_USDCe in asset_ids:
       price_object[ASSET_USDCe] = self.get_price("USDC")
       asset_ids.remove(ASSET_USDCe)
+
+    if ASSET_ybETH in asset_ids:
+      price_object[ASSET_ybETH] = self.calc_pricelens_oracle.get_price(
+        ASSET_ybETH)
+      asset_ids.remove(ASSET_ybETH)
+
+    if ASSET_ybUSDB in asset_ids:
+      price_object[ASSET_ybUSDB] = self.calc_pricelens_oracle.get_price(
+        ASSET_ybUSDB)
+      asset_ids.remove(ASSET_ybUSDB)
 
     raw_prices = self.pyth_oracle.get_multiple_price(asset_ids)
 

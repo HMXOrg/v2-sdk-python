@@ -24,7 +24,6 @@ from hmx2.constants.common import (
 from hmx2.constants.intent import (
   INTENT_TRADE_API,
 )
-from hmx2.constants.markets import MARKET_PROFILE
 from hmx2.enum import (
   Action,
   Cmd,
@@ -168,9 +167,11 @@ class Private(object):
 
     amount_wei = int(amount * 10 ** 18)
 
+    eth_token = self.token_profile['WETH']['address']
+
     return self.cross_margin_handler_instance.functions.depositCollateral(
       sub_account_id,
-      self.token_profile['WETH']['address'],
+      eth_token,
       amount_wei,
       True
     ).transact({"from": self.eth_signer.address, "value": amount_wei})

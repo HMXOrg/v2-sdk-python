@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 LONG_DESCRIPTION = open('README.md').read()
 
 REQUIREMENTS = [
-    'eth_keys',
+    'eth_keys==0.5.0',
     'eth-account==0.10.0',
     'eth-abi>=4.0.0,<5.0.0',
     'uniswap-universal-router-decoder',
@@ -11,7 +11,6 @@ REQUIREMENTS = [
     'simple-multicall-v6',
     'responses',
     'python-dotenv>=1.0.0',
-    'secp256k1==0.14.0'
 ]
 
 setup(

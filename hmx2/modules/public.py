@@ -565,6 +565,10 @@ class Public(object):
       block["timestamp"],
     )
 
+    initial_margin_fraction_bps = data["initial_margin_fraction_bps"] if data["initial_margin_fraction_bps"] else "N/A"
+    maintenance_margin_fraction_bps = data["maintenance_margin_fraction_bps"] if data["maintenance_margin_fraction_bps"] else "N/A"
+
+
     borrowing_rate = Calculator.get_borrowing_rate(
       data["asset_class_config"], data["asset_class"], tvl)
 
@@ -584,6 +588,10 @@ class Public(object):
         "8H": borrowing_rate * 8 * HOURS * 100 / 10**18,
         "24H": borrowing_rate * DAYS * 100 / 10**18,
         "1Y": borrowing_rate * YEARS * 100 / 10**18,
+      },
+      "margin": {
+        "initial_margin_fraction_bps": initial_margin_fraction_bps,
+        "maintenance_margin_fraction_bps": maintenance_margin_fraction_bps
       }
     }
 
@@ -612,6 +620,10 @@ class Public(object):
           block["timestamp"],
         )
 
+        initial_margin_fraction_bps = current_raw_market_data["initial_margin_fraction_bps"] if current_raw_market_data["initial_margin_fraction_bps"] else "N/A"
+        maintenance_margin_fraction_bps = current_raw_market_data["maintenance_margin_fraction_bps"] if current_raw_market_data["maintenance_margin_fraction_bps"] else "N/A"
+
+
         borrowing_rate = Calculator.get_borrowing_rate(
           current_raw_market_data["asset_class_config"], current_raw_market_data["asset_class"], tvl)
 
@@ -631,8 +643,11 @@ class Public(object):
             "8H": borrowing_rate * 8 * HOURS * 100 / 10**18,
             "24H": borrowing_rate * DAYS * 100 / 10**18,
             "1Y": borrowing_rate * YEARS * 100 / 10**18,
-          }
-        }
+          },
+          "margin": {
+        "initial_margin_fraction_bps": initial_margin_fraction_bps,
+        "maintenance_margin_fraction_bps": maintenance_margin_fraction_bps
+      }}
 
     return market_info
 

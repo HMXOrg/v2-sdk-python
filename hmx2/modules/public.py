@@ -565,8 +565,8 @@ class Public(object):
       block["timestamp"],
     )
 
-    initial_margin_fraction_bps = data["initial_margin_fraction_bps"] if data["initial_margin_fraction_bps"] else "N/A"
-    maintenance_margin_fraction_bps = data["maintenance_margin_fraction_bps"] if data["maintenance_margin_fraction_bps"] else "N/A"
+    initial_margin_fraction_bps = data["market_config"]["initial_margin_fraction_bps"] if data["market_config"]["initial_margin_fraction_bps"] else "N/A"
+    maintenance_margin_fraction_bps = data["market_config"]["maintenance_margin_fraction_bps"] if data["market_config"]["maintenance_margin_fraction_bps"] else "N/A"
 
 
     borrowing_rate = Calculator.get_borrowing_rate(
@@ -620,8 +620,8 @@ class Public(object):
           block["timestamp"],
         )
 
-        initial_margin_fraction_bps = current_raw_market_data["initial_margin_fraction_bps"] if current_raw_market_data["initial_margin_fraction_bps"] else "N/A"
-        maintenance_margin_fraction_bps = current_raw_market_data["maintenance_margin_fraction_bps"] if current_raw_market_data["maintenance_margin_fraction_bps"] else "N/A"
+        initial_margin_fraction_bps = current_raw_market_data["market_config"]["initial_margin_fraction_bps"] if current_raw_market_data["market_config"]["initial_margin_fraction_bps"] else "N/A"
+        maintenance_margin_fraction_bps = current_raw_market_data["market_config"]["maintenance_margin_fraction_bps"] if current_raw_market_data["market_config"]["maintenance_margin_fraction_bps"] else "N/A"
 
 
         borrowing_rate = Calculator.get_borrowing_rate(

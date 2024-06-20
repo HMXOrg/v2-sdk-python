@@ -61,7 +61,7 @@ from hmx2.constants.assets import (
   ASSET_PENDLE,
   ASSET_ENA,
 )
-DEFAULT_PYTH_PRICE_SERVICE_URL = "https://hermes.pyth.network"
+DEFAULT_PYTH_PRICE_SERVICE_URL = "https://oracle-public-api.hmx.org"
 
 
 GET_LATEST_PRICE_FEEDS_ENDPOINT = "api/latest_price_feeds"

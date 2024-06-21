@@ -15,7 +15,7 @@ REQUIREMENTS = [
 
 setup(
     name='hmx-v2-python',
-    version='1.2.0',
+    version='1.2.1',
     packages=find_packages(),
     package_data={
       'hmx2': ['abis/*.json'],
@@ -28,7 +28,7 @@ setup(
     license='MIT',
     author_email='contact@hmx.org',
     install_requires=REQUIREMENTS,
-    keywords='hmx exchange perp dex defi ethereum eth arbitrum',
+    keywords='hmx exchange perp dex defi ethereum eth arbitrum blast',
     classifiers=[
       'Intended Audience :: Developers',
       'License :: OSI Approved :: MIT License',

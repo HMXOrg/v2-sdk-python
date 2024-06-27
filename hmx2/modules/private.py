@@ -277,7 +277,7 @@ class Private(object):
       "trigger_price": Web3.to_wei(trigger_price, "tether"),
       "acceptable_price": Web3.to_wei(
         self.__add_slippage(
-          trigger_price) if size > 0 else self.__sub_slippage(trigger_price),
+          trigger_price) if buy else self.__sub_slippage(trigger_price),
         "tether"
       ),
       "trigger_above_threshold": trigger_above_threshold,
@@ -328,7 +328,7 @@ class Private(object):
     '''
     size_delta = Web3.to_wei(size, "tether")
     acceptable_price = self.__add_slippage(
-      trigger_price) if size > 0 else self.__sub_slippage(trigger_price)
+      trigger_price) if buy else self.__sub_slippage(trigger_price)
     order = {
       "cmd": Cmd.UPDATE,
       "order_index": order_index,

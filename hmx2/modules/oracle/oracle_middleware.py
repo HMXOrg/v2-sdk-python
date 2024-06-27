@@ -77,7 +77,11 @@ class OracleMiddleware(object):
       raise Exception('Invalid asset_ids')
 
     if ASSET_GLP in asset_ids:
-      price_object[ASSET_GLP] = self.glp_oracle.get_price(ASSET_GLP)
+      try:
+        price_object[ASSET_GLP] = self.glp_oracle.get_price(ASSET_GLP)
+      except:
+        # mock if not available
+        price_object[ASSET_GLP] = 1
       asset_ids.remove(ASSET_GLP)
 
     if ASSET_DIX in asset_ids:
@@ -85,11 +89,19 @@ class OracleMiddleware(object):
       asset_ids.remove(ASSET_DIX)
 
     if ASSET_gmBTC in asset_ids:
-      price_object[ASSET_gmBTC] = self.gm_btc_oracle.get_price(ASSET_gmBTC)
+      try:
+        price_object[ASSET_gmBTC] = self.gm_btc_oracle.get_price(ASSET_gmBTC)
+      except:
+        # mock if not available
+        price_object[ASSET_gmBTC] = 1
       asset_ids.remove(ASSET_gmBTC)
 
     if ASSET_gmETH in asset_ids:
-      price_object[ASSET_gmETH] = self.gm_eth_oracle.get_price(ASSET_gmETH)
+      try:
+        price_object[ASSET_gmETH] = self.gm_eth_oracle.get_price(ASSET_gmETH)
+      except:
+        # mock if not available
+        price_object[ASSET_gmETH] = 1
       asset_ids.remove(ASSET_gmETH)
 
     if ASSET_wstETH in asset_ids:

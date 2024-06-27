@@ -233,7 +233,7 @@ class Private(object):
     args["order"] = events[0]["args"]
     return args
 
-  def create_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO, intent: bool = False):
+  def create_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO, intent: bool = False, expire_time: int = 240 * MINUTES):
     '''
     Post a trigger order
 
@@ -265,7 +265,7 @@ class Private(object):
     if intent:
       while True:
         try:
-          return self.__create_intent_trigger_order(sub_account_id, market_index, buy, size, trigger_price, trigger_above_threshold, reduce_only, tp_token)
+          return self.__create_intent_trigger_order(sub_account_id, market_index, buy, size, trigger_price, trigger_above_threshold, reduce_only, tp_token, expire_time)
         except Exception as e:
           # print(e)
           sleep(0.5)
@@ -452,9 +452,9 @@ class Private(object):
     return self.limit_trade_handler_instance.events[topic](
       ).process_receipt(receipt, DISCARD)
 
-  def __create_intent_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO):
+  def __create_intent_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, expire_time: int, tp_token: str = ADDRESS_ZERO):
     created_timestamp = math.floor(time())
-    expired_timestamp = created_timestamp + 240 * MINUTES
+    expired_timestamp = created_timestamp + expire_time
 
     acceptable_price = self.__add_slippage(
       trigger_price) if buy else self.__sub_slippage(trigger_price)

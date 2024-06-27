@@ -1,6 +1,7 @@
 from web3 import Web3
 from hmx2.constants.contracts import (
   ADAPTIVE_FEE_CALCULATOR_ABI,
+  LIMIT_TRADE_HANDLER_ABI_PATH,
   VAULT_STORAGE_ABI_PATH,
   PERP_STORAGE_ABI_PATH,
   CONFIG_STORAGE_ABI_PATH,
@@ -54,6 +55,9 @@ class Public(object):
     )
     self.calculator_instance = load_contract(
       self.eth_provider, self.contract_address["CALCULATOR_ADDRESS"], CALCULATOR_ABI_PATH
+    )
+    self.limit_trade_handler = load_contract(
+      self.eth_provider, self.contract_address["LIMIT_TRADE_HANDLER_ADDRESS"], LIMIT_TRADE_HANDLER_ABI_PATH
     )
     self.orderbook_oracle_instance = load_contract(
       self.eth_provider, self.contract_address["ORDERBOOK_ORACLE_ADDRESS"], ORDERBOOK_ORACLE_ABI)
@@ -565,9 +569,10 @@ class Public(object):
       block["timestamp"],
     )
 
-    initial_margin_fraction_bps = data["market_config"]["initial_margin_fraction_bps"] if data["market_config"]["initial_margin_fraction_bps"] else "N/A"
-    maintenance_margin_fraction_bps = data["market_config"]["maintenance_margin_fraction_bps"] if data["market_config"]["maintenance_margin_fraction_bps"] else "N/A"
-
+    initial_margin_fraction_bps = data["market_config"]["initial_margin_fraction_bps"] if data[
+      "market_config"]["initial_margin_fraction_bps"] else "N/A"
+    maintenance_margin_fraction_bps = data["market_config"]["maintenance_margin_fraction_bps"] if data[
+      "market_config"]["maintenance_margin_fraction_bps"] else "N/A"
 
     borrowing_rate = Calculator.get_borrowing_rate(
       data["asset_class_config"], data["asset_class"], tvl)
@@ -620,9 +625,10 @@ class Public(object):
           block["timestamp"],
         )
 
-        initial_margin_fraction_bps = current_raw_market_data["market_config"]["initial_margin_fraction_bps"] if current_raw_market_data["market_config"]["initial_margin_fraction_bps"] else "N/A"
-        maintenance_margin_fraction_bps = current_raw_market_data["market_config"]["maintenance_margin_fraction_bps"] if current_raw_market_data["market_config"]["maintenance_margin_fraction_bps"] else "N/A"
-
+        initial_margin_fraction_bps = current_raw_market_data["market_config"][
+          "initial_margin_fraction_bps"] if current_raw_market_data["market_config"]["initial_margin_fraction_bps"] else "N/A"
+        maintenance_margin_fraction_bps = current_raw_market_data["market_config"][
+          "maintenance_margin_fraction_bps"] if current_raw_market_data["market_config"]["maintenance_margin_fraction_bps"] else "N/A"
 
         borrowing_rate = Calculator.get_borrowing_rate(
           current_raw_market_data["asset_class_config"], current_raw_market_data["asset_class"], tvl)
@@ -645,9 +651,9 @@ class Public(object):
             "1Y": borrowing_rate * YEARS * 100 / 10**18,
           },
           "margin": {
-        "initial_margin_fraction_bps": initial_margin_fraction_bps,
-        "maintenance_margin_fraction_bps": maintenance_margin_fraction_bps
-      }}
+              "initial_margin_fraction_bps": initial_margin_fraction_bps,
+              "maintenance_margin_fraction_bps": maintenance_margin_fraction_bps
+          }}
 
     return market_info
 
@@ -1147,3 +1153,65 @@ class Public(object):
       "funding_fee": funding_fee,
       "loss_fee": loss_fee
     }
+
+  def __get_intent_trade_orders_api(self, address: str, sub_account_id: int):
+    response = r.get(
+        f'{INTENT_TRADE_API}/v1/intent-handler/{address}/{sub_account_id}/trade-orders', params={'chainId': self.chain_id, 'status': 'pending'})
+    return response.json()
+
+  def __get_intent_trade_orders(self, address: str, sub_account_ids: int):
+    active_trade_orders = {}
+    for sub_account_id in sub_account_ids:
+      active_trade_orders[sub_account_id] = self.__get_intent_trade_orders_api(
+        address, sub_account_id)['data']['intentTradeOrders']
+
+    return active_trade_orders
+
+  def __multicall_get_active_limit_orders(self, account: str, sub_account_ids: List[int]):
+
+    calls = list(map(lambda sub_account_id: self.multicall_instance.create_call(
+        self.limit_trade_handler, "getLimitActiveOrdersBySubAccount", [
+          get_sub_account(account, sub_account_id), 100, 0]
+      ), sub_account_ids))
+
+    active_limit_orders_result = self.multicall_instance.call(calls)
+    data = active_limit_orders_result[1]
+
+    active_limit_orders_data = {}
+
+    for sub_account_id in sub_account_ids:
+      data_pop = data.pop(0)
+      data_decoded = decode(
+          ['(address,address,bool,bool,int256,uint8,uint256,uint256,uint256,uint256,uint256,uint256)[]'],
+          data_pop
+      )
+
+      raw_sub_account_orders = data_decoded[0]
+
+      for raw_order in raw_sub_account_orders:
+        order = {
+            "account": raw_order[0],
+            "tp_token": raw_order[1],
+            "trigger_above_threshold": raw_order[2],
+            "reduce_only": raw_order[3],
+            "size_delta": raw_order[4],
+            "sub_account_id": raw_order[5],
+            "order_index": raw_order[6],
+            "market_index": raw_order[7],
+            "trigger_price": raw_order[8],
+            "acceptable_price": raw_order[9],
+            "execution_fee": raw_order[10],
+            "created_timestamp": raw_order[11],
+        }
+        try:
+          active_limit_orders_data[sub_account_id].append(order)
+        except:
+          active_limit_orders_data[sub_account_id] = [order]
+
+    return active_limit_orders_data
+
+  def get_active_limit_orders(self, account: str, sub_account_ids: List[int] = [0, 1, 2, 3, 4], intent: bool = False):
+    if intent:
+      return self.__get_intent_trade_orders(account, sub_account_ids)
+
+    return self.__multicall_get_active_limit_orders(account, sub_account_ids)

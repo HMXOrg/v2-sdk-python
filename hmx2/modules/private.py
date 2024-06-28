@@ -30,7 +30,7 @@ from hmx2.enum import (
 )
 from eth_account import Account
 
-from eth_account.messages import encode_typed_data
+from eth_account.messages import encode_typed_data, encode_defunct
 from time import time
 from hmx2.helpers.contract_loader import load_contract
 from simple_multicall_v6 import Multicall
@@ -233,7 +233,7 @@ class Private(object):
     args["order"] = events[0]["args"]
     return args
 
-  def create_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO, intent: bool = False):
+  def create_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO, intent: bool = False, expire_time: int = 240 * MINUTES):
     '''
     Post a trigger order
 
@@ -265,7 +265,7 @@ class Private(object):
     if intent:
       while True:
         try:
-          return self.__create_intent_trigger_order(sub_account_id, market_index, buy, size, trigger_price, trigger_above_threshold, reduce_only, tp_token)
+          return self.__create_intent_trigger_order(sub_account_id, market_index, buy, size, trigger_price, trigger_above_threshold, reduce_only, tp_token, expire_time)
         except Exception as e:
           # print(e)
           sleep(0.5)
@@ -352,7 +352,7 @@ class Private(object):
     args["order"] = events[0]["args"]
     return args
 
-  def cancel_trigger_order(self, sub_account_id: int, order_index: int):
+  def cancel_trigger_order(self, sub_account_id: int, market_index: int, order_index: int, intent: bool = False):
     '''
     Cancel a trigger order
 
@@ -362,6 +362,9 @@ class Private(object):
     :param order_index: required
     :type order_index: int
     '''
+
+    if intent:
+      return self.__cancel_intent_trade_order(market_index, order_index)
     order = {
       "cmd": Cmd.CANCEL,
       "order_index": order_index,
@@ -449,9 +452,9 @@ class Private(object):
     return self.limit_trade_handler_instance.events[topic](
       ).process_receipt(receipt, DISCARD)
 
-  def __create_intent_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO):
+  def __create_intent_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, expire_time: int, tp_token: str = ADDRESS_ZERO):
     created_timestamp = math.floor(time())
-    expired_timestamp = created_timestamp + 240 * MINUTES
+    expired_timestamp = created_timestamp + expire_time
 
     acceptable_price = self.__add_slippage(
       trigger_price) if buy else self.__sub_slippage(trigger_price)
@@ -570,3 +573,75 @@ class Private(object):
     Get the public address of the signer.
     '''
     return self.eth_signer.address
+
+  def __encode_and_build_cancel_trade_order(self, market_index: int, order_index: int, created_timestamp: int):
+    order_key = self.__get_order_key_from_order_index(order_index)
+    raw_message = f'Cancel_{order_key}_{created_timestamp}'
+
+    encoded_message = encode_defunct(text=raw_message)
+    pk = keys.PrivateKey(self.eth_signer.key)
+    pubkey = pk.public_key
+
+    str_pubkey = str(pubkey)
+
+    # convert to secp256k1 format
+    pubkey_ser = str_pubkey[:2] + "04" + str_pubkey[2:]
+    sign_data = Account.sign_message(
+      encoded_message, pk)
+
+    signature = encode_packed(['bytes32', 'bytes32', 'uint8'], [
+        bytes.fromhex(hex(sign_data.r)[2:]), bytes.fromhex(hex(sign_data.s)[2:]), sign_data.v])
+
+    cancel_order = {
+      "id": order_index,
+      "marketIndex": market_index,
+      "cancelOrderSignature": "0x" + signature.hex(),
+      "cancelTimestamp": created_timestamp,
+      "publicKey": pubkey_ser,
+      "_rawMessage": raw_message
+    }
+
+    req_body = {
+      "chainId": self.chain_id,
+        "intentTradeOrders": [cancel_order]
+    }
+
+    json_body = json.dumps(req_body)
+
+    return json_body
+
+  def __cancel_intent_trade_order_api(self, req):
+    return r.post(f'{INTENT_TRADE_API}/v1/intent-handler/orders.cancel', headers={'Content-Type': 'application/json'}, data=req)
+
+  def __cancel_intent_trade_order(self, market_index: int, order_index: int):
+    created_timestamp = math.floor(time())
+    json_body = self.__encode_and_build_cancel_trade_order(
+      market_index, order_index, created_timestamp)
+    return self.__cancel_intent_trade_order_api(json_body).json()
+
+  def __get_order_key_from_order_index(self, order_index: int):
+    order_response = self.__get_intent_trade_orders(
+      self.eth_signer.address, [0, 1, 2, 3, 4])
+
+    order_object = {}
+
+    order_list = [
+        x for y in order_response.values() for x in y]
+
+    for order in order_list:
+      order_object[order['id']] = order['key']
+
+    return order_object[order_index]
+
+  def __get_intent_trade_orders_api(self, address: str, sub_account_id: int):
+    response = r.get(
+        f'{INTENT_TRADE_API}/v1/intent-handler/{address}/{sub_account_id}/trade-orders', params={'chainId': self.chain_id, 'status': 'pending'})
+    return response.json()
+
+  def __get_intent_trade_orders(self, address: str, sub_account_ids: int):
+    active_trade_orders = {}
+    for sub_account_id in sub_account_ids:
+      active_trade_orders[sub_account_id] = self.__get_intent_trade_orders_api(
+        address, sub_account_id)['data']['intentTradeOrders']
+
+    return active_trade_orders

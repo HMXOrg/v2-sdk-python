@@ -265,7 +265,7 @@ class Private(object):
     if intent:
       while True:
         try:
-          return self.__create_intent_trigger_order(sub_account_id, market_index, buy, size, trigger_price, trigger_above_threshold, reduce_only, tp_token, expire_time)
+          return self.__create_intent_trigger_order(sub_account_id, market_index, buy, size, trigger_price, trigger_above_threshold, reduce_only, expire_time, tp_token)
         except Exception as e:
           # print(e)
           sleep(0.5)
@@ -364,7 +364,11 @@ class Private(object):
     '''
 
     if intent:
-      return self.__cancel_intent_trade_order(market_index, order_index)
+      while True:
+        try:
+          return self.__cancel_intent_trade_order(market_index, order_index)
+        except Exception as e:
+          sleep(0.5)
     order = {
       "cmd": Cmd.CANCEL,
       "order_index": order_index,

@@ -3,7 +3,6 @@ from eth_keys import keys
 from web3 import Web3, Account
 from web3.middleware.signing import construct_sign_and_send_raw_middleware
 from web3.logs import DISCARD
-from time import sleep
 from hmx2.constants.contracts import (
   CROSS_MARGIN_HANDLER_ABI_PATH,
   LIMIT_TRADE_HANDLER_ABI_PATH,
@@ -15,6 +14,7 @@ from hmx2.constants.contracts import (
 )
 from hmx2.constants.common import (
   ADDRESS_ZERO,
+  DAYS,
   MAX_UINT,
   EXECUTION_FEE,
   BPS,
@@ -25,7 +25,6 @@ from hmx2.constants.intent import (
   INTENT_TRADE_API,
 )
 from hmx2.enum import (
-  Action,
   Cmd,
 )
 from eth_account import Account
@@ -40,7 +39,7 @@ from hmx2.helpers.mapper import (
   get_collateral_address_asset_map,
   get_collateral_address_list
 )
-from hmx2.helpers.util import check_sub_account_id_param, from_number_to_e30
+from hmx2.helpers.util import check_sub_account_id_param, from_number_to_e30, int_to_byte32
 from hmx2.modules.oracle.oracle_middleware import OracleMiddleware
 from eth_abi.abi import encode
 import decimal
@@ -199,12 +198,7 @@ class Private(object):
     :type tp_token: str in list COLLATERALS address
     '''
     if intent:
-      while True:
-        try:
-          return self.__create_intent_trade_order(sub_account_id, market_index, buy, size, reduce_only, tp_token)
-        except Exception as e:
-          # print(e)
-          sleep(0.5)
+      return self.__create_intent_trade_order(sub_account_id, market_index, buy, size, reduce_only, tp_token)
 
     check_sub_account_id_param(sub_account_id)
 
@@ -233,7 +227,7 @@ class Private(object):
     args["order"] = events[0]["args"]
     return args
 
-  def create_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO, intent: bool = False, expire_time: int = 240 * MINUTES):
+  def create_trigger_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, trigger_price: float, trigger_above_threshold: bool, reduce_only: bool, tp_token: str = ADDRESS_ZERO, intent: bool = False, expire_time: int = 30 * DAYS):
     '''
     Post a trigger order
 
@@ -263,12 +257,7 @@ class Private(object):
     '''
 
     if intent:
-      while True:
-        try:
-          return self.__create_intent_trigger_order(sub_account_id, market_index, buy, size, trigger_price, trigger_above_threshold, reduce_only, expire_time, tp_token)
-        except Exception as e:
-          # print(e)
-          sleep(0.5)
+      return self.__create_intent_trigger_order(sub_account_id, market_index, buy, size, trigger_price, trigger_above_threshold, reduce_only, expire_time, tp_token)
 
     order = {
       "cmd": Cmd.CREATE,
@@ -364,11 +353,7 @@ class Private(object):
     '''
 
     if intent:
-      while True:
-        try:
-          return self.__cancel_intent_trade_order(market_index, order_index)
-        except Exception as e:
-          sleep(0.5)
+      return self.__cancel_intent_trade_order(market_index, order_index)
     order = {
       "cmd": Cmd.CANCEL,
       "order_index": order_index,
@@ -476,7 +461,7 @@ class Private(object):
 
   def __create_intent_trade_order(self, sub_account_id: int, market_index: int, buy: bool, size: float, reduce_only: bool, tp_token: str = ADDRESS_ZERO):
     created_timestamp = math.floor(time())
-    expired_timestamp = created_timestamp + 240 * MINUTES
+    expired_timestamp = created_timestamp + 5 * MINUTES
 
     acceptable_price = MAX_UINT54 if buy else 0
     trigger_price = 0
@@ -536,7 +521,7 @@ class Private(object):
     sign_data = Account.sign_message(encoded_data, self.eth_signer.key)
 
     signature = encode_packed(['bytes32', 'bytes32', 'uint8'], [
-        bytes.fromhex(hex(sign_data.r)[2:]), bytes.fromhex(hex(sign_data.s)[2:]), sign_data.v])
+        int_to_byte32(sign_data.r), int_to_byte32(sign_data.s), sign_data.v])
 
     pk = keys.PrivateKey(self.eth_signer.key)
 
@@ -594,7 +579,7 @@ class Private(object):
       encoded_message, pk)
 
     signature = encode_packed(['bytes32', 'bytes32', 'uint8'], [
-        bytes.fromhex(hex(sign_data.r)[2:]), bytes.fromhex(hex(sign_data.s)[2:]), sign_data.v])
+        int_to_byte32(sign_data.r), int_to_byte32(sign_data.s), sign_data.v])
 
     cancel_order = {
       "id": order_index,

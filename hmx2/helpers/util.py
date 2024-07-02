@@ -44,3 +44,8 @@ def is_blast_chain(chain_id: int) -> bool:
 
 def is_mainnet(chain_id: int) -> bool:
   return chain_id in MAINNET_ADDRESSES
+
+
+def int_to_byte32(val: int) -> bytes:
+  hex_value = "{:064x}".format(val)
+  return bytes.fromhex(hex_value)
